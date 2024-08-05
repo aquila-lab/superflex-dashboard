@@ -14,6 +14,6 @@ const Root = (): JSX.Element => (
   </StrictMode>
 );
 
-const container = document.getElementById('root') as HTMLElement;
+const container = document.getElementById('root')!;
 const root = createRoot(container);
 root.render(<Root />);

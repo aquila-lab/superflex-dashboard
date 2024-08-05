@@ -25,7 +25,7 @@ export type RegisterUserArgs = {
 async function registerUser({ username, email, password }: RegisterUserArgs): Promise<string> {
   try {
     const { data } = await PublicApi.post('/auth/register', {
-      username: username,
+      username,
       email,
       password
     });
