@@ -1,3 +1,5 @@
 node_modules/
 dist/
 out/
+src/react-app-env.d.ts
+src/reportWebVitals.ts
