@@ -1,7 +1,7 @@
 import './App.css';
 
 import React from 'react';
-import { Toaster } from 'sonner';
+import { Toaster } from '@/components';
 
 import AppPages from './pages/AppPages';
 import { AppLoader } from './components';
@@ -24,7 +24,7 @@ const App = (): JSX.Element => {
         <div id="AppContent" className="h-full">
           <AppPages />
         </div>
-        <Toaster richColors position="bottom-right" />
+        <Toaster />
       </div>
     </AppContextProviders>
   );
