@@ -1,4 +1,4 @@
-import { GOOGLE_OAUTH_REDIRECT_URI } from '../common/constants';
+import { GOOGLE_OAUTH_REDIRECT_URI } from '@/common/constants';
 import { parseError } from './error';
 import { PublicApi } from './api';
 

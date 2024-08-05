@@ -1,4 +1,4 @@
-import { IS_PROD } from '../common/constants';
+import { IS_PROD } from '@/common/constants';
 
 export type ApiError = {
   statusCode: number;

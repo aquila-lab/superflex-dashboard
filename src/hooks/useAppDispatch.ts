@@ -1,2 +1,2 @@
-import { useAppDispatch } from '../core/store';
+import { useAppDispatch } from '@/core/store';
 export { useAppDispatch };

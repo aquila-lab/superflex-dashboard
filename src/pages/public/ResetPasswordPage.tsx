@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { useAppDispatch } from '../../hooks';
-import { resetPassword } from '../../core/auth/authSlice';
-import { Button } from '../../components';
+import { useAppDispatch } from '@/hooks';
+import { resetPassword } from '@/core/auth/authSlice';
+import { Button } from '@/components';
 
 const ResetPasswordPage = (): JSX.Element => {
   const dispatch = useAppDispatch();

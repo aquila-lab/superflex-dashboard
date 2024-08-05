@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
-import { useAppDispatch } from '../../hooks';
-import { authenticateOAuth, registerUser } from '../../core/auth/authSlice';
-import { Button, ErrorAlert, GoogleLoginButton } from '../../components';
-import { getCustomUserError } from '../../api/error';
+import { useAppDispatch } from '@/hooks';
+import { getCustomUserError } from '@/api/error';
+import { Button, ErrorAlert, GoogleLoginButton } from '@/components';
+import { authenticateOAuth, registerUser } from '@/core/auth/authSlice';
 
 type FormDataType = {
   firstName: string;

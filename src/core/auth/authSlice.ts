@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk, isAnyOf, bindActionCreators } from '@reduxjs/toolkit';
 import { toast } from 'sonner';
 
-import * as api from '../../api';
+import * as api from '@/api';
+import { getCustomUserError } from '@/api/error';
+import { fetchUser } from '@/core/user/userSlice';
 import { logoutHelper, setAuthHeader } from './helpers';
-import { fetchUser } from '../user/userSlice';
-import { getCustomUserError } from '../../api/error';
 
 type AuthSliceState = {
   loggedIn: boolean;

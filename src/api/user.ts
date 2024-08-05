@@ -1,4 +1,4 @@
-import User, { UserData } from '../core/user/User.model';
+import User, { UserData } from '@/core/user/User.model';
 import { parseError } from './error';
 import { Api } from './api';
 

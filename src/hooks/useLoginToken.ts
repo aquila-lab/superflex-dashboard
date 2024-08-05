@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 
-import { retrieveToken } from '../core/auth/authSlice';
+import { retrieveToken } from '@/core/auth/authSlice';
 import { useAppDispatch } from './useAppDispatch';
 
 function useLoginToken(): void {

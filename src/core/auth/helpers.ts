@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie';
 
-import { ApiProvider } from '../../api';
-import { IS_PROD, COOKIE_DOMAIN, ApiErrorTypes } from '../../common/constants';
+import { ApiProvider } from '@/api';
+import { IS_PROD, COOKIE_DOMAIN, ApiErrorTypes } from '@/common/constants';
 
 function logoutHelper(): void {
   Cookies.remove('token', { domain: COOKIE_DOMAIN });

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import { Button } from '../../components';
-import { useAppDispatch } from '../../hooks';
-import { sendResetPasswordEmail } from '../../core/auth/authSlice';
+import { Button } from '@/components';
+import { useAppDispatch } from '@/hooks';
+import { sendResetPasswordEmail } from '@/core/auth/authSlice';
 
 const RequestResetPasswordPage = (): JSX.Element => {
   const dispatch = useAppDispatch();
