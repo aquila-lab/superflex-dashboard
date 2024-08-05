@@ -1,6 +1,6 @@
 import './App.css';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Toaster } from 'sonner';
 
 import AppPages from './pages/AppPages';
