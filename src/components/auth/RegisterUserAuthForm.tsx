@@ -110,9 +110,9 @@ export function RegisterUserAuthForm({
           </div>
 
           <div className="grid gap-1">
-            <Label htmlFor="repeat-password">Repeat password</Label>
+            <Label htmlFor="confirm-password">Confirm Password</Label>
             <Input
-              id="repeat-password"
+              id="confirm-password"
               type="password"
               required
               value={formData.repeatPassword}

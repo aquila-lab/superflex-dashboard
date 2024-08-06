@@ -54,7 +54,7 @@ export function LoginUserAuthForm({ className, ...props }: LoginUserAuthFormProp
         }}>
         <div className="grid gap-3">
           <div className="grid gap-1">
-            <Label htmlFor="email">Email or username</Label>
+            <Label htmlFor="email">Email or Username</Label>
             <Input
               id="email"
               placeholder="name@example.com"
