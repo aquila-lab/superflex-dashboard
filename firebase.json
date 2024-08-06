@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "superflex-dashboard",
+    "site": "superflex-ai",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
