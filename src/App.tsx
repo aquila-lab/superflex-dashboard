@@ -1,13 +1,12 @@
 import './App.css';
 
 import React from 'react';
-import { Toaster } from '@/components';
 
-import AppPages from './pages/AppPages';
-import { AppLoader } from './components';
-import { useLoginToken } from './hooks/useLoginToken';
+import AppPages from '@/pages/AppPages';
+import { useAppSelector } from '@/core/store';
+import { useLoginToken } from '@/hooks/useLoginToken';
+import { LoadingSpinner, Toaster } from '@/components';
 import { AppContextProviders } from './AppContextProviders';
-import { useAppSelector } from './core/store';
 
 const App = (): JSX.Element => {
   const isLoginPending = useAppSelector((state) => state.auth.isLoginPending);
@@ -15,7 +14,7 @@ const App = (): JSX.Element => {
   useLoginToken();
 
   if (isLoginPending) {
-    return <AppLoader />;
+    return <LoadingSpinner />;
   }
 
   return (

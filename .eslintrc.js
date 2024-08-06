@@ -23,6 +23,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/return-await': 'off',
+    '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/no-extraneous-class': 'off',
     '@typescript-eslint/no-floating-promises': 'off',
     '@typescript-eslint/consistent-type-imports': 'off',

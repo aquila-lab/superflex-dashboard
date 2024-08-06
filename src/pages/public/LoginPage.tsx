@@ -1,167 +1,60 @@
-import React, { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-import { useAppDispatch } from '@/hooks';
-import { getCustomUserError } from '@/api/error';
-import { authenticateOAuth, loginUser } from '@/core/auth/authSlice';
-import { Button, ErrorAlert, GoogleLoginButton } from '@/components';
-
-type FormDataType = {
-  email: string;
-  password: string;
-};
+import { cn } from '@/lib/utils';
+import { buttonVariants, LoginUserAuthForm } from '@/components';
 
 const LoginPage = (): JSX.Element => {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-
-  const [searchParams] = useSearchParams();
-
-  const [formData, setFormData] = useState<FormDataType>({
-    email: '',
-    password: ''
-  });
-  const [loginFailed, setLoginFailed] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const handleFormUpdate = (field: string, value: any): void => {
-    setFormData((prevState) => ({ ...prevState, [field]: value }));
-  };
-
-  const handleLoginSubmit = async (): Promise<void> => {
-    setLoginFailed(false);
-    setErrorMessage('');
-
-    const response: any = await dispatch(loginUser({ ...formData }));
-    if (response.error) {
-      setLoginFailed(true);
-      setErrorMessage(response.payload?.message ?? 'Email is already in use');
-      return;
-    }
-
-    if (searchParams.get('token')) {
-      navigate(`/accept-invite?${searchParams.toString()}`);
-      return;
-    }
-
-    navigate(`/home`);
-  };
-
-  const handleOAuth = async (code: string): Promise<void> => {
-    const response: any = await dispatch(authenticateOAuth({ code }));
-    if (response.error) {
-      setLoginFailed(true);
-      setErrorMessage(getCustomUserError(response.payload, 'Registration failed'));
-      return;
-    }
-
-    if (searchParams.get('token')) {
-      navigate(`/accept-invite?${searchParams.toString()}`);
-      return;
-    }
-
-    navigate('/home');
-  };
-
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gray-50">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        {/* <img
-          className="mx-auto h-10 w-auto"
-          src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-          alt="Sprout"
-        /> */}
-        <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Sign In to your Account
-        </h2>
-      </div>
-
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-        <div
-          className={`bg-white px-6 ${
-            loginFailed ? 'pb-12 pt-3' : 'py-12'
-          } shadow sm:rounded-lg sm:px-12`}>
-          {loginFailed && (
-            <div className="my-4">
-              <ErrorAlert>{errorMessage}</ErrorAlert>
-            </div>
-          )}
-
-          <form
-            className="space-y-6"
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleLoginSubmit();
-            }}>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  value={formData.email}
-                  onChange={(e) => handleFormUpdate('email', e.target.value)}
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm"
-                />
-              </div>
+    <>
+      <div className="container relative hidden h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+        <Link
+          to="/register"
+          className={cn(
+            buttonVariants({ variant: 'ghost' }),
+            'absolute right-4 top-4 md:right-8 md:top-8'
+          )}>
+          Create an account
+        </Link>
+        <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
+          <div className="absolute inset-0 bg-zinc-900" />
+          <div className="relative z-20 flex items-center text-lg font-medium">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mr-2 h-6 w-6">
+              <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
+            </svg>
+            Superflex AI, Inc.
+          </div>
+          <div className="relative z-20 mt-auto">
+            <blockquote className="space-y-2">
+              <p className="text-lg">
+                &ldquo;{"Change starts with you, but it doesn't start until you do."}&rdquo;
+              </p>
+              <footer className="text-sm">Tom Ziglar</footer>
+            </blockquote>
+          </div>
+        </div>
+        <div className="lg:p-8">
+          <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+            <div className="flex flex-col space-y-2 text-center">
+              <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
+              <p className="text-sm text-muted-foreground">
+                Enter your email below to login to your account
+              </p>
             </div>
 
-            <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900">
-                  Password
-                </label>
-                <Link
-                  to="/forgot-password"
-                  className="text-sm text-indigo-600 hover:underline dark:text-indigo-500">
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="off"
-                  value={formData.password}
-                  onChange={(e) => handleFormUpdate('password', e.target.value)}
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Button type="submit" className="w-full">
-                Sign In
-              </Button>
-            </div>
-          </form>
-
-          <div>
-            <div className="relative mt-6">
-              <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-sm font-medium leading-6">
-                <span className="bg-white px-6 text-gray-900">Or continue with</span>
-              </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-1 gap-4">
-              <GoogleLoginButton label="Sign In with Google" onAuthentication={handleOAuth} />
-            </div>
+            <LoginUserAuthForm />
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
