@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-import { LoginPage, RegisterPage } from './public';
+import { ForgotPasswordPage, LoginPage, RegisterPage } from './public';
 
 const AppPages = (): JSX.Element => {
   return (
@@ -10,6 +10,7 @@ const AppPages = (): JSX.Element => {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       </Routes>
     </BrowserRouter>
   );

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants, Icons, LoginUserAuthForm } from '@/components';
+import { AuthWallpaper, buttonVariants, LoginUserAuthForm } from '@/components';
 
 const LoginPage = (): JSX.Element => {
   return (
@@ -16,21 +16,9 @@ const LoginPage = (): JSX.Element => {
           )}>
           Create an account
         </Link>
-        <div className="relative hidden lg:flex h-full flex-col bg-muted p-10 text-white dark:border-r">
-          <div className="absolute inset-0 bg-zinc-900" />
-          <div className="relative z-20 flex items-center text-lg font-medium">
-            <Icons.logo className="mr-2 size-6" />
-            Superflex AI
-          </div>
-          <div className="relative z-20 mt-auto">
-            <blockquote className="space-y-2">
-              <p className="text-lg">
-                &ldquo;{"Change starts with you, but it doesn't start until you do."}&rdquo;
-              </p>
-              <footer className="text-sm">Tom Ziglar</footer>
-            </blockquote>
-          </div>
-        </div>
+
+        <AuthWallpaper />
+
         <div className="lg:p-8">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
