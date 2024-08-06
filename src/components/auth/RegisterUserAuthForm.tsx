@@ -1,34 +1,43 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { cn } from '@/lib/utils';
 import { useAppDispatch } from '@/hooks';
 import { getCustomUserError } from '@/api/error';
-import { authenticateOAuth, loginUser } from '@/core/auth/authSlice';
+import { authenticateOAuth, registerUser } from '@/core/auth/authSlice';
 import { Button, GoogleOAuthButton, Icons, Input, Label } from '@/components';
 
-interface LoginUserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface RegisterUserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function LoginUserAuthForm({ className, ...props }: LoginUserAuthFormProps): JSX.Element {
+export function RegisterUserAuthForm({
+  className,
+  ...props
+}: RegisterUserAuthFormProps): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    usernameOrEmail: '',
-    password: ''
+    username: '',
+    email: '',
+    password: '',
+    repeatPassword: ''
   });
 
-  const onLoginSubmit = async (): Promise<void> => {
-    setIsLoading(true);
+  const onRegisterSubmit = async (): Promise<void> => {
+    if (formData.password !== formData.repeatPassword) {
+      toast.error('Password and confirm password are not equal');
+      return;
+    }
 
-    const response: any = await dispatch(loginUser({ ...formData }));
+    setIsLoading(true);
+    const response: any = await dispatch(registerUser({ ...formData }));
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.payload?.message ?? 'Login failed');
+      toast.error(response.payload?.message ?? 'Email is already in use');
       return;
     }
 
@@ -38,7 +47,7 @@ export function LoginUserAuthForm({ className, ...props }: LoginUserAuthFormProp
   const onGoogleOAuthSubmit = async (code: string): Promise<void> => {
     const response: any = await dispatch(authenticateOAuth({ code }));
     if (response.error) {
-      toast.error(getCustomUserError(response.payload, 'Login failed'));
+      toast.error(getCustomUserError(response.payload, 'Registration failed'));
       return;
     }
 
@@ -50,35 +59,45 @@ export function LoginUserAuthForm({ className, ...props }: LoginUserAuthFormProp
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          onLoginSubmit();
+          onRegisterSubmit();
         }}>
         <div className="grid gap-3">
           <div className="grid gap-1">
-            <Label htmlFor="email">Email or Username</Label>
+            <Label htmlFor="username">Username</Label>
             <Input
-              id="email"
-              placeholder="name@example.com"
+              id="username"
               type="text"
-              autoCapitalize="none"
-              autoComplete="email"
+              autoComplete="off"
               autoCorrect="off"
               disabled={isLoading}
               required
-              value={formData.usernameOrEmail}
+              value={formData.username}
               onChange={(e) =>
-                setFormData((prevState) => ({ ...prevState, usernameOrEmail: e.target.value }))
+                setFormData((prevState) => ({ ...prevState, username: e.target.value }))
               }
             />
           </div>
 
           <div className="grid gap-1">
-            <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
-              <Link to="/forgot-password" className="ml-auto inline-block text-sm underline">
-                Forgot your password?
-              </Link>
-            </div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              placeholder="name@example.com"
+              type="email"
+              autoCapitalize="none"
+              autoComplete="email"
+              autoCorrect="off"
+              disabled={isLoading}
+              required
+              value={formData.email}
+              onChange={(e) =>
+                setFormData((prevState) => ({ ...prevState, email: e.target.value }))
+              }
+            />
+          </div>
 
+          <div className="grid gap-1">
+            <Label htmlFor="password">Password</Label>
             <Input
               id="password"
               type="password"
@@ -90,9 +109,22 @@ export function LoginUserAuthForm({ className, ...props }: LoginUserAuthFormProp
             />
           </div>
 
+          <div className="grid gap-1">
+            <Label htmlFor="confirm-password">Confirm Password</Label>
+            <Input
+              id="confirm-password"
+              type="password"
+              required
+              value={formData.repeatPassword}
+              onChange={(e) =>
+                setFormData((prevState) => ({ ...prevState, repeatPassword: e.target.value }))
+              }
+            />
+          </div>
+
           <Button disabled={isLoading}>
             {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
-            Login
+            Create an account
           </Button>
         </div>
       </form>

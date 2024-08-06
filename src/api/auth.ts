@@ -3,13 +3,16 @@ import { parseError } from './error';
 import { PublicApi } from './api';
 
 export type LoginUserArgs = {
-  email: string;
+  usernameOrEmail: string;
   password: string;
 };
 
-async function loginUser({ email, password }: LoginUserArgs): Promise<string> {
+async function loginUser({ usernameOrEmail, password }: LoginUserArgs): Promise<string> {
   try {
-    const response = await PublicApi.post('/auth/login', { email, password });
+    const response = await PublicApi.post('/auth/login', {
+      username_or_email: usernameOrEmail,
+      password
+    });
     return Promise.resolve(response.data.token);
   } catch (err: any) {
     return Promise.reject(parseError(err));
