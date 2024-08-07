@@ -1,7 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-import { LoginPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage } from './public';
+import {
+  LoginPage,
+  RegisterPage,
+  ForgotPasswordPage,
+  ResetPasswordPage,
+  LoginSuccessfulPage
+} from './public';
 
 const AppPages = (): JSX.Element => {
   return (
@@ -12,6 +18,7 @@ const AppPages = (): JSX.Element => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/successful" element={<LoginSuccessfulPage />} />
       </Routes>
     </BrowserRouter>
   );
