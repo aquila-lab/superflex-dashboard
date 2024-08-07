@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { cn } from '@/lib/utils';
@@ -18,6 +18,8 @@ export function RegisterUserAuthForm({
 }: RegisterUserAuthFormProps): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const [searchParams] = useSearchParams();
 
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -41,7 +43,7 @@ export function RegisterUserAuthForm({
       return;
     }
 
-    navigate(`/successful`);
+    navigate(`/successful?${searchParams.toString()}`);
   };
 
   const onGoogleOAuthSubmit = async (code: string): Promise<void> => {
@@ -51,7 +53,7 @@ export function RegisterUserAuthForm({
       return;
     }
 
-    navigate('/successful');
+    navigate(`/successful?${searchParams.toString()}`);
   };
 
   return (

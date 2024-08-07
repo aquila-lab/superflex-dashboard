@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { cn } from '@/lib/utils';
@@ -15,6 +15,8 @@ interface LoginUserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 export function LoginUserAuthForm({ className, ...props }: LoginUserAuthFormProps): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const [searchParams] = useSearchParams();
 
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,7 +34,7 @@ export function LoginUserAuthForm({ className, ...props }: LoginUserAuthFormProp
       return;
     }
 
-    navigate(`/successful`);
+    navigate(`/successful?${searchParams.toString()}`);
   };
 
   const onGoogleOAuthSubmit = async (code: string): Promise<void> => {
@@ -42,7 +44,7 @@ export function LoginUserAuthForm({ className, ...props }: LoginUserAuthFormProp
       return;
     }
 
-    navigate('/successful');
+    navigate(`/successful?${searchParams.toString()}`);
   };
 
   return (
