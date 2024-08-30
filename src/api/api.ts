@@ -3,8 +3,8 @@ import Cookies from 'js-cookie';
 
 import { IS_PROD, API_BASE_URL, COOKIE_DOMAIN } from '@/common/constants';
 
-const Api = axios.create({ baseURL: `${API_BASE_URL}/v1` });
-const PublicApi = axios.create({ baseURL: `${API_BASE_URL}/v1` });
+const Api = axios.create({ baseURL: `${API_BASE_URL}/api/v1` });
+const PublicApi = axios.create({ baseURL: `${API_BASE_URL}/api/v1` });
 
 class ApiProviderClass {
   responseInterceptor: any = null;
