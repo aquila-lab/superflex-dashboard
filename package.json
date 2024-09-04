@@ -2,6 +2,13 @@
   "name": "superflex-dashboard",
   "version": "0.1.0",
   "private": true,
+  "description": "Superflex dashboard",
+  "author": "Riphal <https://twitter.com/_riphal_>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aquila-lab/superflex-dashboard"
+  },
   "scripts": {
     "start": "npx webpack serve --mode development --open",
     "build": "npx webpack --mode production",
