@@ -7,9 +7,9 @@ export type ApiError = {
 } | null;
 
 const internalServerError: ApiError = {
+  statusCode: 500,
   slug: 'internal_server',
-  message: 'Internal server error',
-  statusCode: 500
+  message: 'Internal server error'
 };
 
 export function parseError(err: any): ApiError {
@@ -31,7 +31,7 @@ export function getCustomUserError(
   err: ApiError,
   defaultMsg: string = 'Internal server error'
 ): string {
-  if (!!err?.slug.startsWith('custom_') || err?.slug === 'validation') {
+  if (err?.message) {
     return err.message;
   }
   return defaultMsg;
