@@ -7,13 +7,18 @@ import {
   ForgotPasswordPage,
   ResetPasswordPage,
   LoginSuccessfulPage,
-  FigmaSuccessfulPage
+  FigmaSuccessfulPage,
+  PrivacyPolicyPage,
+  TermsOfServicePage
 } from './public';
 
 const AppPages = (): JSX.Element => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
