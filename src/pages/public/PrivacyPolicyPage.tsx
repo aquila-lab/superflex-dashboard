@@ -249,7 +249,7 @@ const PrivacyPolicyPage = (): JSX.Element => {
         and where this is to a country that is not subject to an adequacy decision by the EU
         Commission or considered adequate as determined by applicable data protection laws, we will
         take steps to ensure your personal information is adequately protected by safeguards such as
-        Standard Contractual Clauses ("SCCs") approved by the EU Commission or by the UK Government.
+        Standard Contractual Clauses (“SCCs”) approved by the EU Commission or by the UK Government.
         A copy of the relevant mechanism can be obtained for your review on request by using the
         contact details in the 'Contacting Aquila Labs About Your Privacy' section of this Privacy
         Policy.
@@ -504,7 +504,7 @@ const PrivacyPolicyPage = (): JSX.Element => {
         <li>Right to object to processing (if processing is based on legitimate interests);</li>
         <li>Right to object to the processing of personal data for direct marketing purposes;</li>
         <li>
-          Right of erasure of your personal data from our system ("right to be forgotten") if
+          Right of erasure of your personal data from our system (“right to be forgotten”) if
           certain grounds are met.
         </li>
       </ul>
@@ -571,7 +571,7 @@ const PrivacyPolicyPage = (): JSX.Element => {
       <p className="text-gray-700">
         If you have questions or concerns about the way we are handling your personal information,
         or would like to exercise your privacy rights, please email us with the subject line
-        "Privacy Concern" at{' '}
+        “Privacy Concern” at{' '}
         <a href="mailto:boris@superflex.ai" className="text-black underline">
           boris@superflex.ai
         </a>
