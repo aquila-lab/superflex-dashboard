@@ -43,6 +43,10 @@ export function LoginUserAuthForm({ className, ...props }: LoginUserAuthFormProp
       toast.error(getCustomUserError(response.payload, 'Login failed'));
       return;
     }
+    if (response.payload.newUser) {
+      navigate(`/register-step-1?${searchParams.toString()}`);
+      return;
+    }
 
     navigate(`/successful?${searchParams.toString()}`);
   };

@@ -1,4 +1,5 @@
 import { GOOGLE_OAUTH_REDIRECT_URI } from '@/common/constants';
+import Token, { TokenData } from '@/core/auth/Token.model';
 import { parseError } from './error';
 import { PublicApi } from './api';
 
@@ -42,12 +43,13 @@ export type AuthenticateOAuthArgs = {
   code: string;
 };
 
-async function googleOAuthUser({ code }: AuthenticateOAuthArgs): Promise<string> {
+async function googleOAuthUser({ code }: AuthenticateOAuthArgs): Promise<TokenData> {
   try {
     const { data } = await PublicApi.get(
       `/auth/google-callback?code=${code}&redirect_uri=${GOOGLE_OAUTH_REDIRECT_URI}`
     );
-    return Promise.resolve(data.token);
+
+    return Promise.resolve(Token.buildTokenDataFromResponse(data));
   } catch (err: any) {
     return Promise.reject(parseError(err));
   }

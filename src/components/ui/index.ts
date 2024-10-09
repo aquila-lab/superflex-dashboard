@@ -9,6 +9,7 @@ export * from './Icons';
 export * from './Input';
 export * from './Label';
 export * from './LoadingSpinner';
+export * from './Select';
 export * from './Separator';
 export * from './Sonner';
 export * from './Textarea';

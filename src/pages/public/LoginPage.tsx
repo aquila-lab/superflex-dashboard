@@ -1,15 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { cn } from '@/lib/utils';
 import { AuthWallpaper, buttonVariants, LoginUserAuthForm } from '@/components';
 
 const LoginPage = (): JSX.Element => {
+  const [searchParams] = useSearchParams();
+
   return (
     <>
       <div className="container relative h-full flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
-          to="/register"
+          to={`/register?${searchParams.toString()}`}
           className={cn(
             buttonVariants({ variant: 'ghost' }),
             'absolute right-4 top-4 md:right-8 md:top-8'

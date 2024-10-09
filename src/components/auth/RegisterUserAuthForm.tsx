@@ -43,7 +43,7 @@ export function RegisterUserAuthForm({
       return;
     }
 
-    navigate(`/successful?${searchParams.toString()}`);
+    navigate(`/register-step-1?${searchParams.toString()}`);
   };
 
   const onGoogleOAuthSubmit = async (code: string): Promise<void> => {
@@ -53,7 +53,7 @@ export function RegisterUserAuthForm({
       return;
     }
 
-    navigate(`/successful?${searchParams.toString()}`);
+    navigate(`/register-step-1?${searchParams.toString()}`);
   };
 
   return (

@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import * as api from '@/api';
 import { getCustomUserError } from '@/api/error';
 import { fetchUser } from '@/core/user/userSlice';
+import { TokenData } from './Token.model';
 import { logoutHelper, setAuthHeader } from './helpers';
 
 type AuthSliceState = {
@@ -59,7 +60,7 @@ const registerUser = createAsyncThunk(
 const authenticateOAuth = createAsyncThunk(
   'auth/authenticateOAuth',
   async (args: api.AuthenticateOAuthArgs, { dispatch, rejectWithValue }) => {
-    let token;
+    let token: TokenData;
 
     try {
       token = await api.googleOAuthUser(args);
@@ -67,7 +68,7 @@ const authenticateOAuth = createAsyncThunk(
       return rejectWithValue(err);
     }
 
-    await setAuthHeader(token, bindActionCreators(logoutUser, dispatch));
+    await setAuthHeader(token.token, bindActionCreators(logoutUser, dispatch));
     await dispatch(fetchUser());
 
     return token;
@@ -155,12 +156,17 @@ const authSlice = createSlice({
       toast.error(getCustomUserError(err, 'Failed to send reset password email'));
     });
 
+    builder.addCase(authenticateOAuth.fulfilled, (state, action) => {
+      state.isLoginPending = false;
+      state.loggedIn = true;
+      state.token = action.payload.token;
+    });
+
     builder.addMatcher(
       isAnyOf(
         loginUser.fulfilled,
         retrieveToken.fulfilled,
         registerUser.fulfilled,
-        authenticateOAuth.fulfilled,
         resetPassword.fulfilled
       ),
       (state, { payload }) => {
