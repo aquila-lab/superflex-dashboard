@@ -29,7 +29,7 @@ const AppPages = (): JSX.Element => {
         <Route path="/successful" element={<LoginSuccessfulPage />} />
         <Route path="/figma-successful" element={<FigmaSuccessfulPage />} />
 
-        <Route element={<ProtectedRoute isAllowed={!isLoggedIn} />}>
+        <Route element={<ProtectedRoute isAllowed={isLoggedIn} />}>
           <Route path="/pricing" element={<PricingPage />} />
         </Route>
       </Routes>
