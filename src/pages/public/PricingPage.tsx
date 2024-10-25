@@ -46,7 +46,7 @@ const PricingPage = (): React.ReactNode => {
               'ml-1 text-xs',
               isAnnual ? 'text-primary-foreground' : 'text-muted-foreground'
             )}>
-            (Save 36%)
+            (Save 35%)
           </span>
         </Button>
       </div>
@@ -90,7 +90,7 @@ const PricingPage = (): React.ReactNode => {
           </CardHeader>
           <CardContent className="flex-grow">
             <p className="text-3xl font-bold">
-              {isAnnual ? '$31' : '$49'}
+              {isAnnual ? '$32' : '$49'}
               <span className="text-sm text-foreground font-normal"> / User / Month</span>
             </p>
             <p className="text-sm text-muted-foreground">
