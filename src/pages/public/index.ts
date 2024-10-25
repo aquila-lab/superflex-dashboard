@@ -4,3 +4,4 @@ export { default as ResetPasswordPage } from './ResetPasswordPage';
 export { default as ForgotPasswordPage } from './ForgotPasswordPage';
 export { default as LoginSuccessfulPage } from './LoginSuccessfulPage';
 export { default as FigmaSuccessfulPage } from './FigmaSuccessfulPage';
+export { default as PricingPage } from './PricingPage';

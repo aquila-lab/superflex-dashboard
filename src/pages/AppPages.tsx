@@ -7,7 +7,8 @@ import {
   ForgotPasswordPage,
   ResetPasswordPage,
   LoginSuccessfulPage,
-  FigmaSuccessfulPage
+  FigmaSuccessfulPage,
+  PricingPage
 } from './public';
 import CollectUserInformationPage from './public/CollectUserInformationPage';
 
@@ -23,6 +24,7 @@ const AppPages = (): JSX.Element => {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/successful" element={<LoginSuccessfulPage />} />
         <Route path="/figma-successful" element={<FigmaSuccessfulPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
       </Routes>
     </BrowserRouter>
   );
