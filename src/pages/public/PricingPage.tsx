@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   Card,
@@ -11,13 +11,36 @@ import {
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { cn } from '@/lib/utils';
+import { useAppSelector } from '@/core/store';
+import { useSearchParams } from 'react-router-dom';
 
 const PricingPage = (): React.ReactNode => {
-  const [isAnnual, setIsAnnual] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const togglePricing = (): void => {
-    setIsAnnual(!isAnnual);
-  };
+  const user = useAppSelector((state) => state.user);
+
+  const isAnnual = searchParams.get('billing') !== 'monthly';
+
+  function togglePricing(): void {
+    setSearchParams({ billing: isAnnual ? 'monthly' : 'yearly' });
+  }
+
+  function getPaymentLink(
+    plan: 'individual_pro_monthly' | 'individual_pro_yearly' | 'team_monthly' | 'team_yearly'
+  ): string {
+    switch (plan) {
+      case 'individual_pro_monthly':
+        return `https://buy.stripe.com/eVag2Q3mm1Mm7qEbIZ${user?.email ? `?prefilled_email=${user.email}` : ''}`;
+      case 'individual_pro_yearly':
+        return `https://buy.stripe.com/dR6aIw4qq3UufXa3cu${user?.email ? `?prefilled_email=${user.email}` : ''}`;
+      case 'team_monthly':
+        return `https://buy.stripe.com/bIYbMAcWW3UufXafZe${user?.email ? `?prefilled_email=${user.email}` : ''}`;
+      case 'team_yearly':
+        return `https://buy.stripe.com/fZe3g4aOObmWdP2eVd${user?.email ? `?prefilled_email=${user.email}` : ''}`;
+      default: // pro_monthly
+        return `https://buy.stripe.com/eVag2Q3mm1Mm7qEbIZ${user?.email ? `?prefilled_email=${user.email}` : ''}`;
+    }
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground px-4 sm:px-6 md:px-8">
@@ -74,7 +97,14 @@ const PricingPage = (): React.ReactNode => {
             </ul>
           </CardContent>
           <CardFooter>
-            <Button variant="secondary" className="w-full">
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={() =>
+                (window.location.href = getPaymentLink(
+                  isAnnual ? 'individual_pro_yearly' : 'individual_pro_monthly'
+                ))
+              }>
               Get Started
             </Button>
           </CardFooter>
@@ -104,7 +134,12 @@ const PricingPage = (): React.ReactNode => {
             </ul>
           </CardContent>
           <CardFooter>
-            <Button variant="default" className="w-full">
+            <Button
+              variant="default"
+              className="w-full"
+              onClick={() =>
+                (window.location.href = getPaymentLink(isAnnual ? 'team_yearly' : 'team_monthly'))
+              }>
               Get Started
             </Button>
           </CardFooter>
