@@ -6,10 +6,10 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter
-} from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
+  CardFooter,
+  Badge,
+  Button
+} from '@/components';
 import { cn } from '@/lib/utils';
 import { useAppSelector } from '@/core/store';
 import { useSearchParams } from 'react-router-dom';
@@ -30,15 +30,15 @@ const PricingPage = (): React.ReactNode => {
   ): string {
     switch (plan) {
       case 'individual_pro_monthly':
-        return `https://buy.stripe.com/eVag2Q3mm1Mm7qEbIZ${user?.email ? `?prefilled_email=${user.email}` : ''}`;
+        return `https://buy.stripe.com/eVag2Q3mm1Mm7qEbIZ?prefilled_email=${user.email}`;
       case 'individual_pro_yearly':
-        return `https://buy.stripe.com/dR6aIw4qq3UufXa3cu${user?.email ? `?prefilled_email=${user.email}` : ''}`;
+        return `https://buy.stripe.com/dR6aIw4qq3UufXa3cu?prefilled_email=${user.email}`;
       case 'team_monthly':
-        return `https://buy.stripe.com/bIYbMAcWW3UufXafZe${user?.email ? `?prefilled_email=${user.email}` : ''}`;
+        return `https://buy.stripe.com/bIYbMAcWW3UufXafZe?prefilled_email=${user.email}`;
       case 'team_yearly':
-        return `https://buy.stripe.com/fZe3g4aOObmWdP2eVd${user?.email ? `?prefilled_email=${user.email}` : ''}`;
+        return `https://buy.stripe.com/fZe3g4aOObmWdP2eVd?prefilled_email=${user.email}`;
       default: // pro_monthly
-        return `https://buy.stripe.com/eVag2Q3mm1Mm7qEbIZ${user?.email ? `?prefilled_email=${user.email}` : ''}`;
+        return `https://buy.stripe.com/eVag2Q3mm1Mm7qEbIZ?prefilled_email=${user.email}`;
     }
   }
 
