@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { cn } from '@/lib/utils';
 
 const PricingPage = (): React.ReactNode => {
   const [isAnnual, setIsAnnual] = useState(true);
@@ -30,16 +31,23 @@ const PricingPage = (): React.ReactNode => {
         <Button
           variant={isAnnual ? 'outline' : 'default'}
           size="sm"
-          className="rounded-r-none w-[72px]"
+          className="rounded-r-none"
           onClick={togglePricing}>
           Monthly
         </Button>
         <Button
           variant={isAnnual ? 'default' : 'outline'}
           size="sm"
-          className="rounded-l-none w-[72px]"
+          className="rounded-l-none"
           onClick={togglePricing}>
-          Annual
+          Yearly{' '}
+          <span
+            className={cn(
+              'ml-1 text-xs',
+              isAnnual ? 'text-primary-foreground' : 'text-muted-foreground'
+            )}>
+            (Save 36%)
+          </span>
         </Button>
       </div>
       <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8">
