@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 type ProtectedRouteProps = {
   isAllowed: boolean;
@@ -10,8 +10,11 @@ export const ProtectedRoute = ({
   isAllowed,
   redirectPath = '/login'
 }: ProtectedRouteProps): JSX.Element => {
+  const location = useLocation();
+
   if (!isAllowed) {
-    return <Navigate to={redirectPath} replace />;
+    return <Navigate to={redirectPath} state={{ from: location.pathname }} replace />;
   }
+
   return <Outlet />;
 };

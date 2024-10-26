@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { cn } from '@/lib/utils';
@@ -13,6 +13,7 @@ import { Button, GoogleOAuthButton, Icons, Input, Label } from '@/components';
 interface LoginUserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function LoginUserAuthForm({ className, ...props }: LoginUserAuthFormProps): JSX.Element {
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -34,7 +35,9 @@ export function LoginUserAuthForm({ className, ...props }: LoginUserAuthFormProp
       return;
     }
 
-    navigate(`/successful?${searchParams.toString()}`);
+    const origin =
+      (location.state as { from: string })?.from ?? `/successful?${searchParams.toString()}`;
+    navigate(origin);
   };
 
   const onGoogleOAuthSubmit = async (code: string): Promise<void> => {
@@ -48,7 +51,9 @@ export function LoginUserAuthForm({ className, ...props }: LoginUserAuthFormProp
       return;
     }
 
-    navigate(`/successful?${searchParams.toString()}`);
+    const origin =
+      (location.state as { from: string })?.from ?? `/successful?${searchParams.toString()}`;
+    navigate(origin);
   };
 
   return (

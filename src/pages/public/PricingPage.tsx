@@ -32,12 +32,12 @@ const PricingPage = (): React.ReactNode => {
       case 'individual_pro_monthly':
         return `https://buy.stripe.com/eVag2Q3mm1Mm7qEbIZ?client_reference_id=${user.id}&prefilled_email=${user.email}`;
       case 'individual_pro_yearly':
-        return `https://buy.stripe.com/dR6aIw4qq3UufXa3cu?client_reference_id=${user.id}& prefilled_email=${user.email}`;
+        return `https://buy.stripe.com/dR6aIw4qq3UufXa3cu?client_reference_id=${user.id}&prefilled_email=${user.email}`;
       case 'team_monthly':
         return `https://buy.stripe.com/bIYbMAcWW3UufXafZe?client_reference_id=${user.id}&prefilled_email=${user.email}`;
       case 'team_yearly':
         return `https://buy.stripe.com/fZe3g4aOObmWdP2eVd?client_reference_id=${user.id}&prefilled_email=${user.email}`;
-      default: // pro_monthly
+      default: // individual_pro_monthly
         return `https://buy.stripe.com/eVag2Q3mm1Mm7qEbIZ?client_reference_id=${user.id}&prefilled_email=${user.email}`;
     }
   }
