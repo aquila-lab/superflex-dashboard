@@ -91,6 +91,7 @@ const PricingPage = (): React.ReactNode => {
               *billed {isAnnual ? 'yearly' : 'monthly'}
             </p>
             <ul className="list-disc pl-5 space-y-2 mt-4">
+              <li>Up to 3 projects</li>
               <li>500 premium requests per month</li>
               <li>Unlimited basic requests per month</li>
               <li>Priority email support</li>
@@ -127,6 +128,7 @@ const PricingPage = (): React.ReactNode => {
               *billed {isAnnual ? 'yearly' : 'monthly'}
             </p>
             <ul className="list-disc pl-5 space-y-2 mt-4">
+              <li>Unlimited projects</li>
               <li>Unlimited premium requests per month</li>
               <li>Centralized team billing</li>
               <li>Admin dashboard with usage stats</li>
