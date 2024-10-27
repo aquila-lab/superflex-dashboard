@@ -1,17 +1,22 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
+import { ProtectedRoute } from '@/components';
 import {
   LoginPage,
   RegisterPage,
   ForgotPasswordPage,
   ResetPasswordPage,
   LoginSuccessfulPage,
-  FigmaSuccessfulPage
+  FigmaSuccessfulPage,
+  PricingPage
 } from './public';
 import CollectUserInformationPage from './public/CollectUserInformationPage';
+import { useAppSelector } from '@/core/store';
 
 const AppPages = (): JSX.Element => {
+  const isLoggedIn = useAppSelector((state) => state.auth.loggedIn);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -23,6 +28,10 @@ const AppPages = (): JSX.Element => {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/successful" element={<LoginSuccessfulPage />} />
         <Route path="/figma-successful" element={<FigmaSuccessfulPage />} />
+
+        <Route element={<ProtectedRoute isAllowed={isLoggedIn} />}>
+          <Route path="/pricing" element={<PricingPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

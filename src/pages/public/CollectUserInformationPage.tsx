@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import posthog from 'posthog-js';
 
 import {
@@ -15,6 +15,7 @@ import {
 import { useAppSelector } from '@/core/store';
 
 const CollectUserInformationPage: React.FC = () => {
+  const location = useLocation();
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -36,7 +37,9 @@ const CollectUserInformationPage: React.FC = () => {
       });
     }
 
-    navigate(`/successful?${searchParams.toString()}`);
+    const origin =
+      (location.state as { from: string })?.from ?? `/successful?${searchParams.toString()}`;
+    navigate(origin);
   };
 
   return (
