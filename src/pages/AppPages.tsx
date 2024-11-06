@@ -2,17 +2,17 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import { ProtectedRoute } from '@/components';
+import { useAppSelector } from '@/core/store';
 import {
   LoginPage,
+  PricingPage,
   RegisterPage,
-  ForgotPasswordPage,
   ResetPasswordPage,
+  ForgotPasswordPage,
   LoginSuccessfulPage,
   FigmaSuccessfulPage,
-  PricingPage
+  CollectUserInformationPage
 } from './public';
-import CollectUserInformationPage from './public/CollectUserInformationPage';
-import { useAppSelector } from '@/core/store';
 
 const AppPages = (): JSX.Element => {
   const isLoggedIn = useAppSelector((state) => state.auth.loggedIn);

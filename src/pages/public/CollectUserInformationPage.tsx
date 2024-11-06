@@ -14,7 +14,7 @@ import {
 } from '@/components';
 import { useAppSelector } from '@/core/store';
 
-const CollectUserInformationPage: React.FC = () => {
+const CollectUserInformationPage = (): JSX.Element => {
   const location = useLocation();
   const navigate = useNavigate();
 
