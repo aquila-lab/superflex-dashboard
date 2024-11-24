@@ -121,7 +121,7 @@ const PricingPage = (): React.ReactNode => {
           </CardHeader>
           <CardContent className="flex-grow">
             <p className="text-3xl font-bold">
-              {isAnnual ? '$32' : '$49'}
+              {isAnnual ? '$65' : '$99'}
               <span className="text-sm text-foreground font-normal"> / User / Month</span>
             </p>
             <p className="text-sm text-muted-foreground">
