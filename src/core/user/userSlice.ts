@@ -19,6 +19,17 @@ const fetchUser = createAsyncThunk('user/getUser', async (_, { rejectWithValue }
   }
 });
 
+const updateUser = createAsyncThunk(
+  'user/updateUser',
+  async (args: api.UpdateUserArgs, { rejectWithValue }) => {
+    try {
+      return await api.updateUser(args);
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -31,9 +42,16 @@ const userSlice = createSlice({
       state.email = action.payload.email;
       state.picture = action.payload.picture;
     });
+    // Update user
+    builder.addCase(updateUser.fulfilled, (state, action) => {
+      state.id = action.payload.id;
+      state.username = action.payload.username;
+      state.email = action.payload.email;
+      state.picture = action.payload.picture;
+    });
   }
 });
 
 export default userSlice.reducer;
 
-export { fetchUser };
+export { fetchUser, updateUser };

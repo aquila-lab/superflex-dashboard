@@ -27,6 +27,7 @@ module.exports = {
     '@typescript-eslint/no-extraneous-class': 'off',
     '@typescript-eslint/no-floating-promises': 'off',
     '@typescript-eslint/consistent-type-imports': 'off',
+    '@typescript-eslint/prefer-nullish-coalescing': 'off',
     '@typescript-eslint/strict-boolean-expressions': 'off',
     '@typescript-eslint/consistent-type-definitions': 'off',
     '@typescript-eslint/no-confusing-void-expression': 'off',
