@@ -43,7 +43,6 @@ export function RegisterUserAuthForm({
       return;
     }
 
-    searchParams.set('showNameFields', 'false');
     navigate(`/register-step-1?${searchParams.toString()}`);
   };
 
