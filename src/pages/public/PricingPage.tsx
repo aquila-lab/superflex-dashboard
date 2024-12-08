@@ -94,6 +94,7 @@ const PricingPage = (): React.ReactNode => {
               <li>Up to 3 projects</li>
               <li>500 premium requests per month</li>
               <li>Unlimited basic requests per month</li>
+              <li>Import from Figma</li>
               <li>Priority email support</li>
             </ul>
           </CardContent>
@@ -119,21 +120,29 @@ const PricingPage = (): React.ReactNode => {
               analytics.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex-grow">
-            <p className="text-3xl font-bold">
-              {isAnnual ? '$65' : '$99'}
-              <span className="text-sm text-foreground font-normal"> / User / Month</span>
-            </p>
-            <p className="text-sm text-muted-foreground">
-              *billed {isAnnual ? 'yearly' : 'monthly'}
-            </p>
-            <ul className="list-disc pl-5 space-y-2 mt-4">
-              <li>Unlimited projects</li>
-              <li>Unlimited premium requests per month</li>
-              <li>Centralized team billing</li>
-              <li>Admin dashboard with usage stats</li>
-              <li>Priority support via Slack Connect</li>
-            </ul>
+          <CardContent className="flex-grow space-y-3">
+            <div>
+              <p className="text-4xl font-bold">
+                ${isAnnual ? '62' : '99'}
+                <span className="text-lg font-normal">/u/mo</span>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                *billed {isAnnual ? 'yearly' : 'monthly'}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <p>Everything in Individual Pro plus:</p>
+
+              <ul className="list-disc pl-5 space-y-2 mt-4">
+                <li>Zero data retention policy</li>
+                <li>Unlimited projects</li>
+                <li>Unlimited premium requests per month</li>
+                <li>Personalized onboarding</li>
+                <li>Priority support via Slack Connect</li>
+                <li>Optional design system consulting</li>
+              </ul>
+            </div>
           </CardContent>
           <CardFooter>
             <Button
