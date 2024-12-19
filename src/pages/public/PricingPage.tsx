@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import posthog from 'posthog-js';
 
 import {
   Card,
@@ -20,6 +21,15 @@ const PricingPage = (): React.ReactNode => {
   const user = useAppSelector((state) => state.user);
 
   const isAnnual = searchParams.get('billing') !== 'monthly';
+
+  useEffect(() => {
+    const source = searchParams.get('source');
+    posthog.capture('pricing_page_view', {
+      source: source ?? 'unknown',
+      userID: user.id,
+      email: user.email
+    });
+  }, [searchParams, user.id, user.email]);
 
   function togglePricing(): void {
     setSearchParams({ billing: isAnnual ? 'monthly' : 'yearly' });
