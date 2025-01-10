@@ -9,7 +9,8 @@ import {
   CardContent,
   CardFooter,
   Badge,
-  Button
+  Button,
+  Separator
 } from '@/components';
 import { cn } from '@/lib/utils';
 import { useAppSelector } from '@/core/store';
@@ -94,15 +95,15 @@ const PricingPage = (): React.ReactNode => {
           </CardHeader>
           <CardContent className="flex-grow">
             <p className="text-3xl font-bold">
-              {isAnnual ? '$12' : '$19'}
-              <span className="text-sm text-foreground font-normal"> / Month</span>
+              {isAnnual ? '$19' : '$29'}
+              <span className="text-sm text-foreground font-normal"> / month</span>
             </p>
             <p className="text-sm text-muted-foreground">
               *billed {isAnnual ? 'yearly' : 'monthly'}
             </p>
             <ul className="list-disc pl-5 space-y-2 mt-4">
               <li>Up to 3 projects</li>
-              <li>500 premium requests per month</li>
+              <li>250 premium requests per month</li>
               <li>Unlimited basic requests per month</li>
               <li>Import from Figma</li>
               <li>Priority email support</li>
@@ -133,26 +134,31 @@ const PricingPage = (): React.ReactNode => {
           <CardContent className="flex-grow space-y-3">
             <div>
               <p className="text-4xl font-bold">
-                ${isAnnual ? '62' : '99'}
-                <span className="text-lg font-normal">/u/mo</span>
+                {isAnnual ? '$199' : '$299'}
+                <span className="text-sm text-foreground font-normal"> / month</span>
               </p>
               <p className="text-sm text-muted-foreground">
                 *billed {isAnnual ? 'yearly' : 'monthly'}
               </p>
             </div>
 
-            <div className="space-y-4">
-              <p>Everything in Individual Pro plus:</p>
+            <Separator />
 
-              <ul className="list-disc pl-5 space-y-2 mt-4">
-                <li>Zero data retention policy</li>
-                <li>Unlimited projects</li>
-                <li>Unlimited premium requests per month</li>
-                <li>Personalized onboarding</li>
-                <li>Priority support via Slack Connect</li>
-                <li>Optional design system consulting</li>
-              </ul>
+            <div className="flex justify-between items-center mb-6">
+              <p>5 users</p>
+              <p className="text-sm text-muted-foreground">*$69 per new user</p>
             </div>
+
+            <Separator />
+
+            <ul className="list-disc pl-5 space-y-2 mt-4">
+              <li>Centralized team billing</li>
+              <li>Advanced Figma to code generation</li>
+              <li>Unlimited projects</li>
+              <li>Unlimited premium requests per month</li>
+              <li>Zero data retention policy</li>
+              <li>Priority support via Slack Connect</li>
+            </ul>
           </CardContent>
           <CardFooter>
             <Button
