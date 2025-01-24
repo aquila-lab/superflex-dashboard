@@ -34,7 +34,6 @@ const CollectUserInformationPage = (): JSX.Element => {
 
   const showNameFields = searchParams.get('showNameFields') !== 'false';
 
-  // Dynamic form schema based on showNameFields prop
   const formSchema = z.object({
     ...(showNameFields && {
       firstName: z.string().min(1, 'First name is required'),
@@ -44,7 +43,23 @@ const CollectUserInformationPage = (): JSX.Element => {
     company: z.string().optional(),
     expertise: z.enum(['non-technical', 'technical', 'highly-technical'], {
       required_error: 'Please select your technical expertise level'
-    })
+    }),
+    referralSource: z.enum(
+      [
+        'vscode',
+        'google',
+        'reddit',
+        'tiktok',
+        'instagram',
+        'twitter',
+        'youtube',
+        'friend',
+        'other'
+      ],
+      {
+        required_error: 'Please select how you heard about us'
+      }
+    )
   });
 
   type FormData = z.infer<typeof formSchema>;
@@ -58,7 +73,8 @@ const CollectUserInformationPage = (): JSX.Element => {
       }),
       title: '',
       company: '',
-      expertise: undefined
+      expertise: undefined,
+      referralSource: undefined
     }
   });
 
@@ -67,7 +83,8 @@ const CollectUserInformationPage = (): JSX.Element => {
     lastName,
     title,
     company,
-    expertise
+    expertise,
+    referralSource
   }: FormData): Promise<void> => {
     await dispatch(
       updateUser({
@@ -89,7 +106,8 @@ const CollectUserInformationPage = (): JSX.Element => {
         email: user.email,
         title,
         company,
-        expertiseLevel: expertise
+        expertiseLevel: expertise,
+        referralSource
       });
     }
 
@@ -188,6 +206,35 @@ const CollectUserInformationPage = (): JSX.Element => {
                     <FormControl>
                       <Input placeholder="Acme Corp" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="referralSource"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>How did you hear about us?</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select how you found us" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="vscode">VSCode</SelectItem>
+                        <SelectItem value="google">Google</SelectItem>
+                        <SelectItem value="reddit">Reddit</SelectItem>
+                        <SelectItem value="tiktok">TikTok</SelectItem>
+                        <SelectItem value="youtube">YouTube</SelectItem>
+                        <SelectItem value="twitter">X/Twitter</SelectItem>
+                        <SelectItem value="instagram">Instagram</SelectItem>
+                        <SelectItem value="friend">Friend</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
