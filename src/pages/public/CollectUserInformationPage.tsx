@@ -109,6 +109,8 @@ const CollectUserInformationPage = (): JSX.Element => {
         expertiseLevel: expertise,
         referralSource
       });
+
+      posthog.capture('referral_source', { referralSource, userID: user.id });
     }
 
     const origin =
