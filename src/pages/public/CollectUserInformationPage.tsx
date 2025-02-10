@@ -54,6 +54,7 @@ const CollectUserInformationPage = (): JSX.Element => {
         'twitter',
         'youtube',
         'friend',
+        'linkedin',
         'other'
       ],
       {
@@ -234,6 +235,7 @@ const CollectUserInformationPage = (): JSX.Element => {
                         <SelectItem value="twitter">X/Twitter</SelectItem>
                         <SelectItem value="instagram">Instagram</SelectItem>
                         <SelectItem value="friend">Friend</SelectItem>
+                        <SelectItem value="linkedin">LinkedIn</SelectItem>
                         <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
