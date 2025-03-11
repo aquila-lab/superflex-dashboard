@@ -1,0 +1,37 @@
+import { Loading } from '@/ui/loading'
+import { useAuth } from '@/global/hooks/use-auth'
+import { useUserStore } from '@/store/user-store'
+import { useEffect, useState } from 'react'
+
+interface RouterContainerProps {
+  children: React.ReactNode
+}
+
+export const RouterContainer = ({ children }: RouterContainerProps) => {
+  const { isLoading: authLoading, token } = useAuth()
+  const { isLoading: userLoading } = useUserStore()
+  const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    if (!authLoading) {
+      if (!token) {
+        setIsReady(true)
+        return
+      }
+
+      if (!userLoading) {
+        setIsReady(true)
+      }
+    }
+  }, [authLoading, userLoading, token])
+
+  if (!isReady) {
+    return (
+      <div className='h-screen w-screen flex items-center justify-center'>
+        <Loading size='lg' />
+      </div>
+    )
+  }
+
+  return <>{children}</>
+}
