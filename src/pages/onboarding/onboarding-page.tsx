@@ -360,7 +360,6 @@ const OnboardingDownloadVSCode = ({
 }) => {
   return (
     <div className='space-y-6'>
-      <YouTubeVideo videoId='KMxo3T_MTvY' />
       <div className='space-y-4 text-base'>
         <p>
           Visual Studio Code is a lightweight but powerful source code editor
@@ -404,7 +403,7 @@ const OnboardingStartUsingSuperflex = ({
 }) => {
   return (
     <div className='space-y-6'>
-      <YouTubeVideo videoId='KMxo3T_MTvY' />
+      <YouTubeVideo videoId='wB7Um6n9bBA' />
       <div className='space-y-4 text-base'>
         <p>Follow these steps to install and set up Superflex in VS Code:</p>
         <ol className='list-decimal pl-5 space-y-4'>
@@ -451,7 +450,7 @@ const OnboardingConnectFigma = ({
 }) => {
   return (
     <div className='space-y-6'>
-      <YouTubeVideo videoId='KMxo3T_MTvY' />
+      <YouTubeVideo videoId='9Xn9qisQRgM' />
       <div className='space-y-4 text-base'>
         <p>
           Connect your Figma account to Superflex to supercharge your
