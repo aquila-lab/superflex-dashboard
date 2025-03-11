@@ -1,8 +1,8 @@
-import { Loading } from '@/ui/loading'
 import { useAuth } from '@/global/hooks/use-auth'
 import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { Loading } from '@/ui/loading'
 import { useMemo } from 'react'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
 export const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = useAuth()

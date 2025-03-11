@@ -9,8 +9,8 @@ import { UserInfoPage } from '@/pages/user-info/user-info-page'
 import { Navigate } from 'react-router-dom'
 import { Route, Routes } from 'react-router-dom'
 import { BrowserRouter } from 'react-router-dom'
-import { ProtectedRoute } from './protected-route'
 import { AuthRoute } from './auth-route'
+import { ProtectedRoute } from './protected-route'
 import { RouterContainer } from './router-container'
 
 export const Router = () => {

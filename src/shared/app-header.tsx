@@ -1,21 +1,21 @@
 import { useAuth } from '@/global/hooks/use-auth'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user-store'
-import { Icons } from '@/ui/icons'
+import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 import { Button } from '@/ui/button'
-import { Link } from 'react-router-dom'
-import { LogOut, User, Info } from 'lucide-react'
-import { useMemo, useCallback } from 'react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuLabel
+  DropdownMenuTrigger
 } from '@/ui/dropdown-menu'
-import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
+import { Icons } from '@/ui/icons'
+import { Info, LogOut, User } from 'lucide-react'
+import { useCallback, useMemo } from 'react'
 import type { HTMLAttributes } from 'react'
+import { Link } from 'react-router-dom'
 
 export const AppHeader = ({
   className,

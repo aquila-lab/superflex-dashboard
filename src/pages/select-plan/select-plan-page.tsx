@@ -1,4 +1,7 @@
 import { cn } from '@/lib/utils'
+import { type PlanCard as PlanCardType, planCards } from '@/lib/utils'
+import { OnboardingHeader } from '@/shared/onboarding-header'
+import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
 import {
   Card,
@@ -8,12 +11,9 @@ import {
   CardHeader,
   CardTitle
 } from '@/ui/card'
-import { Badge } from '@/ui/badge'
-import { CheckIcon } from 'lucide-react'
 import { Separator } from '@/ui/separator'
-import { useState, useMemo } from 'react'
-import { planCards, type PlanCard as PlanCardType } from '@/lib/utils'
-import { OnboardingHeader } from '@/shared/onboarding-header'
+import { CheckIcon } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { usePlanSelection } from './use-plan-selection'
 
 type BillingPeriod = 'monthly' | 'annual'

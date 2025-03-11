@@ -1,22 +1,22 @@
-import { useMemo } from 'react'
-import { Separator } from '@/ui/separator'
+import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
-import {
-  Twitter,
-  Github,
-  Linkedin,
-  Instagram,
-  Star,
-  Mail,
-  ExternalLink
-} from 'lucide-react'
+import { Separator } from '@/ui/separator'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
 } from '@/ui/tooltip'
-import { cn } from '@/lib/utils'
+import {
+  ExternalLink,
+  Github,
+  Instagram,
+  Linkedin,
+  Mail,
+  Star,
+  Twitter
+} from 'lucide-react'
+import { useMemo } from 'react'
 
 const SocialIcon = ({
   href,

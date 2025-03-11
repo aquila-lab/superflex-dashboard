@@ -1,5 +1,5 @@
-import * as ProgressPrimitive from '@radix-ui/react-progress'
 import { cn } from '@/lib/utils'
+import * as ProgressPrimitive from '@radix-ui/react-progress'
 import type { ComponentProps } from 'react'
 
 export const Progress = ({

@@ -6,12 +6,12 @@ import useEmblaCarousel, {
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import {
   type ComponentProps,
+  type KeyboardEvent,
   createContext,
   useCallback,
   useContext,
   useEffect,
-  useState,
-  type KeyboardEvent
+  useState
 } from 'react'
 
 export type CarouselApi = UseEmblaCarouselType[1]

@@ -1,5 +1,11 @@
-import { AppHeader } from '@/shared/app-header'
+import { useUser } from '@/global/hooks/use-user'
+import { formatDate } from '@/lib/utils'
 import { AppFooter } from '@/shared/app-footer'
+import { AppHeader } from '@/shared/app-header'
+import { useUserStore } from '@/store/user-store'
+import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
+import { Badge } from '@/ui/badge'
+import { Button } from '@/ui/button'
 import {
   Card,
   CardContent,
@@ -8,26 +14,20 @@ import {
   CardHeader,
   CardTitle
 } from '@/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
-import { Button } from '@/ui/button'
-import { Progress } from '@/ui/progress'
-import { Badge } from '@/ui/badge'
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-  DialogFooter
+  DialogTrigger
 } from '@/ui/dialog'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
-import { useState, useCallback, useMemo } from 'react'
-import { useUser } from '@/global/hooks/use-user'
-import { useNavigate } from 'react-router-dom'
-import { useUserStore } from '@/store/user-store'
+import { Progress } from '@/ui/progress'
 import { Pen } from 'lucide-react'
-import { formatDate } from '@/lib/utils'
+import { useCallback, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const RequestsCard = () => {
   const { basicRequestsPercentage, premiumRequestsPercentage, subscription } =

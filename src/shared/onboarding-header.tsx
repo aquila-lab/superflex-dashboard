@@ -1,13 +1,13 @@
 import { useAuth } from '@/global/hooks/use-auth'
 import { cn } from '@/lib/utils'
-import { Icons } from '@/ui/icons'
 import { Button } from '@/ui/button'
-import { useMemo, useCallback } from 'react'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
+import { Icons } from '@/ui/icons'
+import { Check, LogOut, Pen } from 'lucide-react'
+import { useCallback, useMemo } from 'react'
 import type { HTMLAttributes } from 'react'
-import { LogOut, Check, Pen } from 'lucide-react'
 import { stepsData } from './onboarding-steps'
 import type { OnboardingStep } from './onboarding-steps'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
 
 export const OnboardingHeader = ({
   className,

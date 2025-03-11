@@ -1,6 +1,6 @@
-import { Loading } from '@/ui/loading'
 import { useAuth } from '@/global/hooks/use-auth'
 import { useUserStore } from '@/store/user-store'
+import { Loading } from '@/ui/loading'
 import { useEffect, useState } from 'react'
 
 interface RouterContainerProps {

@@ -1,19 +1,19 @@
-import { AppHeader } from '@/shared/app-header'
-import { AppFooter } from '@/shared/app-footer'
+import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
 import { cn, onboardingStepMapping } from '@/lib/utils'
-import { useState, useCallback, useMemo, useEffect } from 'react'
-import { Check, Download, ExternalLink, Lock, CheckCircle } from 'lucide-react'
-import { Button } from '@/ui/button'
+import { AppFooter } from '@/shared/app-footer'
+import { AppHeader } from '@/shared/app-header'
+import { useAuthStore } from '@/store/auth-store'
+import { API_BASE_URL } from '@/store/model'
+import { useUserStore } from '@/store/user-store'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger
 } from '@/ui/accordion'
-import { API_BASE_URL } from '@/store/model'
-import { useAuthStore } from '@/store/auth-store'
-import { useUserStore } from '@/store/user-store'
-import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
+import { Button } from '@/ui/button'
+import { Check, CheckCircle, Download, ExternalLink, Lock } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
 type OnboardingSection = {

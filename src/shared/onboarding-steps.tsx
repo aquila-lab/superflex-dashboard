@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
-import { Check, Pen } from 'lucide-react'
-import { useMemo, type HTMLAttributes } from 'react'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
+import { Check, Pen } from 'lucide-react'
+import { type HTMLAttributes, useMemo } from 'react'
 
 export type OnboardingStep =
   | 'sign-up'

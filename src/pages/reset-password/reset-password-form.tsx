@@ -29,7 +29,7 @@ export const ResetPasswordForm = ({
       try {
         setIsSubmitting(true)
 
-        console.log(email)
+        console.info(email)
 
         // const authToken = await login(email, password)
 

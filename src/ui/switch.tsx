@@ -1,5 +1,5 @@
-import * as SwitchPrimitive from '@radix-ui/react-switch'
 import { cn } from '@/lib/utils'
+import * as SwitchPrimitive from '@radix-ui/react-switch'
 import type { ComponentProps } from 'react'
 
 export const Switch = ({
