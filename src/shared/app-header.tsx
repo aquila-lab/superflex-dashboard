@@ -4,6 +4,14 @@ import { useUserStore } from '@/store/user-store'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 import { Button } from '@/ui/button'
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/ui/dialog'
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -12,8 +20,8 @@ import {
   DropdownMenuTrigger
 } from '@/ui/dropdown-menu'
 import { Icons } from '@/ui/icons'
-import { Info, LogOut, User } from 'lucide-react'
-import { useCallback, useMemo } from 'react'
+import { ExternalLink, Info, LogOut, User } from 'lucide-react'
+import { useCallback, useMemo, useState } from 'react'
 import type { HTMLAttributes } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -42,6 +50,98 @@ const UserAvatar = () => {
       )}
       <AvatarFallback>{userInitials}</AvatarFallback>
     </Avatar>
+  )
+}
+
+const SuperflexExtensionDialog = () => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const launchVSCodeExtension = useCallback(() => {
+    window.location.href = 'vscode:extension/aquilalabs.superflex'
+  }, [])
+
+  const launchCursorExtension = useCallback(() => {
+    window.location.href = 'cursor:extension/aquilalabs.superflex'
+  }, [])
+
+  const openVSCodeExtension = useCallback(() => {
+    try {
+      setIsLoading(true)
+
+      launchVSCodeExtension()
+
+      setTimeout(() => {
+        setIsLoading(false)
+        setIsOpen(true)
+      }, 500)
+    } catch (_error) {
+      setIsLoading(false)
+      setIsOpen(true)
+    }
+  }, [launchVSCodeExtension])
+
+  const openMarketplace = useCallback(() => {
+    window.open(
+      'https://marketplace.visualstudio.com/items?itemName=aquilalabs.superflex',
+      '_blank'
+    )
+    setIsOpen(false)
+  }, [])
+
+  return (
+    <>
+      <Button
+        variant='outline'
+        onClick={openVSCodeExtension}
+        disabled={isLoading}
+        className='flex items-center gap-2'
+      >
+        {isLoading ? (
+          <>
+            <Icons.Spinner className='h-4 w-4 animate-spin' />
+            <span>Opening...</span>
+          </>
+        ) : (
+          <>
+            <ExternalLink className='h-4 w-4' />
+            <span>Open Superflex</span>
+          </>
+        )}
+      </Button>
+
+      <Dialog
+        open={isOpen}
+        onOpenChange={setIsOpen}
+      >
+        <DialogContent className='sm:max-w-md'>
+          <DialogHeader>
+            <DialogTitle>Open Superflex Extension</DialogTitle>
+            <DialogDescription>
+              It seems VS Code didn't open automatically. You have the following
+              options:
+            </DialogDescription>
+          </DialogHeader>
+          <div className='flex flex-col gap-4 py-4'>
+            <Button onClick={launchCursorExtension}>Try in Cursor</Button>
+            <Button
+              variant='outline'
+              onClick={openMarketplace}
+            >
+              Go to VS Code Marketplace
+            </Button>
+          </div>
+          <DialogFooter className='sm:justify-start'>
+            <Button
+              variant='secondary'
+              onClick={() => setIsOpen(false)}
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
@@ -77,7 +177,9 @@ export const AppHeader = ({
         </Link>
       </div>
 
-      <div className='flex items-center justify-end gap-2'>
+      <div className='flex items-center justify-end gap-4'>
+        <SuperflexExtensionDialog />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
