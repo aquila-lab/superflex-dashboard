@@ -1,11 +1,13 @@
 import { useAuth } from '@/global/hooks/use-auth'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/store/auth-store'
+import { API_BASE_URL } from '@/store/model'
 import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
-import { Loader2 } from 'lucide-react'
 import { useGoogleLogin } from '@react-oauth/google'
+import { Loader2 } from 'lucide-react'
 import {
   type FormEvent,
   useCallback,
@@ -16,8 +18,6 @@ import {
 import type { ComponentProps } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { API_BASE_URL } from '@/store/model'
-import { useAuthStore } from '@/store/auth-store'
 
 export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
   const [email, setEmail] = useState('')

@@ -1,7 +1,9 @@
 import { DashboardPage } from '@/pages/dashboard/dashboard-page'
 import { LoginPage } from '@/pages/login/login-page'
+import { NewPasswordPage } from '@/pages/new-password/new-password-page'
 import { OnboardingPage } from '@/pages/onboarding/onboarding-page'
 import { RegisterPage } from '@/pages/register/register-page'
+import { ResetPasswordRequestPage } from '@/pages/reset-password-request/reset-password-request-page'
 import { ResetPasswordPage } from '@/pages/reset-password/reset-password-page'
 import { SelectPlanPage } from '@/pages/select-plan/select-plan-page'
 import { SuccessPage } from '@/pages/success/success-page'
@@ -12,8 +14,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthRoute } from './auth-route'
 import { ProtectedRoute } from './protected-route'
 import { RouterContainer } from './router-container'
-import { ResetPasswordRequestPage } from '@/pages/reset-password-request/reset-password-request-page'
-import { NewPasswordPage } from '@/pages/new-password/new-password-page'
 
 export const Router = () => {
   return (

@@ -1,17 +1,17 @@
-import { cn, type BillingPeriod } from '@/lib/utils'
+import { type BillingPeriod, cn } from '@/lib/utils'
 import type { ExtendedPlanCard } from '@/lib/utils'
+import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
 import {
   Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
   CardContent,
-  CardFooter
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
 } from '@/ui/card'
-import { CheckIcon } from 'lucide-react'
 import { Separator } from '@/ui/separator'
-import { Badge } from '@/ui/badge'
+import { CheckIcon } from 'lucide-react'
 
 export const PlanCard = ({
   plan,
