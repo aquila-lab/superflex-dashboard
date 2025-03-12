@@ -48,7 +48,6 @@ export const RegisterForm = ({
     [googleLogin, navigate]
   )
 
-  // Check for Google auth code in URL params
   useEffect(() => {
     const code = searchParams.get('code')
     if (code) {
