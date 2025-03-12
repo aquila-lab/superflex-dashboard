@@ -1,325 +1,324 @@
-import { useOnboardingStep } from "@/global/hooks/use-onboarding-step";
-import { cn, onboardingStepMapping } from "@/lib/utils";
-import { AppFooter } from "@/shared/app-footer";
-import { AppHeader } from "@/shared/app-header";
-import { useAuthStore } from "@/store/auth-store";
-import { API_BASE_URL } from "@/common/constants";
-import { useUserStore } from "@/store/user-store";
+import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
+import { cn, onboardingStepMapping } from '@/lib/utils'
+import { AppFooter } from '@/shared/app-footer'
+import { AppHeader } from '@/shared/app-header'
+import { useAuthStore } from '@/store/auth-store'
+import { API_BASE_URL } from '@/common/constants'
+import { useUserStore } from '@/store/user-store'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
-} from "@/ui/accordion";
-import { Button } from "@/ui/button";
-import { Check, CheckCircle, Download, ExternalLink, Lock } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
+  AccordionTrigger
+} from '@/ui/accordion'
+import { Button } from '@/ui/button'
+import { Check, CheckCircle, Download, ExternalLink, Lock } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 
 type OnboardingSection = {
-  id: string;
-  title: string;
-  defaultOpen: boolean;
-  completed: boolean;
-  stepNumber: number;
-};
+  id: string
+  title: string
+  defaultOpen: boolean
+  completed: boolean
+  stepNumber: number
+}
 
 const CompleteButton = ({
   sectionId,
   onComplete,
-  isCompleted,
+  isCompleted
 }: {
-  sectionId: string;
-  onComplete: (id: string, completed: boolean) => void;
-  isCompleted: boolean;
+  sectionId: string
+  onComplete: (id: string, completed: boolean) => void
+  isCompleted: boolean
 }) => {
   if (isCompleted) {
     return (
-      <div className="flex items-center text-green-600 gap-2">
-        <CheckCircle className="h-5 w-5" />
-        <span className="text-sm font-medium">Completed</span>
+      <div className='flex items-center text-green-600 gap-2'>
+        <CheckCircle className='h-5 w-5' />
+        <span className='text-sm font-medium'>Completed</span>
       </div>
-    );
+    )
   }
 
   return (
-    <Button variant="outline" onClick={() => onComplete(sectionId, true)}>
-      <CheckCircle className="h-4 w-4 mr-2" />
+    <Button
+      variant='outline'
+      onClick={() => onComplete(sectionId, true)}
+    >
+      <CheckCircle className='h-4 w-4 mr-2' />
       Mark as complete
     </Button>
-  );
-};
+  )
+}
 
 const ButtonGroup = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex flex-wrap items-center gap-4 mt-6">{children}</div>
-  );
-};
+    <div className='flex flex-wrap items-center gap-4 mt-6'>{children}</div>
+  )
+}
 
 export const OnboardingPage = () => {
-  const { user, updateUser } = useUserStore();
-  const { getAuthHeader } = useAuthStore();
-  const { currentStep, isStepCompleted } = useOnboardingStep();
+  const { user, updateUser } = useUserStore()
+  const { getAuthHeader } = useAuthStore()
+  const { currentStep, isStepCompleted } = useOnboardingStep()
 
   const completeStepNumber = useMemo(() => {
-    return onboardingStepMapping.stepToNumber("complete");
-  }, []);
+    return onboardingStepMapping.stepToNumber('complete')
+  }, [])
 
   const updateOnboardingStep = useCallback(
     async (stepNumber: number) => {
       try {
         const response = await fetch(`${API_BASE_URL}/user`, {
-          method: "PATCH",
+          method: 'PATCH',
           headers: {
-            "Content-Type": "application/json",
-            ...getAuthHeader(),
+            'Content-Type': 'application/json',
+            ...getAuthHeader()
           },
           body: JSON.stringify({
-            onboarding_step: stepNumber,
-          }),
-        });
+            onboarding_step: stepNumber
+          })
+        })
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to update progress");
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'Failed to update progress')
         }
 
-        updateUser({ onboarding_step: stepNumber });
+        updateUser({ onboarding_step: stepNumber })
       } catch (error) {
         toast.error(
           error instanceof Error
             ? error.message
-            : "Failed to update your progress"
-        );
+            : 'Failed to update your progress'
+        )
       }
     },
     [getAuthHeader, updateUser]
-  );
+  )
 
   useEffect(() => {
     if (user && user.onboarding_step === null) {
-      updateOnboardingStep(completeStepNumber);
+      updateOnboardingStep(completeStepNumber)
     }
-  }, [user, completeStepNumber, updateOnboardingStep]);
+  }, [user, completeStepNumber, updateOnboardingStep])
 
   const [sections, setSections] = useState<OnboardingSection[]>([
     {
-      id: "download-vscode",
-      title: "Download VSCode",
-      defaultOpen: currentStep === "vscode-download",
-      completed: isStepCompleted("vscode-download"),
-      stepNumber: 2,
+      id: 'download-vscode',
+      title: 'Download VSCode',
+      defaultOpen: currentStep === 'vscode-download',
+      completed: isStepCompleted('vscode-download'),
+      stepNumber: 2
     },
     {
-      id: "start-using-superflex",
-      title: "Start using Superflex",
-      defaultOpen: currentStep === "extension-installation",
-      completed: isStepCompleted("extension-installation"),
-      stepNumber: 3,
+      id: 'start-using-superflex',
+      title: 'Start using Superflex',
+      defaultOpen: currentStep === 'extension-installation',
+      completed: isStepCompleted('extension-installation'),
+      stepNumber: 3
     },
     {
-      id: "connect-figma",
-      title: "Connect your Figma account",
-      defaultOpen: currentStep === "connect-figma",
-      completed: isStepCompleted("connect-figma"),
-      stepNumber: 4,
-    },
-  ]);
+      id: 'connect-figma',
+      title: 'Connect your Figma account',
+      defaultOpen: currentStep === 'connect-figma',
+      completed: isStepCompleted('connect-figma'),
+      stepNumber: 4
+    }
+  ])
 
   const [openSection, setOpenSection] = useState<string>(() => {
     if (user && (user.onboarding_step ?? 0) > 4) {
-      return "connect-figma";
+      return 'connect-figma'
     }
-    if (currentStep === "connect-figma") {
-      return "connect-figma";
+    if (currentStep === 'connect-figma') {
+      return 'connect-figma'
     }
-    if (currentStep === "extension-installation") {
-      return "start-using-superflex";
+    if (currentStep === 'extension-installation') {
+      return 'start-using-superflex'
     }
-    return "download-vscode";
-  });
+    return 'download-vscode'
+  })
 
   useEffect(() => {
     if (user) {
-      setSections((prev) =>
-        prev.map((section) => ({
+      setSections(prev =>
+        prev.map(section => ({
           ...section,
-          completed: section.stepNumber < (user.onboarding_step ?? 0),
+          completed: section.stepNumber < (user.onboarding_step ?? 0)
         }))
-      );
+      )
     }
-  }, [user]);
+  }, [user])
 
   const markSectionCompleted = useCallback(
     (sectionId: string, isCompleted: boolean) => {
-      setSections((prev) => {
-        const updatedSections = prev.map((section) =>
+      setSections(prev => {
+        const updatedSections = prev.map(section =>
           section.id === sectionId
             ? { ...section, completed: isCompleted }
             : section
-        );
+        )
 
-        const currentIndex = prev.findIndex(
-          (section) => section.id === sectionId
-        );
-        const currentSection = prev[currentIndex];
-        const isLastSection = currentIndex === prev.length - 1;
+        const currentIndex = prev.findIndex(section => section.id === sectionId)
+        const currentSection = prev[currentIndex]
+        const isLastSection = currentIndex === prev.length - 1
 
         if (isCompleted) {
           if (currentSection) {
-            const nextStepNumber = currentSection.stepNumber + 1;
-            updateOnboardingStep(nextStepNumber);
+            const nextStepNumber = currentSection.stepNumber + 1
+            updateOnboardingStep(nextStepNumber)
           }
 
           if (!isLastSection) {
-            const nextSectionIndex = currentIndex + 1;
-            const nextSectionId = prev[nextSectionIndex].id;
+            const nextSectionIndex = currentIndex + 1
+            const nextSectionId = prev[nextSectionIndex].id
 
             setTimeout(() => {
-              setOpenSection(nextSectionId);
-            }, 0);
+              setOpenSection(nextSectionId)
+            }, 0)
           }
         }
 
-        return updatedSections;
-      });
+        return updatedSections
+      })
     },
     [updateOnboardingStep]
-  );
+  )
 
   const handleAccordionValueChange = useCallback(
     (value: string) => {
-      if (value === "") {
-        return;
+      if (value === '') {
+        return
       }
 
-      const sectionIndex = sections.findIndex(
-        (section) => section.id === value
-      );
+      const sectionIndex = sections.findIndex(section => section.id === value)
       if (sectionIndex > 0) {
         const previousSectionsCompleted = sections
           .slice(0, sectionIndex)
-          .every((section) => section.completed);
+          .every(section => section.completed)
 
         if (!previousSectionsCompleted) {
-          return;
+          return
         }
       }
 
-      setOpenSection(value);
+      setOpenSection(value)
     },
     [sections]
-  );
+  )
 
   const disabledSections = useMemo(() => {
-    const result: string[] = [];
+    const result: string[] = []
 
     for (let i = 1; i < sections.length; i++) {
       const previousSectionsCompleted = sections
         .slice(0, i)
-        .every((section) => section.completed);
+        .every(section => section.completed)
 
       if (!previousSectionsCompleted) {
-        result.push(sections[i].id);
+        result.push(sections[i].id)
       }
     }
 
-    return result;
-  }, [sections]);
+    return result
+  }, [sections])
 
   return (
-    <div className="flex flex-col min-h-svh">
+    <div className='flex flex-col min-h-svh'>
       <AppHeader />
-      <div className="flex flex-col items-center justify-start p-4 max-w-4xl mx-auto w-full gap-8 pt-8 pb-12">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-2">Setup Superflex</h1>
-          <p className="text-muted-foreground max-w-2xl">
+      <div className='flex flex-col items-center justify-start p-4 max-w-4xl mx-auto w-full gap-8 pt-8 pb-12'>
+        <div className='text-center'>
+          <h1 className='text-3xl font-bold mb-2'>Setup Superflex</h1>
+          <p className='text-muted-foreground max-w-2xl'>
             Follow these steps to get started with Superflex and supercharge
             your development workflow.
           </p>
         </div>
 
         <Accordion
-          type="single"
+          type='single'
           value={openSection}
           onValueChange={handleAccordionValueChange}
-          className="w-full space-y-8"
+          className='w-full space-y-8'
           collapsible
         >
           {sections.map((section, index) => {
-            const isDisabled = disabledSections.includes(section.id);
+            const isDisabled = disabledSections.includes(section.id)
 
             return (
               <AccordionItem
                 key={section.id}
                 value={section.id}
                 className={cn(
-                  "px-6 py-2 last:pb-12 rounded-xl border-none",
-                  isDisabled && "opacity-70"
+                  'px-6 py-2 last:pb-12 rounded-xl border-none',
+                  isDisabled && 'opacity-70'
                 )}
               >
-                <div className="flex items-start gap-6">
+                <div className='flex items-start gap-6'>
                   <div
                     className={cn(
-                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border",
+                      'flex h-8 w-8 shrink-0 items-center justify-center rounded-full border',
                       section.completed
-                        ? "bg-green-100 border-green-500 text-green-600"
+                        ? 'bg-green-100 border-green-500 text-green-600'
                         : isDisabled
-                        ? "bg-muted border-muted-foreground/40 text-muted-foreground"
-                        : "border-primary/40"
+                          ? 'bg-muted border-muted-foreground/40 text-muted-foreground'
+                          : 'border-primary/40'
                     )}
                   >
                     {section.completed ? (
-                      <Check className="h-5 w-5" />
+                      <Check className='h-5 w-5' />
                     ) : isDisabled ? (
-                      <Lock className="h-4 w-4" />
+                      <Lock className='h-4 w-4' />
                     ) : (
-                      <span className="text-base font-medium">{index + 1}</span>
+                      <span className='text-base font-medium'>{index + 1}</span>
                     )}
                   </div>
-                  <div className="flex-1">
+                  <div className='flex-1'>
                     <AccordionTrigger
                       className={cn(
-                        "!p-0 hover:no-underline font-semibold text-xl flex items-center h-8 cursor-pointer leading-none",
-                        isDisabled && "cursor-not-allowed",
+                        '!p-0 hover:no-underline font-semibold text-xl flex items-center h-8 cursor-pointer leading-none',
+                        isDisabled && 'cursor-not-allowed',
                         openSection === section.id &&
-                          "cursor-default [&>svg]:opacity-50"
+                          'cursor-default [&>svg]:opacity-50'
                       )}
                       disabled={isDisabled}
                     >
                       {section.title}
                     </AccordionTrigger>
-                    <AccordionContent className="pt-6">
-                      {section.id === "download-vscode" && (
+                    <AccordionContent className='pt-6'>
+                      {section.id === 'download-vscode' && (
                         <OnboardingDownloadVSCode
                           onComplete={() =>
-                            markSectionCompleted("download-vscode", true)
+                            markSectionCompleted('download-vscode', true)
                           }
                           isCompleted={section.completed}
                           markAsComplete={() =>
-                            markSectionCompleted("download-vscode", true)
+                            markSectionCompleted('download-vscode', true)
                           }
                         />
                       )}
-                      {section.id === "start-using-superflex" && (
+                      {section.id === 'start-using-superflex' && (
                         <OnboardingStartUsingSuperflex
                           onComplete={() =>
-                            markSectionCompleted("start-using-superflex", true)
+                            markSectionCompleted('start-using-superflex', true)
                           }
                           isCompleted={section.completed}
                           markAsComplete={() =>
-                            markSectionCompleted("start-using-superflex", true)
+                            markSectionCompleted('start-using-superflex', true)
                           }
                         />
                       )}
-                      {section.id === "connect-figma" && (
+                      {section.id === 'connect-figma' && (
                         <OnboardingConnectFigma
                           onComplete={() =>
-                            markSectionCompleted("connect-figma", true)
+                            markSectionCompleted('connect-figma', true)
                           }
                           isCompleted={section.completed}
                           markAsComplete={() =>
-                            markSectionCompleted("connect-figma", true)
+                            markSectionCompleted('connect-figma', true)
                           }
                         />
                       )}
@@ -327,41 +326,41 @@ export const OnboardingPage = () => {
                   </div>
                 </div>
               </AccordionItem>
-            );
+            )
           })}
         </Accordion>
       </div>
       <AppFooter />
     </div>
-  );
-};
+  )
+}
 
 const YouTubeVideo = ({ videoId }: { videoId: string }) => {
   return (
-    <div className="aspect-video w-full rounded-xl overflow-hidden bg-muted">
+    <div className='aspect-video w-full rounded-xl overflow-hidden bg-muted'>
       <iframe
-        className="w-full h-full"
+        className='w-full h-full'
         src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&disablekb=1&modestbranding=1&loop=1&playsinline=1&iv_load_policy=3&color=white`}
-        title="YouTube video"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        title='YouTube video'
+        frameBorder='0'
+        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
         allowFullScreen
       />
     </div>
-  );
-};
+  )
+}
 
 const OnboardingDownloadVSCode = ({
   isCompleted,
-  markAsComplete,
+  markAsComplete
 }: {
-  onComplete: () => void;
-  isCompleted: boolean;
-  markAsComplete: () => void;
+  onComplete: () => void
+  isCompleted: boolean
+  markAsComplete: () => void
 }) => {
   return (
-    <div className="space-y-6">
-      <div className="space-y-4 text-base">
+    <div className='space-y-6'>
+      <div className='space-y-4 text-base'>
         <p>
           Visual Studio Code is a lightweight but powerful source code editor
           that runs on your desktop and is available for Windows, macOS, and
@@ -376,42 +375,42 @@ const OnboardingDownloadVSCode = ({
       <ButtonGroup>
         <Button asChild>
           <a
-            href="https://code.visualstudio.com/download"
-            target="_blank"
-            rel="noopener noreferrer"
+            href='https://code.visualstudio.com/download'
+            target='_blank'
+            rel='noopener noreferrer'
           >
-            <Download className="mr-2 h-4 w-4" />
+            <Download className='mr-2 h-4 w-4' />
             Download VS Code
           </a>
         </Button>
         <CompleteButton
-          sectionId="download-vscode"
+          sectionId='download-vscode'
           onComplete={() => markAsComplete()}
           isCompleted={isCompleted}
         />
       </ButtonGroup>
     </div>
-  );
-};
+  )
+}
 
 const OnboardingStartUsingSuperflex = ({
   isCompleted,
-  markAsComplete,
+  markAsComplete
 }: {
-  onComplete: () => void;
-  isCompleted: boolean;
-  markAsComplete: () => void;
+  onComplete: () => void
+  isCompleted: boolean
+  markAsComplete: () => void
 }) => {
   return (
-    <div className="space-y-6">
-      <YouTubeVideo videoId="wB7Um6n9bBA" />
-      <div className="space-y-4 text-base">
+    <div className='space-y-6'>
+      <YouTubeVideo videoId='wB7Um6n9bBA' />
+      <div className='space-y-4 text-base'>
         <p>Follow these steps to install and set up Superflex in VS Code:</p>
-        <ol className="list-decimal pl-5 space-y-4">
+        <ol className='list-decimal pl-5 space-y-4'>
           <li>Open your project in VSCode.</li>
           <li>
-            Access Superflex from the sidebar or press{" "}
-            <kbd className="px-2 py-1 bg-muted rounded text-xs">⌘;</kbd> to open
+            Access Superflex from the sidebar or press{' '}
+            <kbd className='px-2 py-1 bg-muted rounded text-xs'>⌘;</kbd> to open
             Superflex.
           </li>
           <li>
@@ -423,41 +422,41 @@ const OnboardingStartUsingSuperflex = ({
       <ButtonGroup>
         <Button asChild>
           <a
-            href="https://marketplace.visualstudio.com/items?itemName=aquilalabs.superflex"
-            target="_blank"
-            rel="noopener noreferrer"
+            href='https://marketplace.visualstudio.com/items?itemName=aquilalabs.superflex'
+            target='_blank'
+            rel='noopener noreferrer'
           >
-            <ExternalLink className="mr-2 h-4 w-4" />
+            <ExternalLink className='mr-2 h-4 w-4' />
             Superflex on VS Code Marketplace
           </a>
         </Button>
         <CompleteButton
-          sectionId="start-using-superflex"
+          sectionId='start-using-superflex'
           onComplete={() => markAsComplete()}
           isCompleted={isCompleted}
         />
       </ButtonGroup>
     </div>
-  );
-};
+  )
+}
 
 const OnboardingConnectFigma = ({
   isCompleted,
-  markAsComplete,
+  markAsComplete
 }: {
-  onComplete: () => void;
-  isCompleted: boolean;
-  markAsComplete: () => void;
+  onComplete: () => void
+  isCompleted: boolean
+  markAsComplete: () => void
 }) => {
   return (
-    <div className="space-y-6">
-      <YouTubeVideo videoId="9Xn9qisQRgM" />
-      <div className="space-y-4 text-base">
+    <div className='space-y-6'>
+      <YouTubeVideo videoId='9Xn9qisQRgM' />
+      <div className='space-y-4 text-base'>
         <p>
           Connect your Figma account to Superflex to supercharge your
           design-to-code workflow:
         </p>
-        <ol className="list-decimal pl-5 space-y-4">
+        <ol className='list-decimal pl-5 space-y-4'>
           <li>Click on "Connect Figma" in the lower panel</li>
           <li>
             When the new tab opens, click Allow to allow Superflex to read your
@@ -471,11 +470,11 @@ const OnboardingConnectFigma = ({
       </div>
       <ButtonGroup>
         <CompleteButton
-          sectionId="connect-figma"
+          sectionId='connect-figma'
           onComplete={() => markAsComplete()}
           isCompleted={isCompleted}
         />
       </ButtonGroup>
     </div>
-  );
-};
+  )
+}
