@@ -4,6 +4,7 @@ import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
+import { Loader2 } from 'lucide-react'
 import { useGoogleLogin } from '@react-oauth/google'
 import {
   type FormEvent,
@@ -15,6 +16,8 @@ import {
 import type { ComponentProps } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { API_BASE_URL } from '@/store/model'
+import { useAuthStore } from '@/store/auth-store'
 
 export const RegisterForm = ({
   className,
@@ -27,7 +30,29 @@ export const RegisterForm = ({
   const [searchParams] = useSearchParams()
 
   const navigate = useNavigate()
-  const { register, googleLogin } = useAuth()
+  const { googleLogin } = useAuth()
+  const { setToken } = useAuthStore()
+
+  const handleRegisterWithAuth = useCallback(
+    async (email: string, password: string) => {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, username: email })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || 'Failed to register')
+      }
+
+      const authResponse = await response.json()
+      setToken(authResponse.token)
+
+      return authResponse.token
+    },
+    [setToken]
+  )
 
   const handleGoogleAuthCode = useCallback(
     async (code: string) => {
@@ -80,10 +105,13 @@ export const RegisterForm = ({
       try {
         setIsSubmitting(true)
 
-        await register(email, password)
+        await handleRegisterWithAuth(email, password)
 
         toast.success('Account created successfully')
-        navigate('/select-plan')
+        // Delay navigation slightly to allow the user to see the success message
+        setTimeout(() => {
+          navigate('/select-plan')
+        }, 500)
       } catch (_error) {
         setPassword('')
         setConfirmPassword('')
@@ -100,7 +128,7 @@ export const RegisterForm = ({
       confirmPassword,
       isFormValid,
       isSubmitting,
-      register,
+      handleRegisterWithAuth,
       navigate
     ]
   )
@@ -171,7 +199,14 @@ export const RegisterForm = ({
           className='w-full'
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Creating account...' : 'Create an account'}
+          {isSubmitting ? (
+            <span className='flex items-center gap-2'>
+              <Loader2 className='h-4 w-4 animate-spin' />
+              Creating account...
+            </span>
+          ) : (
+            'Create an account'
+          )}
         </Button>
         <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
           <span className='bg-background text-muted-foreground relative z-10 px-2'>

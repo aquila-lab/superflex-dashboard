@@ -4,6 +4,7 @@ import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
+import { Loader2 } from 'lucide-react'
 import { useGoogleLogin } from '@react-oauth/google'
 import {
   type FormEvent,
@@ -15,6 +16,8 @@ import {
 import type { ComponentProps } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { API_BASE_URL } from '@/store/model'
+import { useAuthStore } from '@/store/auth-store'
 
 export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
   const [email, setEmail] = useState('')
@@ -23,7 +26,29 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
   const [searchParams] = useSearchParams()
 
   const navigate = useNavigate()
-  const { login, googleLogin } = useAuth()
+  const { googleLogin } = useAuth()
+  const { setToken } = useAuthStore()
+
+  const handleLoginWithAuth = useCallback(
+    async (email: string, password: string) => {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username_or_email: email, password })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || 'Failed to login')
+      }
+
+      const authResponse = await response.json()
+      setToken(authResponse.token)
+
+      return authResponse.token
+    },
+    [setToken]
+  )
 
   const handleGoogleAuthCode = useCallback(
     async (code: string) => {
@@ -66,11 +91,14 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
       try {
         setIsSubmitting(true)
 
-        const authToken = await login(email, password)
+        const authToken = await handleLoginWithAuth(email, password)
 
         if (authToken) {
           toast.success('Logged in successfully')
-          navigate('/select-plan')
+          // Delay navigation slightly to allow the user to see the success message
+          setTimeout(() => {
+            navigate('/select-plan')
+          }, 500)
         }
       } catch (_error) {
         setPassword('')
@@ -81,7 +109,7 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
         setIsSubmitting(false)
       }
     },
-    [email, password, isFormValid, isSubmitting, login, navigate]
+    [email, password, isFormValid, isSubmitting, handleLoginWithAuth, navigate]
   )
 
   const handleGoogleLogin = useGoogleLogin({
@@ -147,7 +175,14 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
           className='w-full'
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Signing in...' : 'Login'}
+          {isSubmitting ? (
+            <span className='flex items-center gap-2'>
+              <Loader2 className='h-4 w-4 animate-spin' />
+              Signing in...
+            </span>
+          ) : (
+            'Login'
+          )}
         </Button>
         <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
           <span className='bg-background text-muted-foreground relative z-10 px-2'>
