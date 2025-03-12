@@ -139,16 +139,10 @@ export const NewPasswordForm = ({
       </div>
 
       <div className='text-center text-sm'>
-        <Link to='/reset-password'>
-          <div className='underline underline-offset-4'>
-            Request new reset link
-          </div>
+        Remember your password?{' '}
+        <Link to='/sign-in'>
+          <div className='underline underline-offset-4'>Sign in</div>
         </Link>
-        <div className='mt-2'>
-          <Link to='/sign-in'>
-            <div className='underline underline-offset-4'>Back to sign in</div>
-          </Link>
-        </div>
       </div>
     </form>
   )

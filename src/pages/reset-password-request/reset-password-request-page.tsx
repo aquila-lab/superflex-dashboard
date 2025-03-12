@@ -14,7 +14,7 @@ export const ResetPasswordRequestPage = () => (
             <Check className='h-5 w-5' />
           </div>
           <h1 className='text-2xl font-bold'>Check your email</h1>
-          <p className='text-muted-foreground text-sm text-balance'>
+          <p className='text-muted-foreground text-sm'>
             We've sent a password reset link to your email address. Please check
             your inbox and follow the instructions.
           </p>
@@ -34,13 +34,12 @@ export const ResetPasswordRequestPage = () => (
             <Link to='/reset-password'>Try again</Link>
           </Button>
 
-          <Button
-            variant='link'
-            className='w-full'
-            asChild
-          >
-            <Link to='/sign-in'>Back to sign in</Link>
-          </Button>
+          <div className='text-center text-sm'>
+            Remember your password?{' '}
+            <Link to='/sign-in'>
+              <div className='underline underline-offset-4'>Sign in</div>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
