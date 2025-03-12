@@ -28,6 +28,7 @@ export type UserSubscription = {
   last_reset_date: string
   created_at: string
   end_date: string | null
+  billing_portal_url: string | null
 }
 
 export type AuthTokenResponse = {

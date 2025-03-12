@@ -1,5 +1,6 @@
 import { useUser } from '@/global/hooks/use-user'
-import { formatDate } from '@/lib/utils'
+import { formatDate, cn, type BillingPeriod } from '@/lib/utils'
+import { planCards } from '@/lib/utils'
 import { AppFooter } from '@/shared/app-footer'
 import { AppHeader } from '@/shared/app-header'
 import { useUserStore } from '@/store/user-store'
@@ -31,6 +32,15 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/store/auth-store'
 import { API_BASE_URL } from '@/store/model'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle
+} from '@/ui/drawer'
+import { PlanCard } from '@/shared/plan-card'
+import { usePlanSelection } from '../select-plan/use-plan-selection'
 
 const RequestsCard = () => {
   const { basicRequestsPercentage, premiumRequestsPercentage, subscription } =
@@ -213,6 +223,7 @@ const UserInfoCard = () => {
 
 const SubscriptionCard = () => {
   const { subscription } = useUser()
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   const formattedStartDate = useMemo(() => {
     return formatDate(subscription?.created_at)
@@ -223,43 +234,178 @@ const SubscriptionCard = () => {
   }, [subscription?.end_date])
 
   const isFreePlan = useMemo(() => {
-    if (subscription?.plan?.name === 'Free Plan') {
-      return true
-    }
-    return false
+    return subscription?.plan?.name === 'Free Plan'
   }, [subscription?.plan?.name])
 
+  const hasBillingPortalUrl = useMemo(() => {
+    return Boolean(subscription?.billing_portal_url)
+  }, [subscription?.billing_portal_url])
+
+  const handleManageBilling = useCallback(() => {
+    if (subscription?.billing_portal_url) {
+      window.open(subscription.billing_portal_url, '_blank')
+    }
+  }, [subscription?.billing_portal_url])
+
+  const handleUpgradeClick = useCallback(() => {
+    setIsDrawerOpen(true)
+  }, [])
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Subscription</CardTitle>
-        <CardDescription>Your current plan and usage</CardDescription>
-      </CardHeader>
-      <CardContent className='space-y-4'>
-        <div className='flex justify-between'>
-          <span className='font-medium'>Plan:</span>
-          <Badge variant={isFreePlan ? 'secondary' : 'default'}>
-            <span>{subscription?.plan?.name || 'Free Plan'}</span>
-          </Badge>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Subscription</CardTitle>
+          <CardDescription>Your current plan and usage</CardDescription>
+        </CardHeader>
+        <CardContent className='space-y-4'>
+          <div className='flex justify-between'>
+            <span className='font-medium'>Plan:</span>
+            <Badge variant={isFreePlan ? 'secondary' : 'default'}>
+              <span>{subscription?.plan?.name || 'Free Plan'}</span>
+            </Badge>
+          </div>
+          <div className='flex justify-between'>
+            <span className='font-medium'>Start Date:</span>
+            <span>{formattedStartDate}</span>
+          </div>
+          <div className='flex justify-between'>
+            <span className='font-medium'>End Date:</span>
+            <span>{formattedEndDate}</span>
+          </div>
+        </CardContent>
+        <CardFooter>
+          {isFreePlan ? (
+            <Button
+              className='w-full'
+              onClick={handleUpgradeClick}
+            >
+              Upgrade Subscription
+            </Button>
+          ) : hasBillingPortalUrl ? (
+            <Button
+              className='w-full'
+              variant='outline'
+              onClick={handleManageBilling}
+            >
+              Manage Billing
+            </Button>
+          ) : (
+            <Badge
+              variant='outline'
+              className='w-full py-2 flex justify-center'
+            >
+              Infinite subscription
+            </Badge>
+          )}
+        </CardFooter>
+      </Card>
+
+      <PlanSelectionDrawer
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+      />
+    </>
+  )
+}
+
+const PlanSelectionDrawer = ({
+  open,
+  onOpenChange
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) => {
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('annual')
+  const { handlePlanSelection } = usePlanSelection()
+
+  const planIdMapping = useMemo(() => {
+    return {
+      'Individual Pro Plan':
+        billingPeriod === 'monthly'
+          ? ('individual_pro_monthly' as const)
+          : ('individual_pro_yearly' as const),
+      'Team Plan':
+        billingPeriod === 'monthly'
+          ? ('team_monthly' as const)
+          : ('team_yearly' as const)
+    }
+  }, [billingPeriod])
+
+  return (
+    <Drawer
+      open={open}
+      onOpenChange={onOpenChange}
+    >
+      <DrawerContent>
+        <div className='max-w-4xl mx-auto pb-12 pt-6'>
+          <DrawerHeader>
+            <DrawerTitle className='text-2xl text-center'>
+              Upgrade Your Subscription
+            </DrawerTitle>
+            <DrawerDescription className='text-center'>
+              Choose the plan that best fits your needs
+            </DrawerDescription>
+          </DrawerHeader>
+
+          <div className='flex flex-col p-4 gap-6 px-4'>
+            <div className='mb-6 text-center'>
+              <div className='inline-flex items-center rounded-full border p-1 bg-muted/30'>
+                <div
+                  className={cn(
+                    'px-4 py-2 rounded-full cursor-pointer text-sm font-medium transition-colors duration-200',
+                    billingPeriod === 'monthly'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                  onClick={() => setBillingPeriod('monthly')}
+                >
+                  Monthly
+                </div>
+                <div
+                  className={cn(
+                    'px-4 py-2 rounded-full cursor-pointer text-sm font-medium transition-colors duration-200',
+                    billingPeriod === 'annual'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                  onClick={() => setBillingPeriod('annual')}
+                >
+                  Annual{' '}
+                  <span
+                    className={cn(
+                      'text-primary font-medium',
+                      billingPeriod === 'annual' && 'text-primary-foreground'
+                    )}
+                  >
+                    (Save 33%)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className='grid gap-8 md:grid-cols-2 items-start'>
+              {planCards
+                .filter(plan => plan.title !== 'Free Plan')
+                .map(plan => (
+                  <PlanCard
+                    key={plan.title}
+                    plan={plan}
+                    billingPeriod={billingPeriod}
+                    onSelect={() => {
+                      const planId =
+                        planIdMapping[plan.title as keyof typeof planIdMapping]
+                      if (planId) {
+                        handlePlanSelection(planId)
+                      }
+                    }}
+                  />
+                ))}
+            </div>
+          </div>
         </div>
-        <div className='flex justify-between'>
-          <span className='font-medium'>Start Date:</span>
-          <span>{formattedStartDate}</span>
-        </div>
-        <div className='flex justify-between'>
-          <span className='font-medium'>End Date:</span>
-          <span>{formattedEndDate}</span>
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Button
-          className='w-full'
-          variant={isFreePlan ? 'default' : 'outline'}
-        >
-          {isFreePlan ? 'Upgrade Subscription' : 'Manage Billing'}
-        </Button>
-      </CardFooter>
-    </Card>
+      </DrawerContent>
+    </Drawer>
   )
 }
 

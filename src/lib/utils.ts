@@ -199,3 +199,25 @@ export const planCards = [
     }
   }
 ] as PlanCard[]
+
+export type ExtendedPlanCard = PlanCard & {
+  teamSize?: {
+    monthly: {
+      users: string
+      price: string
+    }
+    annual: {
+      users: string
+      price: string
+    }
+  }
+}
+
+export type BillingPeriod = 'monthly' | 'annual'
+
+export type PlanId =
+  | 'free'
+  | 'individual_pro_monthly'
+  | 'individual_pro_yearly'
+  | 'team_monthly'
+  | 'team_yearly'
