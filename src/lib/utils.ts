@@ -77,13 +77,13 @@ export function cn(...inputs: ClassValue[]) {
 
 export const formatDate = (dateString: string | null | undefined): string => {
   if (!dateString) {
-    return 'N/A'
+    return 'Not available'
   }
 
   const date = new Date(dateString)
 
   if (Number.isNaN(date.getTime())) {
-    return 'N/A'
+    return 'Not available'
   }
 
   return date.toLocaleDateString('en-US', {

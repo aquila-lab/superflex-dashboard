@@ -36,6 +36,12 @@ import {
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
 import { Progress } from '@/ui/progress'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/ui/tooltip'
 import { Pen } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -46,6 +52,22 @@ const RequestsCard = () => {
   const { basicRequestsPercentage, premiumRequestsPercentage, subscription } =
     useUser()
 
+  const isBasicUnlimited = useMemo(() => {
+    return (subscription?.plan?.basic_request_limit || 0) > 9999
+  }, [subscription?.plan?.basic_request_limit])
+
+  const isPremiumUnlimited = useMemo(() => {
+    return (subscription?.plan?.premium_request_limit || 0) > 9999
+  }, [subscription?.plan?.premium_request_limit])
+
+  const basicRequestsUsed = useMemo(() => {
+    return subscription?.basic_requests_used || 0
+  }, [subscription?.basic_requests_used])
+
+  const premiumRequestsUsed = useMemo(() => {
+    return subscription?.premium_requests_used || 0
+  }, [subscription?.premium_requests_used])
+
   return (
     <Card>
       <CardHeader>
@@ -55,25 +77,59 @@ const RequestsCard = () => {
       <CardContent>
         <div className='space-y-4'>
           <div className='space-y-2'>
-            <div className='flex justify-between text-sm'>
+            <div className='flex justify-between items-baseline text-sm'>
               <span>Basic Requests</span>
-              <span>
-                {subscription?.basic_requests_used || 0} /{' '}
-                {subscription?.plan?.basic_request_limit || 0}
-              </span>
+              {isBasicUnlimited ? (
+                <span className='text-muted-foreground text-xs leading-none'>
+                  Unlimited requests available
+                </span>
+              ) : (
+                <span>
+                  {basicRequestsUsed} /{' '}
+                  {subscription?.plan?.basic_request_limit || 0}
+                </span>
+              )}
             </div>
-            <Progress value={basicRequestsPercentage} />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Progress value={basicRequestsPercentage} />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {basicRequestsUsed} requests used
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           <div className='space-y-2'>
-            <div className='flex justify-between text-sm'>
+            <div className='flex justify-between items-baseline text-sm'>
               <span>Premium Requests</span>
-              <span>
-                {subscription?.premium_requests_used || 0} /{' '}
-                {subscription?.plan?.premium_request_limit || 0}
-              </span>
+              {isPremiumUnlimited ? (
+                <span className='text-muted-foreground text-xs leading-none'>
+                  Unlimited requests available
+                </span>
+              ) : (
+                <span>
+                  {premiumRequestsUsed} /{' '}
+                  {subscription?.plan?.premium_request_limit || 0}
+                </span>
+              )}
             </div>
-            <Progress value={premiumRequestsPercentage} />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Progress value={premiumRequestsPercentage} />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {premiumRequestsUsed} requests used
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
       </CardContent>
