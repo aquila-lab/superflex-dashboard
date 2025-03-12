@@ -1,7 +1,7 @@
 import { useApi } from "@/global/providers/api-provider";
 import { isTokenExpired } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
-import { GOOGLE_OAUTH_REDIRECT_URI } from "@/common/constants";
+import { GOOGLE_OAUTH_REDIRECT_URI } from "@/lib/constants";
 import { useUserStore } from "@/store/user-store";
 import { useCallback, useEffect, useMemo } from "react";
 

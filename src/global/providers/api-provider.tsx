@@ -5,7 +5,7 @@ import {
   type UserSubscription,
   useUserStore
 } from '@/store/user-store'
-import { GOOGLE_OAUTH_REDIRECT_URI, API_BASE_URL } from '@/common/constants'
+import { GOOGLE_OAUTH_REDIRECT_URI, API_BASE_URL } from '@/lib/constants'
 import { createContext, useCallback, useContext, useMemo } from 'react'
 import type { ReactNode } from 'react'
 
