@@ -4,9 +4,16 @@ import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
-import { type FormEvent, useCallback, useMemo, useState } from 'react'
+import { useGoogleLogin } from '@react-oauth/google'
+import {
+  type FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import type { ComponentProps } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 export const RegisterForm = ({
@@ -17,9 +24,37 @@ export const RegisterForm = ({
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [searchParams] = useSearchParams()
 
   const navigate = useNavigate()
-  const { register } = useAuth()
+  const { register, googleLogin } = useAuth()
+
+  const handleGoogleAuthCode = useCallback(
+    async (code: string) => {
+      try {
+        setIsSubmitting(true)
+        const authToken = await googleLogin(code)
+
+        if (authToken) {
+          toast.success('Account created with Google successfully')
+          navigate('/select-plan', { replace: true })
+        }
+      } catch (_error) {
+        toast.error('Failed to create account with Google. Please try again.')
+      } finally {
+        setIsSubmitting(false)
+      }
+    },
+    [googleLogin, navigate]
+  )
+
+  // Check for Google auth code in URL params
+  useEffect(() => {
+    const code = searchParams.get('code')
+    if (code) {
+      handleGoogleAuthCode(code)
+    }
+  }, [searchParams, handleGoogleAuthCode])
 
   const isFormValid = useMemo(() => {
     return (
@@ -70,6 +105,18 @@ export const RegisterForm = ({
       navigate
     ]
   )
+
+  const handleGoogleLogin = useGoogleLogin({
+    flow: 'auth-code',
+    onSuccess: async codeResponse => {
+      if (codeResponse.code) {
+        await handleGoogleAuthCode(codeResponse.code)
+      }
+    },
+    onError: () => {
+      toast.error('Google sign up failed. Please try again.')
+    }
+  })
 
   return (
     <form
@@ -137,6 +184,7 @@ export const RegisterForm = ({
           className='w-full'
           type='button'
           disabled={isSubmitting}
+          onClick={() => handleGoogleLogin()}
         >
           <Icons.Google /> Google
         </Button>

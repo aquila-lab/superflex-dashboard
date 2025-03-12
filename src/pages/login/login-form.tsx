@@ -4,18 +4,53 @@ import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
-import { type FormEvent, useCallback, useMemo, useState } from 'react'
+import { useGoogleLogin } from '@react-oauth/google'
+import {
+  type FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import type { ComponentProps } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [searchParams] = useSearchParams()
 
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { login, googleLogin } = useAuth()
+
+  const handleGoogleAuthCode = useCallback(
+    async (code: string) => {
+      try {
+        setIsSubmitting(true)
+        const authToken = await googleLogin(code)
+
+        if (authToken) {
+          toast.success('Logged in with Google successfully')
+          navigate('/select-plan', { replace: true })
+        }
+      } catch (_error) {
+        toast.error('Failed to login with Google. Please try again.')
+      } finally {
+        setIsSubmitting(false)
+      }
+    },
+    [googleLogin, navigate]
+  )
+
+  // Check for Google auth code in URL params
+  useEffect(() => {
+    const code = searchParams.get('code')
+    if (code) {
+      handleGoogleAuthCode(code)
+    }
+  }, [searchParams, handleGoogleAuthCode])
 
   const isFormValid = useMemo(() => {
     return email.trim() !== '' && password.trim() !== ''
@@ -49,6 +84,18 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
     },
     [email, password, isFormValid, isSubmitting, login, navigate]
   )
+
+  const handleGoogleLogin = useGoogleLogin({
+    flow: 'auth-code',
+    onSuccess: async codeResponse => {
+      if (codeResponse.code) {
+        await handleGoogleAuthCode(codeResponse.code)
+      }
+    },
+    onError: () => {
+      toast.error('Google login failed. Please try again.')
+    }
+  })
 
   return (
     <form
@@ -113,6 +160,7 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
           className='w-full'
           type='button'
           disabled={isSubmitting}
+          onClick={() => handleGoogleLogin()}
         >
           <Icons.Google /> Google
         </Button>

@@ -35,3 +35,6 @@ export type AuthTokenResponse = {
 }
 
 export const API_BASE_URL = 'https://api.superflex.ai/v1'
+export const GOOGLE_CLIENT_ID =
+  '195168488301-1b5i1hcnigjraer96pbnubqtbmduu19r.apps.googleusercontent.com'
+export const GOOGLE_OAUTH_REDIRECT_URI = 'http://localhost:5173'

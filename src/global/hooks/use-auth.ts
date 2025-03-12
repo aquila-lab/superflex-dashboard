@@ -1,6 +1,7 @@
 import { useApi } from '@/global/providers/api-provider'
 import { isTokenExpired } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth-store'
+import { GOOGLE_OAUTH_REDIRECT_URI } from '@/store/model'
 import { useUserStore } from '@/store/user-store'
 import { useCallback, useEffect, useMemo } from 'react'
 
@@ -49,6 +50,16 @@ export const useAuth = () => {
     [api]
   )
 
+  const googleLogin = useCallback(
+    async (code: string, redirectUri = GOOGLE_OAUTH_REDIRECT_URI) => {
+      if (!api) {
+        return
+      }
+      return api.googleAuth(code, redirectUri)
+    },
+    [api]
+  )
+
   const logout = useCallback(async () => {
     if (!api) {
       return
@@ -62,6 +73,7 @@ export const useAuth = () => {
     error,
     login,
     register,
+    googleLogin,
     logout,
     token
   }

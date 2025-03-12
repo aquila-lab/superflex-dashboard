@@ -1,5 +1,9 @@
 import { useAuthStore } from '@/store/auth-store'
-import { API_BASE_URL, type AuthTokenResponse } from '@/store/model'
+import {
+  API_BASE_URL,
+  type AuthTokenResponse,
+  GOOGLE_OAUTH_REDIRECT_URI
+} from '@/store/model'
 import {
   type User,
   type UserSubscription,
@@ -11,6 +15,7 @@ import type { ReactNode } from 'react'
 export const ApiContext = createContext<{
   login: (email: string, password: string) => Promise<string>
   register: (email: string, password: string) => Promise<void>
+  googleAuth: (code: string, redirectUri?: string) => Promise<string>
   logout: () => Promise<void>
   fetchUserData: () => Promise<void>
   fetchSubscription: () => Promise<void>
@@ -62,6 +67,45 @@ export const ApiProvider = ({ children }: { children: ReactNode }) => {
         if (!response.ok) {
           const error = await response.json()
           throw new Error(error.message || 'Failed to login')
+        }
+
+        const authResponse: AuthTokenResponse = await response.json()
+
+        setToken(authResponse.token)
+
+        await fetchUserData()
+
+        return authResponse.token
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred'
+        )
+        throw error
+      } finally {
+        setLoading(false)
+      }
+    },
+    [setLoading, setError, setToken, fetchUserData]
+  )
+
+  const googleAuth = useCallback(
+    async (code: string, redirectUri = GOOGLE_OAUTH_REDIRECT_URI) => {
+      try {
+        setLoading(true)
+
+        const response = await fetch(
+          `${API_BASE_URL}/auth/google-callback?code=${encodeURIComponent(code)}&redirect_uri=${encodeURIComponent(redirectUri)}`,
+          {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+          }
+        )
+
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(error.message || 'Failed to authenticate with Google')
         }
 
         const authResponse: AuthTokenResponse = await response.json()
@@ -163,11 +207,12 @@ export const ApiProvider = ({ children }: { children: ReactNode }) => {
     () => ({
       login,
       register,
+      googleAuth,
       logout,
       fetchUserData,
       fetchSubscription
     }),
-    [login, register, logout, fetchUserData, fetchSubscription]
+    [login, register, googleAuth, logout, fetchUserData, fetchSubscription]
   )
 
   return (
