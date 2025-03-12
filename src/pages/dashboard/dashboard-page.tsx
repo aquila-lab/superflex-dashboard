@@ -337,7 +337,7 @@ const PlanSelectionDrawer = ({
       open={open}
       onOpenChange={onOpenChange}
     >
-      <DrawerContent>
+      <DrawerContent className='min-h-fit'>
         <div className='max-w-4xl mx-auto pb-12 pt-6'>
           <DrawerHeader>
             <DrawerTitle className='text-2xl text-center'>
