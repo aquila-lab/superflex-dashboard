@@ -17,6 +17,34 @@ import { useCallback, useMemo } from 'react'
 import type { HTMLAttributes } from 'react'
 import { Link } from 'react-router-dom'
 
+const UserAvatar = () => {
+  const { user } = useUserStore()
+
+  const userInitials = useMemo(() => {
+    if (!user?.username) {
+      return 'U'
+    }
+
+    return user.username.substring(0, 2).toUpperCase()
+  }, [user])
+
+  return (
+    <Avatar>
+      {user?.picture && (
+        <AvatarImage
+          key={user.picture}
+          src={user.picture}
+          alt={user?.username || 'User'}
+          width={40}
+          height={40}
+          className='object-cover'
+        />
+      )}
+      <AvatarFallback>{userInitials}</AvatarFallback>
+    </Avatar>
+  )
+}
+
 export const AppHeader = ({
   className,
   ...props
@@ -32,14 +60,6 @@ export const AppHeader = ({
     () => cn('flex w-full items-center justify-between px-6 py-4', className),
     [className]
   )
-
-  const userInitials = useMemo(() => {
-    if (!user?.username) {
-      return 'U'
-    }
-
-    return user.username.substring(0, 2).toUpperCase()
-  }, [user])
 
   return (
     <header
@@ -65,13 +85,7 @@ export const AppHeader = ({
               size='icon'
               className='rounded-full'
             >
-              <Avatar>
-                <AvatarImage
-                  src={user?.picture || ''}
-                  alt={user?.username || 'User'}
-                />
-                <AvatarFallback>{userInitials}</AvatarFallback>
-              </Avatar>
+              <UserAvatar />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
