@@ -61,7 +61,7 @@ export const NewPasswordForm = ({
         setIsSubmitting(true)
 
         const response = await fetch(
-          `${API_BASE_URL}/v1/auth/reset-password-set`,
+          `${API_BASE_URL}/auth/reset-password-set`,
           {
             method: 'POST',
             headers: {
