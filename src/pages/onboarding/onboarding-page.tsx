@@ -1,9 +1,9 @@
 import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
+import { API_BASE_URL } from '@/lib/constants'
 import { cn, onboardingStepMapping } from '@/lib/utils'
 import { AppFooter } from '@/shared/app-footer'
 import { AppHeader } from '@/shared/app-header'
 import { useAuthStore } from '@/store/auth-store'
-import { API_BASE_URL } from '@/lib/constants'
 import { useUserStore } from '@/store/user-store'
 import {
   Accordion,

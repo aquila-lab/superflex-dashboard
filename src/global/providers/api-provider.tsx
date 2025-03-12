@@ -1,3 +1,4 @@
+import { API_BASE_URL, GOOGLE_OAUTH_REDIRECT_URI } from '@/lib/constants'
 import { useAuthStore } from '@/store/auth-store'
 import type { AuthTokenResponse } from '@/store/model'
 import {
@@ -5,7 +6,6 @@ import {
   type UserSubscription,
   useUserStore
 } from '@/store/user-store'
-import { GOOGLE_OAUTH_REDIRECT_URI, API_BASE_URL } from '@/lib/constants'
 import { createContext, useCallback, useContext, useMemo } from 'react'
 import type { ReactNode } from 'react'
 
