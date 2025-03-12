@@ -28,6 +28,9 @@ import { Progress } from '@/ui/progress'
 import { Pen } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import { useAuthStore } from '@/store/auth-store'
+import { API_BASE_URL } from '@/store/model'
 
 const RequestsCard = () => {
   const { basicRequestsPercentage, premiumRequestsPercentage, subscription } =
@@ -72,15 +75,45 @@ const UserInfoCard = () => {
   const { user } = useUser()
   const [username, setUsername] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const updateUser = useUserStore(state => state.updateUser)
+  const { getAuthHeader } = useAuthStore()
   const navigate = useNavigate()
 
-  const handleSubmit = useCallback(() => {
-    if (username.trim()) {
-      updateUser({ username })
-      setIsDialogOpen(false)
+  const handleSubmit = useCallback(async () => {
+    if (!username.trim()) {
+      toast.error('Username cannot be empty')
+      return
     }
-  }, [username, updateUser])
+
+    setIsSubmitting(true)
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/user`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeader()
+        },
+        body: JSON.stringify({ username })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to update username')
+      }
+
+      updateUser({ username })
+      toast.success('Username updated successfully')
+      setIsDialogOpen(false)
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to update username'
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
+  }, [username, updateUser, getAuthHeader])
 
   const usernameInitials = useMemo(() => {
     if (!user?.username) {
@@ -138,7 +171,12 @@ const UserInfoCard = () => {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleSubmit}>Save Changes</Button>
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting || !username.trim()}
+                  >
+                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
