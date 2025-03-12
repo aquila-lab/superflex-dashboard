@@ -12,6 +12,8 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthRoute } from './auth-route'
 import { ProtectedRoute } from './protected-route'
 import { RouterContainer } from './router-container'
+import { ResetPasswordRequestPage } from '@/pages/reset-password-request/reset-password-request-page'
+import { NewPasswordPage } from '@/pages/new-password/new-password-page'
 
 export const Router = () => {
   return (
@@ -30,6 +32,14 @@ export const Router = () => {
             <Route
               path='/reset-password'
               element={<ResetPasswordPage />}
+            />
+            <Route
+              path='/reset-password-request'
+              element={<ResetPasswordRequestPage />}
+            />
+            <Route
+              path='/new-password'
+              element={<NewPasswordPage />}
             />
           </Route>
 

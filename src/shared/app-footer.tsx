@@ -148,7 +148,7 @@ export const AppFooter = () => {
           <div className='space-y-4'>
             <h3 className='text-lg font-semibold'>Superflex</h3>
             <p className='text-sm text-muted-foreground'>
-              Supercharge your development workflow with AI-powered tools.
+              Ready to become a 10X engineer?
             </p>
             <div className='flex items-center gap-2'>
               <SocialIcon

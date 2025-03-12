@@ -1,10 +1,11 @@
 import { cn } from '@/lib/utils'
+import { API_BASE_URL } from '@/store/model'
 import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
 import { type FormEvent, useCallback, useMemo, useState } from 'react'
 import type { ComponentProps } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 export const ResetPasswordForm = ({
@@ -13,6 +14,8 @@ export const ResetPasswordForm = ({
 }: ComponentProps<'form'>) => {
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const navigate = useNavigate()
 
   const isFormValid = useMemo(() => {
     return email.trim() !== ''
@@ -29,21 +32,28 @@ export const ResetPasswordForm = ({
       try {
         setIsSubmitting(true)
 
-        console.info(email)
+        const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email })
+        })
 
-        // const authToken = await login(email, password)
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'Failed to reset password')
+        }
 
-        // if (authToken) {
-        //   toast.success('Logged in successfully')
-        //   navigate('/select-plan')
-        // }
+        toast.success('Password reset email sent')
+        navigate('/reset-password-request')
       } catch (_error) {
         toast.error('Failed to reset password. Please try again.')
       } finally {
         setIsSubmitting(false)
       }
     },
-    [email, isFormValid, isSubmitting]
+    [email, isFormValid, isSubmitting, navigate]
   )
 
   return (
