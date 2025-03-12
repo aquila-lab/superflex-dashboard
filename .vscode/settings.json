@@ -8,4 +8,7 @@
   "[html]": {
     "editor.defaultFormatter": "vscode.html-language-features"
   },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
 }
