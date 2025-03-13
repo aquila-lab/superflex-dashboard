@@ -254,7 +254,7 @@ const UserInfoCard = () => {
         <div className='flex items-center gap-2'>
           <span className='text-sm font-medium'>Onboarding:</span>
           <Badge variant={isOnboardingComplete ? 'secondary' : 'destructive'}>
-            {isOnboardingComplete ? 'Complete' : 'In progress'}
+            {isOnboardingComplete ? 'Completed' : 'In progress'}
           </Badge>
           {!isOnboardingComplete && (
             <span className='text-sm text-muted-foreground'>

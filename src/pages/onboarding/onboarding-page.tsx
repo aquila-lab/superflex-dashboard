@@ -14,6 +14,7 @@ import {
 import { Button } from '@/ui/button'
 import { Check, CheckCircle, Download, ExternalLink, Lock } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 type OnboardingSection = {
@@ -35,7 +36,7 @@ const CompleteButton = ({
 }) => {
   if (isCompleted) {
     return (
-      <div className='flex items-center text-green-700 gap-2'>
+      <div className='flex items-center text-green-600 gap-2'>
         <CheckCircle className='size-5' />
         <span className='text-sm font-medium'>Completed</span>
       </div>
@@ -60,6 +61,8 @@ const ButtonGroup = ({ children }: { children: React.ReactNode }) => {
 }
 
 export const OnboardingPage = () => {
+  const navigate = useNavigate()
+
   const { user, updateUser } = useUserStore()
   const { getAuthHeader } = useAuthStore()
   const { currentStep, isStepCompleted } = useOnboardingStep()
@@ -291,9 +294,6 @@ export const OnboardingPage = () => {
                     <AccordionContent className='pt-6'>
                       {section.id === 'download-vscode' && (
                         <OnboardingDownloadVSCode
-                          onComplete={() =>
-                            markSectionCompleted('download-vscode', true)
-                          }
                           isCompleted={section.completed}
                           markAsComplete={() =>
                             markSectionCompleted('download-vscode', true)
@@ -302,9 +302,6 @@ export const OnboardingPage = () => {
                       )}
                       {section.id === 'start-using-superflex' && (
                         <OnboardingStartUsingSuperflex
-                          onComplete={() =>
-                            markSectionCompleted('start-using-superflex', true)
-                          }
                           isCompleted={section.completed}
                           markAsComplete={() =>
                             markSectionCompleted('start-using-superflex', true)
@@ -313,13 +310,11 @@ export const OnboardingPage = () => {
                       )}
                       {section.id === 'connect-figma' && (
                         <OnboardingConnectFigma
-                          onComplete={() =>
-                            markSectionCompleted('connect-figma', true)
-                          }
                           isCompleted={section.completed}
-                          markAsComplete={() =>
+                          markAsComplete={() => {
+                            navigate('/dashboard')
                             markSectionCompleted('connect-figma', true)
-                          }
+                          }}
                         />
                       )}
                     </AccordionContent>
@@ -354,7 +349,6 @@ const OnboardingDownloadVSCode = ({
   isCompleted,
   markAsComplete
 }: {
-  onComplete: () => void
   isCompleted: boolean
   markAsComplete: () => void
 }) => {
@@ -397,7 +391,6 @@ const OnboardingStartUsingSuperflex = ({
   isCompleted,
   markAsComplete
 }: {
-  onComplete: () => void
   isCompleted: boolean
   markAsComplete: () => void
 }) => {
@@ -444,7 +437,6 @@ const OnboardingConnectFigma = ({
   isCompleted,
   markAsComplete
 }: {
-  onComplete: () => void
   isCompleted: boolean
   markAsComplete: () => void
 }) => {
