@@ -35,8 +35,8 @@ const CompleteButton = ({
 }) => {
   if (isCompleted) {
     return (
-      <div className='flex items-center text-green-600 gap-2'>
-        <CheckCircle className='h-5 w-5' />
+      <div className='flex items-center text-green-700 gap-2'>
+        <CheckCircle className='size-5' />
         <span className='text-sm font-medium'>Completed</span>
       </div>
     )
@@ -47,7 +47,7 @@ const CompleteButton = ({
       variant='outline'
       onClick={() => onComplete(sectionId, true)}
     >
-      <CheckCircle className='h-4 w-4 mr-2' />
+      <CheckCircle className='size-4 mr-2' />
       Mark as complete
     </Button>
   )
@@ -262,16 +262,16 @@ export const OnboardingPage = () => {
                     className={cn(
                       'flex h-8 w-8 shrink-0 items-center justify-center rounded-full border',
                       section.completed
-                        ? 'bg-green-100 border-green-500 text-green-600'
+                        ? 'bg-green-200 border-green-600 text-green-700'
                         : isDisabled
                           ? 'bg-muted border-muted-foreground/40 text-muted-foreground'
                           : 'border-primary/40'
                     )}
                   >
                     {section.completed ? (
-                      <Check className='h-5 w-5' />
+                      <Check className='size-5' />
                     ) : isDisabled ? (
-                      <Lock className='h-4 w-4' />
+                      <Lock className='size-4' />
                     ) : (
                       <span className='text-base font-medium'>{index + 1}</span>
                     )}
@@ -379,7 +379,7 @@ const OnboardingDownloadVSCode = ({
             target='_blank'
             rel='noopener noreferrer'
           >
-            <Download className='mr-2 h-4 w-4' />
+            <Download className='mr-2 size-4' />
             Download VS Code
           </a>
         </Button>
@@ -426,7 +426,7 @@ const OnboardingStartUsingSuperflex = ({
             target='_blank'
             rel='noopener noreferrer'
           >
-            <ExternalLink className='mr-2 h-4 w-4' />
+            <ExternalLink className='mr-2 size-4' />
             Superflex on VS Code Marketplace
           </a>
         </Button>

@@ -177,7 +177,7 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
         >
           {isSubmitting ? (
             <span className='flex items-center gap-2'>
-              <Loader2 className='h-4 w-4 animate-spin' />
+              <Loader2 className='size-4 animate-spin' />
               Signing in...
             </span>
           ) : (

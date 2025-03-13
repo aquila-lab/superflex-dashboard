@@ -218,7 +218,7 @@ const UserInfoCard = () => {
                   className='text-muted-foreground hover:text-primary transition-colors'
                   aria-label='Edit username'
                 >
-                  <Pen className='h-3 w-3 cursor-pointer' />
+                  <Pen className='size-3 cursor-pointer' />
                 </button>
               </DialogTrigger>
               <DialogContent>

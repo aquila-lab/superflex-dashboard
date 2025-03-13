@@ -49,7 +49,7 @@ export const OnboardingHeader = ({
           onClick={handleLogout}
           className='flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground'
         >
-          <LogOut className='h-4 w-4' />
+          <LogOut className='size-4' />
           <span>Logout</span>
         </Button>
       </div>
@@ -84,16 +84,16 @@ const OnboardingStepsCompact = ({
                   className={cn(
                     'flex items-center justify-center w-8 h-8 rounded-full border transition-colors cursor-pointer',
                     isCompleted
-                      ? 'bg-green-100 border-green-500 text-green-600'
+                      ? 'bg-green-200 border-green-600 text-green-700'
                       : isCurrent
                         ? 'border-primary/40 text-primary/80'
                         : 'border-primary/20 text-primary/40'
                   )}
                 >
                   {isCompleted ? (
-                    <Check className='h-3 w-3' />
+                    <Check className='size-4' />
                   ) : isCurrent ? (
-                    <Pen className='h-3 w-3' />
+                    <Pen className='size-3' />
                   ) : (
                     <span className='text-xs font-medium'>{index + 1}</span>
                   )}
@@ -109,16 +109,16 @@ const OnboardingStepsCompact = ({
                       className={cn(
                         'flex items-center justify-center w-6 h-6 rounded-full border',
                         isCompleted
-                          ? 'bg-green-100 border-green-500 text-green-600'
+                          ? 'bg-green-200 border-green-600 text-green-700'
                           : isCurrent
                             ? 'border-primary/40 text-primary/80'
                             : 'border-primary/20 text-primary/40'
                       )}
                     >
                       {isCompleted ? (
-                        <Check className='h-3 w-3' />
+                        <Check className='size-3' />
                       ) : isCurrent ? (
-                        <Pen className='h-3 w-3' />
+                        <Pen className='size-3' />
                       ) : (
                         <span className='text-xs font-medium'>{index + 1}</span>
                       )}
@@ -131,7 +131,7 @@ const OnboardingStepsCompact = ({
 
                   <div className='pt-2 text-xs'>
                     {isCompleted && (
-                      <span className='text-green-600 font-medium'>
+                      <span className='text-green-700 font-medium'>
                         Completed
                       </span>
                     )}
@@ -152,7 +152,7 @@ const OnboardingStepsCompact = ({
               <div
                 className={cn(
                   'h-0.5 w-8 mx-1',
-                  index < currentStepIndex ? 'bg-green-500' : 'bg-muted'
+                  index < currentStepIndex ? 'bg-green-600' : 'bg-muted'
                 )}
               />
             )}

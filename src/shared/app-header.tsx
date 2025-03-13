@@ -33,7 +33,7 @@ const UserAvatar = () => {
       return 'U'
     }
 
-    return user.username.substring(0, 2).toUpperCase()
+    return user.username.substring(0, 1).toUpperCase()
   }, [user])
 
   return (
@@ -99,12 +99,12 @@ const SuperflexExtensionDialog = () => {
       >
         {isLoading ? (
           <>
-            <Icons.Spinner className='h-4 w-4 animate-spin' />
+            <Icons.Spinner className='size-4 animate-spin' />
             <span>Opening...</span>
           </>
         ) : (
           <>
-            <ExternalLink className='h-4 w-4' />
+            <ExternalLink className='size-4' />
             <span>Open Superflex</span>
           </>
         )}
@@ -210,7 +210,7 @@ export const AppHeader = ({
               className='cursor-pointer'
             >
               <Link to='/dashboard'>
-                <User className='mr-2 h-4 w-4' />
+                <User className='mr-2 size-4' />
                 <span>Account Settings</span>
               </Link>
             </DropdownMenuItem>
@@ -219,7 +219,7 @@ export const AppHeader = ({
               className='cursor-pointer'
             >
               <Link to='/dashboard/onboarding'>
-                <Info className='mr-2 h-4 w-4' />
+                <Info className='mr-2 size-4' />
                 <span>Setup Superflex</span>
               </Link>
             </DropdownMenuItem>
@@ -227,7 +227,7 @@ export const AppHeader = ({
               onClick={handleLogout}
               className='cursor-pointer'
             >
-              <LogOut className='mr-2 h-4 w-4' />
+              <LogOut className='mr-2 size-4' />
               <span>Logout</span>
             </DropdownMenuItem>
           </DropdownMenuContent>

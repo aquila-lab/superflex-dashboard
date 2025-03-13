@@ -43,7 +43,7 @@ const SocialIcon = ({
             )}
             aria-label={label}
           >
-            <Icon className='h-4 w-4' />
+            <Icon className='size-4' />
           </a>
         </TooltipTrigger>
         <TooltipContent>
@@ -71,7 +71,7 @@ const FooterLink = ({
       className='text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1'
     >
       {label}
-      {isExternal && <ExternalLink className='h-3 w-3' />}
+      {isExternal && <ExternalLink className='size-3' />}
     </a>
   )
 }
@@ -127,7 +127,7 @@ export const AppFooter = () => {
               href='mailto:boris@superflex.ai'
               className='text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1'
             >
-              <Mail className='h-3 w-3' />
+              <Mail className='size-3' />
               <span>Support</span>
             </a>
           </FooterLinkGroup>

@@ -9,7 +9,7 @@ export const Loading = ({
   size?: 'sm' | 'default' | 'lg'
 }) => {
   const sizeClass = {
-    sm: 'h-4 w-4',
+    sm: 'size-4',
     default: 'h-8 w-8',
     lg: 'h-12 w-12'
   }

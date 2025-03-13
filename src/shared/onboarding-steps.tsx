@@ -71,16 +71,16 @@ export const OnboardingSteps = ({
                         className={cn(
                           'flex items-center justify-center w-8 h-8 rounded-full border transition-colors',
                           isCompleted
-                            ? 'bg-green-100 border-green-500 text-green-600'
+                            ? 'bg-green-200 border-green-600 text-green-700'
                             : isCurrent
                               ? 'border-primary/40 text-primary/80'
                               : 'border-primary/20 text-primary/40'
                         )}
                       >
                         {isCompleted ? (
-                          <Check className='h-4 w-4' />
+                          <Check className='size-4' />
                         ) : isCurrent ? (
-                          <Pen className='h-4 w-4' />
+                          <Pen className='size-4' />
                         ) : (
                           <span className='text-sm font-medium'>
                             {index + 1}
@@ -99,16 +99,16 @@ export const OnboardingSteps = ({
                           className={cn(
                             'flex items-center justify-center w-6 h-6 rounded-full border',
                             isCompleted
-                              ? 'bg-green-100 border-green-500 text-green-600'
+                              ? 'bg-green-200 border-green-600 text-green-700'
                               : isCurrent
                                 ? 'border-primary/40 text-primary/80'
                                 : 'border-primary/20 text-primary/40'
                           )}
                         >
                           {isCompleted ? (
-                            <Check className='h-3 w-3' />
+                            <Check className='size-3' />
                           ) : isCurrent ? (
-                            <Pen className='h-3 w-3' />
+                            <Pen className='size-3' />
                           ) : (
                             <span className='text-xs font-medium'>
                               {index + 1}
@@ -123,7 +123,7 @@ export const OnboardingSteps = ({
 
                       <div className='pt-2 text-xs'>
                         {isCompleted && (
-                          <span className='text-green-600 font-medium'>
+                          <span className='text-green-700 font-medium'>
                             Completed
                           </span>
                         )}
@@ -146,7 +146,7 @@ export const OnboardingSteps = ({
                   <div
                     className={cn(
                       'h-0.5 w-12 mx-1 sm:mx-3',
-                      index < currentStepIndex ? 'bg-green-500' : 'bg-muted'
+                      index < currentStepIndex ? 'bg-green-600' : 'bg-muted'
                     )}
                   />
                 )}

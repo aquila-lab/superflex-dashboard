@@ -10,8 +10,8 @@ export const ResetPasswordRequestPage = () => (
     <div className='flex flex-1 items-center justify-center'>
       <div className='w-full max-w-xs flex flex-col gap-6'>
         <div className='flex flex-col items-center gap-2 text-center'>
-          <div className='mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600'>
-            <Check className='h-5 w-5' />
+          <div className='mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-green-200 text-green-700'>
+            <Check className='size-5' />
           </div>
           <h1 className='text-2xl font-bold'>Check your email</h1>
           <p className='text-muted-foreground text-sm'>
