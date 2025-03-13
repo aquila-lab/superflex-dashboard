@@ -1,4 +1,5 @@
 import { useAuth } from '@/global/hooks/use-auth'
+import { useUser } from '@/global/hooks/use-user'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user-store'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
@@ -20,110 +21,152 @@ import {
   DropdownMenuTrigger
 } from '@/ui/dropdown-menu'
 import { Icons } from '@/ui/icons'
-import { ExternalLink, Info, LogOut, User } from 'lucide-react'
+import { ChevronDown, ExternalLink, Info, LogOut, User } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import type { HTMLAttributes } from 'react'
 import { Link } from 'react-router-dom'
 
 const UserAvatar = () => {
-  const { user } = useUserStore()
+  const { user } = useUser()
 
   const userInitials = useMemo(() => {
     if (!user?.username) {
       return 'U'
     }
 
-    return user.username.substring(0, 1).toUpperCase()
+    return user.username.substring(0, 2).toUpperCase()
   }, [user])
 
   return (
     <Avatar>
-      {user?.picture && (
-        <AvatarImage
-          key={user.picture}
-          src={user.picture}
-          alt={user?.username || 'User'}
-          width={40}
-          height={40}
-          className='object-cover'
-        />
-      )}
+      <AvatarImage
+        key={user?.picture}
+        src={user?.picture || ''}
+        alt={user?.username || 'User'}
+        width={40}
+        height={40}
+        className='object-cover'
+      />
       <AvatarFallback>{userInitials}</AvatarFallback>
     </Avatar>
   )
 }
 
-const SuperflexExtensionDialog = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+const SuperflexExtensionDropdown = () => {
+  const [isAttemptingLaunch, setIsAttemptingLaunch] = useState(false)
+  const [showFallbackDialog, setShowFallbackDialog] = useState(false)
+  const [currentApp, setCurrentApp] = useState<string>('')
 
-  const launchVSCodeExtension = useCallback(() => {
-    window.location.href = 'vscode:extension/aquilalabs.superflex'
-  }, [])
-
-  const launchCursorExtension = useCallback(() => {
-    window.location.href = 'cursor:extension/aquilalabs.superflex'
-  }, [])
-
-  const openVSCodeExtension = useCallback(() => {
+  const launchWithFallback = useCallback((uri: string, appName: string) => {
     try {
-      setIsLoading(true)
+      setIsAttemptingLaunch(true)
+      setCurrentApp(appName)
 
-      launchVSCodeExtension()
+      window.location.href = uri
 
       setTimeout(() => {
-        setIsLoading(false)
-        setIsOpen(true)
-      }, 500)
+        setIsAttemptingLaunch(false)
+
+        if (document.visibilityState === 'visible') {
+          setShowFallbackDialog(true)
+        }
+      }, 1000)
     } catch (_error) {
-      setIsLoading(false)
-      setIsOpen(true)
+      setIsAttemptingLaunch(false)
+      setShowFallbackDialog(true)
     }
-  }, [launchVSCodeExtension])
+  }, [])
+
+  const launchVSCodeExtension = useCallback(() => {
+    launchWithFallback('vscode:extension/aquilalabs.superflex', 'VS Code')
+  }, [launchWithFallback])
+
+  const launchCursorExtension = useCallback(() => {
+    launchWithFallback('cursor:extension/aquilalabs.superflex', 'Cursor')
+  }, [launchWithFallback])
 
   const openMarketplace = useCallback(() => {
     window.open(
       'https://marketplace.visualstudio.com/items?itemName=aquilalabs.superflex',
       '_blank'
     )
-    setIsOpen(false)
+    setShowFallbackDialog(false)
   }, [])
 
   return (
     <>
-      <Button
-        variant='outline'
-        onClick={openVSCodeExtension}
-        disabled={isLoading}
-        className='flex items-center gap-2'
-      >
-        {isLoading ? (
-          <>
-            <Icons.Spinner className='size-4 animate-spin' />
-            <span>Opening...</span>
-          </>
-        ) : (
-          <>
-            <ExternalLink className='size-4' />
-            <span>Open Superflex</span>
-          </>
-        )}
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant='outline'
+            className='flex items-center gap-2'
+            disabled={isAttemptingLaunch}
+          >
+            {isAttemptingLaunch ? (
+              <>
+                <Icons.Spinner className='size-4 animate-spin' />
+                <span>Launching...</span>
+              </>
+            ) : (
+              <>
+                <ExternalLink className='size-4' />
+                <span>Install Superflex</span>
+                <ChevronDown className='size-4 ml-1' />
+              </>
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align='end'
+          className='w-56'
+        >
+          <DropdownMenuLabel>Install Options</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={launchVSCodeExtension}
+            className='cursor-pointer'
+            disabled={isAttemptingLaunch}
+          >
+            <span>Try in VS Code</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={launchCursorExtension}
+            className='cursor-pointer'
+            disabled={isAttemptingLaunch}
+          >
+            <span>Try in Cursor</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={openMarketplace}
+            className='cursor-pointer'
+          >
+            <span>Visit VS Code Marketplace</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <Dialog
-        open={isOpen}
-        onOpenChange={setIsOpen}
+        open={showFallbackDialog}
+        onOpenChange={setShowFallbackDialog}
       >
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
-            <DialogTitle>Open Superflex Extension</DialogTitle>
+            <DialogTitle>Failed to Launch {currentApp}</DialogTitle>
             <DialogDescription>
-              It seems VS Code didn't open automatically. You have the following
-              options:
+              We couldn't open {currentApp} automatically. You have the
+              following options:
             </DialogDescription>
           </DialogHeader>
           <div className='flex flex-col gap-4 py-4'>
-            <Button onClick={launchCursorExtension}>Try in Cursor</Button>
+            {currentApp === 'VS Code' ? (
+              <Button onClick={launchCursorExtension}>
+                Try in Cursor Instead
+              </Button>
+            ) : (
+              <Button onClick={launchVSCodeExtension}>
+                Try in VS Code Instead
+              </Button>
+            )}
             <Button
               variant='outline'
               onClick={openMarketplace}
@@ -134,7 +177,7 @@ const SuperflexExtensionDialog = () => {
           <DialogFooter className='sm:justify-start'>
             <Button
               variant='secondary'
-              onClick={() => setIsOpen(false)}
+              onClick={() => setShowFallbackDialog(false)}
             >
               Cancel
             </Button>
@@ -178,7 +221,7 @@ export const AppHeader = ({
       </div>
 
       <div className='flex items-center justify-end gap-4'>
-        <SuperflexExtensionDialog />
+        <SuperflexExtensionDropdown />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
