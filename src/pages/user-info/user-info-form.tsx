@@ -42,8 +42,8 @@ export const UserInfoForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [title, setTitle] = useState('')
-  const [company, setCompany] = useState('')
+  const [title, setTitle] = useState<string | undefined>(undefined)
+  const [company, setCompany] = useState<string | undefined>(undefined)
   const [technicalLevel, setTechnicalLevel] = useState<TechnicalLevel | ''>('')
   const [referralSource, setReferralSource] = useState<ReferralSource | ''>('')
 
@@ -189,24 +189,28 @@ export const UserInfoForm = ({
         </div>
 
         <div className='space-y-3'>
-          <Label htmlFor='title'>Title</Label>
+          <Label htmlFor='title'>
+            Title{' '}
+            <span className='text-xs text-muted-foreground'>(optional)</span>
+          </Label>
           <Input
             id='title'
             placeholder='Software Engineer'
             className='w-full'
-            required
             value={title}
             onChange={e => setTitle(e.target.value)}
           />
         </div>
 
         <div className='space-y-3'>
-          <Label htmlFor='company'>Company</Label>
+          <Label htmlFor='company'>
+            Company{' '}
+            <span className='text-xs text-muted-foreground'>(optional)</span>
+          </Label>
           <Input
             id='company'
             placeholder='Acme Inc.'
             className='w-full'
-            required
             value={company}
             onChange={e => setCompany(e.target.value)}
           />
