@@ -6,7 +6,7 @@ export const AuthWallpaper = () => {
     <div className='relative hidden lg:flex h-full flex-col bg-muted p-10 text-white dark:border-r'>
       <div className='absolute inset-0 bg-zinc-900' />
       <Link
-        to='/sign-in'
+        to='/login'
         className='relative z-20 flex items-center text-lg font-medium cursor-pointer w-min'
       >
         <Icons.Logo className='mr-2 size-6' />

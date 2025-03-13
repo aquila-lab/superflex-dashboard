@@ -92,7 +92,7 @@ export const ResetPasswordForm = ({
       </div>
       <div className='text-center text-sm'>
         Remember your password?{' '}
-        <Link to='/sign-in'>
+        <Link to='/login'>
           <div className='underline underline-offset-4'>Sign in</div>
         </Link>
       </div>

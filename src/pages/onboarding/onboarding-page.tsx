@@ -1,4 +1,5 @@
 import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
+import { useAuthExtensionParams } from '@/lib/auth-utils'
 import { API_BASE_URL } from '@/lib/constants'
 import { cn, onboardingStepMapping } from '@/lib/utils'
 import { AppFooter } from '@/shared/app-footer'
@@ -66,6 +67,7 @@ export const OnboardingPage = () => {
   const { user, updateUser } = useUserStore()
   const { getAuthHeader } = useAuthStore()
   const { currentStep, isStepCompleted } = useOnboardingStep()
+  const { appendExtensionParams } = useAuthExtensionParams()
 
   const completeStepNumber = useMemo(() => {
     return onboardingStepMapping.stepToNumber('complete')
@@ -312,7 +314,7 @@ export const OnboardingPage = () => {
                         <OnboardingConnectFigma
                           isCompleted={section.completed}
                           markAsComplete={() => {
-                            navigate('/dashboard')
+                            navigate(appendExtensionParams('/dashboard'))
                             markSectionCompleted('connect-figma', true)
                           }}
                         />

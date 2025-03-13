@@ -1,6 +1,7 @@
 import { useAuth } from '@/global/hooks/use-auth'
 import { API_BASE_URL } from '@/lib/constants'
 import { cn } from '@/lib/utils'
+import { useAuthExtensionParams } from '@/lib/auth-utils'
 import { useAuthStore } from '@/store/auth-store'
 import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
@@ -28,6 +29,7 @@ export const RegisterForm = ({
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchParams] = useSearchParams()
+  const { appendExtensionParams } = useAuthExtensionParams()
 
   const navigate = useNavigate()
   const { googleLogin } = useAuth()
@@ -62,7 +64,7 @@ export const RegisterForm = ({
 
         if (authToken) {
           toast.success('Account created with Google successfully')
-          navigate('/select-plan', { replace: true })
+          navigate(appendExtensionParams('/select-plan'), { replace: true })
         }
       } catch (_error) {
         toast.error('Failed to create account with Google. Please try again.')
@@ -70,7 +72,7 @@ export const RegisterForm = ({
         setIsSubmitting(false)
       }
     },
-    [googleLogin, navigate]
+    [googleLogin, navigate, appendExtensionParams]
   )
 
   useEffect(() => {
@@ -110,7 +112,7 @@ export const RegisterForm = ({
         toast.success('Account created successfully')
         // Delay navigation slightly to allow the user to see the success message
         setTimeout(() => {
-          navigate('/select-plan')
+          navigate(appendExtensionParams('/select-plan'))
         }, 500)
       } catch (_error) {
         setPassword('')
@@ -129,7 +131,8 @@ export const RegisterForm = ({
       isFormValid,
       isSubmitting,
       handleRegisterWithAuth,
-      navigate
+      navigate,
+      appendExtensionParams
     ]
   )
 
@@ -225,7 +228,7 @@ export const RegisterForm = ({
       </div>
       <div className='text-center text-sm'>
         Already have an account?{' '}
-        <Link to='/sign-in'>
+        <Link to={appendExtensionParams('/login')}>
           <div className='underline underline-offset-4'>Sign in</div>
         </Link>
       </div>

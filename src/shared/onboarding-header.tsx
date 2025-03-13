@@ -4,10 +4,36 @@ import { Button } from '@/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
 import { Icons } from '@/ui/icons'
 import { Check, LogOut, Pen } from 'lucide-react'
-import { useCallback, useMemo } from 'react'
-import type { HTMLAttributes } from 'react'
-import { stepsData } from './onboarding-steps'
-import type { OnboardingStep } from './onboarding-steps'
+import { useCallback, useMemo, type HTMLAttributes } from 'react'
+
+export type OnboardingStep =
+  | 'register'
+  | 'choose-plan'
+  | 'profile-setup'
+  | 'get-started'
+
+export const stepsData = [
+  {
+    id: 'register',
+    label: 'Sign Up',
+    description: 'Covers registration'
+  },
+  {
+    id: 'choose-plan',
+    label: 'Choose Plan',
+    description: 'Plan selection and subscription'
+  },
+  {
+    id: 'profile-setup',
+    label: 'Profile Setup',
+    description: 'Covers additional user info'
+  },
+  {
+    id: 'get-started',
+    label: 'Get Started',
+    description: 'VSCode extension onboarding flow'
+  }
+] as const
 
 export const OnboardingHeader = ({
   className,

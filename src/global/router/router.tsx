@@ -22,11 +22,11 @@ export const Router = () => {
         <Routes>
           <Route element={<AuthRoute />}>
             <Route
-              path='/sign-in'
+              path='/login'
               element={<LoginPage />}
             />
             <Route
-              path='/sign-up'
+              path='/register'
               element={<RegisterPage />}
             />
             <Route
@@ -70,7 +70,7 @@ export const Router = () => {
             path='*'
             element={
               <Navigate
-                to='/sign-in'
+                to='/login'
                 replace
               />
             }
