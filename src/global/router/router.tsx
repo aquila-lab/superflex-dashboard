@@ -30,15 +30,15 @@ export const Router = () => {
               element={<RegisterPage />}
             />
             <Route
-              path='/reset-password'
+              path='/forgot-password'
               element={<ResetPasswordPage />}
             />
             <Route
-              path='/reset-password-request'
+              path='/forgot-password-request'
               element={<ResetPasswordRequestPage />}
             />
             <Route
-              path='/new-password'
+              path='/reset-password'
               element={<NewPasswordPage />}
             />
           </Route>

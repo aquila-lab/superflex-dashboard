@@ -31,7 +31,7 @@ export const ResetPasswordRequestPage = () => (
             className='w-full'
             asChild
           >
-            <Link to='/reset-password'>Try again</Link>
+            <Link to='/forgot-password'>Try again</Link>
           </Button>
 
           <div className='text-center text-sm'>

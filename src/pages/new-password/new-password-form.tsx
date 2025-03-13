@@ -27,7 +27,7 @@ export const NewPasswordForm = ({
       toast.error(
         'Missing password reset code. Please request a new password reset.'
       )
-      navigate('/reset-password')
+      navigate('/forgot-password')
     }
   }, [code, navigate])
 
@@ -53,7 +53,7 @@ export const NewPasswordForm = ({
         toast.error(
           'Missing password reset code. Please request a new password reset.'
         )
-        navigate('/reset-password')
+        navigate('/forgot-password')
         return
       }
 

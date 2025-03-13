@@ -46,7 +46,7 @@ export const ResetPasswordForm = ({
         }
 
         toast.success('Password reset email sent')
-        navigate('/reset-password-request')
+        navigate('/forgot-password-request')
       } catch (_error) {
         toast.error('Failed to reset password. Please try again.')
       } finally {

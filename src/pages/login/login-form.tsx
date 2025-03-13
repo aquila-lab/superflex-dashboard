@@ -164,7 +164,7 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
           <div className='flex items-center'>
             <Label htmlFor='password'>Password</Label>
             <Link
-              to={appendExtensionParams('/reset-password-request')}
+              to={'/forgot-password-request'}
               className='ml-auto text-sm leading-none underline-offset-4 hover:underline'
             >
               Forgot your password?
