@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 import type { User, UserSubscription } from './model'
-export type { OnboardingStep, Plan, User, UserSubscription } from './model'
+export type { Plan, User, UserSubscription } from './model'
 
 export const useUserStore = create<{
   user: User | null

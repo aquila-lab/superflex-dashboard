@@ -19,13 +19,13 @@ export const AuthRoute = () => {
       }
     }
 
-    const pathMapping = {
-      complete: '/dashboard',
-      'plan-selection': '/select-plan',
-      'user-info': '/user-info',
-      'vscode-download': '/dashboard/onboarding',
-      'extension-installation': '/dashboard/onboarding',
-      'connect-figma': '/dashboard/onboarding'
+    const pathMapping: Record<number, string> = {
+      0: '/select-plan',
+      1: '/user-info',
+      2: '/dashboard/onboarding',
+      3: '/dashboard/onboarding',
+      4: '/dashboard/onboarding',
+      5: '/dashboard'
     }
 
     return {

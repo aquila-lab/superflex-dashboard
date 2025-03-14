@@ -1,4 +1,3 @@
-import type { OnboardingStep } from '@/store/model'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -12,7 +11,7 @@ export const onboardingStepMapping = {
     'complete'
   ] as const,
 
-  numberToStep: (step: number | null): OnboardingStep => {
+  getStepName: (step: number | null): string => {
     if (
       step === null ||
       step < 0 ||
@@ -23,8 +22,8 @@ export const onboardingStepMapping = {
     return onboardingStepMapping.steps[step]
   },
 
-  stepToNumber: (step: OnboardingStep): number => {
-    const index = onboardingStepMapping.steps.indexOf(step)
+  getStepNumber: (stepName: string): number => {
+    const index = onboardingStepMapping.steps.indexOf(stepName as any)
     return index === -1 ? onboardingStepMapping.steps.length - 1 : index
   }
 }

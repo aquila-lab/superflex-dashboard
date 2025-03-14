@@ -76,7 +76,7 @@ export const OnboardingPage = () => {
   const { appendExtensionParams } = useAuthExtensionParams()
 
   const completeStepNumber = useMemo(() => {
-    return onboardingStepMapping.stepToNumber('complete')
+    return onboardingStepMapping.steps.length - 1
   }, [])
 
   const updateOnboardingStep = useCallback(
@@ -120,22 +120,22 @@ export const OnboardingPage = () => {
     {
       id: 'download-vscode',
       title: 'Install VS Code or Cursor',
-      defaultOpen: currentStep === 'vscode-download',
-      completed: isStepCompleted('vscode-download'),
+      defaultOpen: currentStep === 2,
+      completed: isStepCompleted(2),
       stepNumber: 2
     },
     {
       id: 'start-using-superflex',
       title: 'Start using Superflex',
-      defaultOpen: currentStep === 'extension-installation',
-      completed: isStepCompleted('extension-installation'),
+      defaultOpen: currentStep === 3,
+      completed: isStepCompleted(3),
       stepNumber: 3
     },
     {
       id: 'connect-figma',
       title: 'Connect your Figma account',
-      defaultOpen: currentStep === 'connect-figma',
-      completed: isStepCompleted('connect-figma'),
+      defaultOpen: currentStep === 4,
+      completed: isStepCompleted(4),
       stepNumber: 4
     }
   ])
@@ -144,10 +144,10 @@ export const OnboardingPage = () => {
     if (user && (user.onboarding_step ?? 0) > 4) {
       return 'connect-figma'
     }
-    if (currentStep === 'connect-figma') {
+    if (currentStep === 4) {
       return 'connect-figma'
     }
-    if (currentStep === 'extension-installation') {
+    if (currentStep === 3) {
       return 'start-using-superflex'
     }
     return 'download-vscode'

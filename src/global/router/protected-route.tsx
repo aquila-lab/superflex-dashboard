@@ -19,25 +19,20 @@ export const ProtectedRoute = () => {
       }
     }
 
-    const pathMapping = {
-      complete: '/dashboard',
-      'plan-selection': '/select-plan',
-      'user-info': '/user-info',
-      'vscode-download': '/dashboard/onboarding',
-      'extension-installation': '/dashboard/onboarding',
-      'connect-figma': '/dashboard/onboarding'
+    const pathMapping: Record<number, string> = {
+      0: '/select-plan',
+      1: '/user-info',
+      2: '/dashboard/onboarding',
+      3: '/dashboard/onboarding',
+      4: '/dashboard/onboarding',
+      5: '/dashboard'
     }
 
     const correctPath = pathMapping[currentStep] || '/dashboard/onboarding'
 
     if (
       ['/dashboard', '/dashboard/onboarding'].includes(location.pathname) &&
-      [
-        'vscode-download',
-        'extension-installation',
-        'connect-figma',
-        'complete'
-      ].includes(currentStep)
+      [2, 3, 4, 5].includes(currentStep)
     ) {
       return {
         path: appendExtensionParams(correctPath),

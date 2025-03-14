@@ -1,11 +1,3 @@
-export type OnboardingStep =
-  | 'plan-selection'
-  | 'user-info'
-  | 'vscode-download'
-  | 'extension-installation'
-  | 'connect-figma'
-  | 'complete'
-
 export type User = {
   id: string
   email: string

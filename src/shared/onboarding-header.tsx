@@ -6,30 +6,24 @@ import { Icons } from '@/ui/icons'
 import { Check, LogOut, Pen } from 'lucide-react'
 import { type HTMLAttributes, useCallback, useMemo } from 'react'
 
-export type OnboardingStep =
-  | 'register'
-  | 'choose-plan'
-  | 'profile-setup'
-  | 'get-started'
-
 export const stepsData = [
   {
-    id: 'register',
+    id: 0,
     label: 'Sign Up',
     description: 'Covers registration'
   },
   {
-    id: 'choose-plan',
+    id: 1,
     label: 'Choose Plan',
     description: 'Plan selection and subscription'
   },
   {
-    id: 'profile-setup',
+    id: 2,
     label: 'Profile Setup',
     description: 'Covers additional user info'
   },
   {
-    id: 'get-started',
+    id: 3,
     label: 'Get Started',
     description: 'VSCode extension onboarding flow'
   }
@@ -40,7 +34,7 @@ export const OnboardingHeader = ({
   currentStep,
   ...props
 }: HTMLAttributes<HTMLDivElement> & {
-  currentStep?: OnboardingStep
+  currentStep?: number
 }) => {
   const { logout } = useAuth()
 
@@ -62,7 +56,7 @@ export const OnboardingHeader = ({
         <Icons.Logo className='h-10 w-8' />
       </div>
 
-      {currentStep && (
+      {currentStep !== undefined && (
         <div className='flex-1 flex justify-center'>
           <OnboardingStepsCompact currentStep={currentStep} />
         </div>
@@ -86,18 +80,14 @@ export const OnboardingHeader = ({
 const OnboardingStepsCompact = ({
   currentStep
 }: {
-  currentStep: OnboardingStep
+  currentStep: number
 }) => {
-  const currentStepIndex = useMemo(() => {
-    return stepsData.findIndex(step => step.id === currentStep)
-  }, [currentStep])
-
   return (
     <div className='flex items-center'>
       {stepsData.map((step, index) => {
-        const isCompleted = index < currentStepIndex
-        const isCurrent = index === currentStepIndex
-        const isUpcoming = index > currentStepIndex
+        const isCompleted = index < currentStep
+        const isCurrent = index === currentStep
+        const isUpcoming = index > currentStep
 
         return (
           <div
@@ -178,7 +168,7 @@ const OnboardingStepsCompact = ({
               <div
                 className={cn(
                   'h-0.5 w-8 mx-1',
-                  index < currentStepIndex ? 'bg-green-600' : 'bg-muted'
+                  index < currentStep ? 'bg-green-600' : 'bg-muted'
                 )}
               />
             )}

@@ -24,7 +24,7 @@ export const SelectPlanPage = () => {
 
   return (
     <div className='flex flex-col min-h-svh'>
-      <OnboardingHeader currentStep='choose-plan' />
+      <OnboardingHeader currentStep={1} />
       <div className='flex flex-1 items-center justify-center pb-12'>
         <div className='w-full max-w-6xl px-4'>
           <div className='mb-12 text-center'>
