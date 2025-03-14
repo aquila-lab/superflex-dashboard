@@ -13,10 +13,29 @@ import {
   AccordionTrigger
 } from '@/ui/accordion'
 import { Button } from '@/ui/button'
-import { Check, CheckCircle, Download, ExternalLink, Lock } from 'lucide-react'
+import {
+  Check,
+  CheckCircle,
+  Download,
+  ExternalLink,
+  Lock,
+  Sparkles,
+  Zap,
+  AlertTriangle,
+  Rocket
+} from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/ui/dialog'
+import { Icons } from '@/ui/icons'
 
 type OnboardingSection = {
   id: string
@@ -52,12 +71,6 @@ const CompleteButton = ({
       <CheckCircle className='size-4 mr-2' />
       Mark as complete
     </Button>
-  )
-}
-
-const ButtonGroup = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className='flex flex-wrap items-center gap-4 mt-6'>{children}</div>
   )
 }
 
@@ -113,7 +126,7 @@ export const OnboardingPage = () => {
   const [sections, setSections] = useState<OnboardingSection[]>([
     {
       id: 'download-vscode',
-      title: 'Download VSCode',
+      title: 'Install VS Code or Cursor',
       defaultOpen: currentStep === 'vscode-download',
       completed: isStepCompleted('vscode-download'),
       stepNumber: 2
@@ -358,33 +371,87 @@ const OnboardingDownloadVSCode = ({
     <div className='space-y-6'>
       <div className='space-y-4 text-base'>
         <p>
-          Visual Studio Code is a lightweight but powerful source code editor
-          that runs on your desktop and is available for Windows, macOS, and
-          Linux.
-        </p>
-        <p>
-          VS Code comes with built-in support for JavaScript, TypeScript, and
-          Node.js and has a rich ecosystem of extensions for other languages and
-          frameworks.
+          To start using Superflex, you'll need a code editor that supports its
+          features. We recommend using Visual Studio Code (VS Code) or Cursor
+          for the best experience.
         </p>
       </div>
-      <ButtonGroup>
-        <Button asChild>
-          <a
-            href='https://code.visualstudio.com/download'
-            target='_blank'
-            rel='noopener noreferrer'
+
+      <div className='grid gap-6'>
+        <div className='rounded-lg border p-4 space-y-3'>
+          <div className='flex items-center gap-2 font-medium'>
+            <Download className='size-5 text-blue-600' />
+            <h3 className='text-lg'>Visual Studio Code</h3>
+          </div>
+          <p>
+            Visual Studio Code is a lightweight but powerful source code editor
+            available for Windows, macOS, and Linux.
+          </p>
+          <div className='rounded-lg bg-amber-50 border border-amber-200 p-4 flex items-start gap-3'>
+            <AlertTriangle className='size-5 text-amber-600 mt-0.5 flex-shrink-0' />
+            <div>
+              <p className='font-medium text-amber-800'>Version Requirement</p>
+              <p className='text-sm text-amber-700'>
+                Superflex requires VS Code v1.70.0 or higher. If you already
+                have VS Code installed, check your version via{' '}
+                <span className='font-medium'>Help &gt; About</span> and update
+                if needed.
+              </p>
+            </div>
+          </div>
+          <Button
+            asChild
+            variant='outline'
+            className='mt-2'
           >
-            <Download className='mr-2 size-4' />
-            Download VS Code
-          </a>
-        </Button>
+            <a
+              href='https://code.visualstudio.com/download'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              <Download className='mr-2 size-4' />
+              Download VS Code
+            </a>
+          </Button>
+        </div>
+
+        <div className='rounded-lg border p-4 space-y-3'>
+          <div className='flex items-center gap-2 font-medium'>
+            <Sparkles className='size-5 text-purple-600' />
+            <h3 className='text-lg'>Cursor</h3>
+          </div>
+          <p>
+            Cursor is an AI-enhanced version of VS Code, optimized for
+            AI-assisted development with built-in AI capabilities for code
+            generation, explanation, and debugging.
+          </p>
+          <Button
+            asChild
+            variant='outline'
+            className='mt-2'
+          >
+            <a
+              href='https://cursor.sh'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              <Download className='mr-2 size-4' />
+              Download Cursor
+            </a>
+          </Button>
+        </div>
+      </div>
+
+      <div className='pt-2 flex justify-between items-center'>
+        <p className='text-sm text-muted-foreground'>
+          Once installed, you're ready to proceed to the next step! 🚀
+        </p>
         <CompleteButton
           sectionId='download-vscode'
           onComplete={() => markAsComplete()}
           isCompleted={isCompleted}
         />
-      </ButtonGroup>
+      </div>
     </div>
   )
 }
@@ -396,41 +463,381 @@ const OnboardingStartUsingSuperflex = ({
   isCompleted: boolean
   markAsComplete: () => void
 }) => {
+  const [activeTab, setActiveTab] = useState<'vscode' | 'cursor'>('vscode')
+  const [isAttemptingLaunch, setIsAttemptingLaunch] = useState(false)
+  const [showFallbackDialog, setShowFallbackDialog] = useState(false)
+  const [currentApp, setCurrentApp] = useState<string>('')
+
+  const launchWithFallback = useCallback((uri: string, appName: string) => {
+    try {
+      setIsAttemptingLaunch(true)
+      setCurrentApp(appName)
+
+      window.location.href = uri
+
+      setTimeout(() => {
+        setIsAttemptingLaunch(false)
+
+        if (document.visibilityState === 'visible') {
+          setShowFallbackDialog(true)
+        }
+      }, 1000)
+    } catch (_error) {
+      setIsAttemptingLaunch(false)
+      setShowFallbackDialog(true)
+    }
+  }, [])
+
+  const launchVSCodeExtension = useCallback(() => {
+    launchWithFallback('vscode:extension/aquilalabs.superflex', 'VS Code')
+  }, [launchWithFallback])
+
+  const launchCursorExtension = useCallback(() => {
+    launchWithFallback('cursor:extension/aquilalabs.superflex', 'Cursor')
+  }, [launchWithFallback])
+
+  const openMarketplace = useCallback(() => {
+    window.open(
+      'https://marketplace.visualstudio.com/items?itemName=aquilalabs.superflex',
+      '_blank'
+    )
+  }, [])
+
   return (
     <div className='space-y-6'>
-      <YouTubeVideo videoId='wB7Um6n9bBA' />
       <div className='space-y-4 text-base'>
-        <p>Follow these steps to install and set up Superflex in VS Code:</p>
-        <ol className='list-decimal pl-5 space-y-4'>
-          <li>Open your project in VSCode.</li>
-          <li>
-            Access Superflex from the sidebar or press{' '}
-            <kbd className='px-2 py-1 bg-muted rounded text-xs'>⌘;</kbd> to open
-            Superflex.
-          </li>
-          <li>
-            Move Superflex to the secondary sidebar for better multitasking.
-          </li>
-          <li>Start coding at superhuman speed!</li>
-        </ol>
+        <p>
+          Now that you have VS Code or Cursor installed, it's time to set up
+          Superflex. Follow the instructions below based on your editor of
+          choice.
+        </p>
       </div>
-      <ButtonGroup>
-        <Button asChild>
-          <a
-            href='https://marketplace.visualstudio.com/items?itemName=aquilalabs.superflex'
-            target='_blank'
-            rel='noopener noreferrer'
+
+      <div className='flex space-x-2 border-b'>
+        <button
+          type='button'
+          onClick={() => setActiveTab('vscode')}
+          className={cn(
+            'px-4 py-2 font-medium text-sm transition-colors cursor-pointer',
+            activeTab === 'vscode'
+              ? 'border-b-2 border-primary text-primary'
+              : 'text-muted-foreground hover:text-foreground'
+          )}
+        >
+          VS Code
+        </button>
+        <button
+          type='button'
+          onClick={() => setActiveTab('cursor')}
+          className={cn(
+            'px-4 py-2 font-medium text-sm transition-colors cursor-pointer',
+            activeTab === 'cursor'
+              ? 'border-b-2 border-primary text-primary'
+              : 'text-muted-foreground hover:text-foreground'
+          )}
+        >
+          Cursor
+        </button>
+      </div>
+
+      <div className={cn('space-y-6', activeTab !== 'vscode' && 'hidden')}>
+        <YouTubeVideo videoId='wB7Um6n9bBA' />
+        <div className='rounded-lg border p-4 space-y-4'>
+          <div className='flex items-center gap-2 font-medium'>
+            <Download className='size-5 text-blue-600' />
+            <h3 className='text-lg'>Installing Superflex in VS Code</h3>
+          </div>
+
+          <div className='space-y-3 pl-2'>
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>1</span>
+              </div>
+              <p>Open VS Code</p>
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>2</span>
+              </div>
+              <p>
+                Click on the Extensions tab (
+                <kbd className='px-1.5 py-0.5 bg-muted rounded text-xs'>
+                  Ctrl + Shift + X
+                </kbd>{' '}
+                /
+                <kbd className='px-1.5 py-0.5 bg-muted rounded text-xs'>
+                  Cmd + Shift + X
+                </kbd>
+                )
+              </p>
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>3</span>
+              </div>
+              <p>
+                Search for <span className='font-medium'>Superflex</span>
+              </p>
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>4</span>
+              </div>
+              <p>
+                Click <span className='font-medium'>Install</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className='rounded-lg border p-4 space-y-4'>
+          <div className='flex items-center gap-2 font-medium'>
+            <Rocket className='size-5 text-red-300' />
+            <h3 className='text-lg'>Using Superflex</h3>
+          </div>
+
+          <div className='space-y-3 pl-2'>
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>1</span>
+              </div>
+              <p>Open your project in VS Code</p>
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>2</span>
+              </div>
+              <p>
+                Access Superflex from the sidebar or press{' '}
+                <kbd className='px-1.5 py-0.5 bg-muted rounded text-xs'>⌘;</kbd>{' '}
+                to open Superflex
+              </p>
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>3</span>
+              </div>
+              <p>
+                Move Superflex to the secondary sidebar for better multitasking
+              </p>
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>4</span>
+              </div>
+              <p>Start coding at superhuman speed!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className={cn('space-y-6', activeTab !== 'cursor' && 'hidden')}>
+        <YouTubeVideo videoId='pM3YPWC_4Oo' />
+        <div className='rounded-lg border p-4 space-y-4'>
+          <div className='flex items-center gap-2 font-medium'>
+            <Download className='size-5 text-purple-600' />
+            <h3 className='text-lg'>Installing Superflex in Cursor</h3>
+          </div>
+
+          <div className='space-y-3 pl-2'>
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>1</span>
+              </div>
+              <p>Open Cursor</p>
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>2</span>
+              </div>
+              <p>
+                Click on the Extensions tab (
+                <kbd className='px-1.5 py-0.5 bg-muted rounded text-xs'>
+                  Ctrl + Shift + X
+                </kbd>{' '}
+                /
+                <kbd className='px-1.5 py-0.5 bg-muted rounded text-xs'>
+                  Cmd + Shift + X
+                </kbd>
+                )
+              </p>
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>3</span>
+              </div>
+              <p>
+                Search for <span className='font-medium'>Superflex</span>
+              </p>
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>4</span>
+              </div>
+              <p>
+                Click <span className='font-medium'>Install</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className='rounded-lg border p-4 space-y-4'>
+          <div className='flex items-center gap-2 font-medium'>
+            <Zap className='size-5 text-yellow-500' />
+            <h3 className='text-lg'>Using Superflex</h3>
+          </div>
+
+          <div className='space-y-3 pl-2'>
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>1</span>
+              </div>
+              <p>Open your project in Cursor</p>
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>2</span>
+              </div>
+              <p>
+                Access Superflex from the sidebar or press{' '}
+                <kbd className='px-1.5 py-0.5 bg-muted rounded text-xs'>⌘;</kbd>{' '}
+                to open Superflex
+              </p>
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>3</span>
+              </div>
+              <p>
+                Move Superflex to the secondary sidebar for better multitasking
+              </p>
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+                <span className='text-xs font-medium'>4</span>
+              </div>
+              <p>Start coding at superhuman speed!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className='rounded-lg border p-4 space-y-4'>
+        <div className='flex items-center gap-2 font-medium'>
+          <Zap className='size-5 text-yellow-500' />
+          <h3 className='text-lg'>Quick Install Options</h3>
+        </div>
+        <p>Use these options to install Superflex directly:</p>
+
+        <div className='flex flex-wrap gap-3'>
+          <Button
+            variant='outline'
+            onClick={launchVSCodeExtension}
+            disabled={isAttemptingLaunch}
+          >
+            {isAttemptingLaunch && currentApp === 'VS Code' ? (
+              <>
+                <Icons.Spinner className='mr-2 size-4 animate-spin' />
+                <span>Launching...</span>
+              </>
+            ) : (
+              <>
+                <Download className='mr-2 size-4' />
+                <span>Install in VS Code</span>
+              </>
+            )}
+          </Button>
+
+          <Button
+            variant='outline'
+            onClick={launchCursorExtension}
+            disabled={isAttemptingLaunch}
+          >
+            {isAttemptingLaunch && currentApp === 'Cursor' ? (
+              <>
+                <Icons.Spinner className='mr-2 size-4 animate-spin' />
+                <span>Launching...</span>
+              </>
+            ) : (
+              <>
+                <Download className='mr-2 size-4' />
+                <span>Install in Cursor</span>
+              </>
+            )}
+          </Button>
+
+          <Button
+            variant='outline'
+            onClick={openMarketplace}
           >
             <ExternalLink className='mr-2 size-4' />
-            Superflex on VS Code Marketplace
-          </a>
-        </Button>
+            <span>Visit VS Code Marketplace</span>
+          </Button>
+        </div>
+      </div>
+
+      <Dialog
+        open={showFallbackDialog}
+        onOpenChange={setShowFallbackDialog}
+      >
+        <DialogContent className='sm:max-w-md'>
+          <DialogHeader>
+            <DialogTitle>Failed to Launch {currentApp}</DialogTitle>
+            <DialogDescription>
+              We couldn't open {currentApp} automatically. You have the
+              following options:
+            </DialogDescription>
+          </DialogHeader>
+          <div className='flex flex-col gap-4 py-4'>
+            {currentApp === 'VS Code' ? (
+              <Button onClick={launchCursorExtension}>
+                Try in Cursor Instead
+              </Button>
+            ) : (
+              <Button onClick={launchVSCodeExtension}>
+                Try in VS Code Instead
+              </Button>
+            )}
+            <Button
+              variant='outline'
+              onClick={openMarketplace}
+            >
+              Go to VS Code Marketplace
+            </Button>
+          </div>
+          <DialogFooter className='sm:justify-start'>
+            <Button
+              variant='secondary'
+              onClick={() => setShowFallbackDialog(false)}
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <div className='pt-2 flex justify-between items-center'>
+        <p className='text-sm text-muted-foreground'>
+          Once installed, you're ready for the next step! 🚀
+        </p>
         <CompleteButton
           sectionId='start-using-superflex'
           onComplete={() => markAsComplete()}
           isCompleted={isCompleted}
         />
-      </ButtonGroup>
+      </div>
     </div>
   )
 }
@@ -444,31 +851,79 @@ const OnboardingConnectFigma = ({
 }) => {
   return (
     <div className='space-y-6'>
-      <YouTubeVideo videoId='9Xn9qisQRgM' />
       <div className='space-y-4 text-base'>
         <p>
-          Connect your Figma account to Superflex to supercharge your
-          design-to-code workflow:
+          Before diving into Superflex, you need to connect your Figma account.
+          This allows Superflex to access your designs and use them as context
+          for AI-powered assistance.
         </p>
-        <ol className='list-decimal pl-5 space-y-4'>
-          <li>Click on "Connect Figma" in the lower panel</li>
-          <li>
-            When the new tab opens, click Allow to allow Superflex to read your
-            Figma project
-          </li>
-          <li>
-            Now you will be able to copy Figma selections and give them as
-            context to Superflex using the Figma link feature
-          </li>
-        </ol>
       </div>
-      <ButtonGroup>
+
+      <YouTubeVideo videoId='9Xn9qisQRgM' />
+
+      <div className='rounded-lg border p-4 space-y-4'>
+        <div className='flex items-center gap-2 font-medium'>
+          <CheckCircle className='size-5 text-green-600' />
+          <h3 className='text-lg'>How to Connect Figma</h3>
+        </div>
+
+        <div className='space-y-3 pl-2'>
+          <div className='flex items-center gap-3'>
+            <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+              <span className='text-xs font-medium'>1</span>
+            </div>
+            <p>
+              Click <span className='font-medium'>"Connect Figma"</span> in the
+              lower panel of Superflex.
+            </p>
+          </div>
+
+          <div className='flex items-center gap-3'>
+            <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+              <span className='text-xs font-medium'>2</span>
+            </div>
+            <p>
+              A new tab will open—click{' '}
+              <span className='font-medium'>Allow</span> to grant Superflex
+              permission to read your Figma projects.
+            </p>
+          </div>
+
+          <div className='flex items-center gap-3'>
+            <div className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'>
+              <span className='text-xs font-medium'>3</span>
+            </div>
+            <p>
+              Once connected, you'll be able to copy Figma selections and use
+              the Figma link feature to provide design context directly to
+              Superflex.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className='rounded-lg bg-green-50 border border-green-200 p-4 space-y-1 flex items-start gap-3'>
+        <Sparkles className='size-5 text-green-600 mt-0.5 flex-shrink-0' />
+        <div>
+          <p className='font-medium text-green-800'>What you'll unlock</p>
+          <p className='text-sm text-green-700'>
+            With Figma connected, you can convert designs directly to code, get
+            layout suggestions, and ensure your implementation matches the
+            design perfectly.
+          </p>
+        </div>
+      </div>
+
+      <div className='pt-2 flex justify-between items-center'>
+        <p className='text-sm text-muted-foreground'>
+          All set? Click the button to complete onboarding! 🚀
+        </p>
         <CompleteButton
           sectionId='connect-figma'
           onComplete={() => markAsComplete()}
           isCompleted={isCompleted}
         />
-      </ButtonGroup>
+      </div>
     </div>
   )
 }

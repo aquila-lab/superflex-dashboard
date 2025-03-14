@@ -127,14 +127,14 @@ const SuperflexExtensionDropdown = () => {
             className='cursor-pointer'
             disabled={isAttemptingLaunch}
           >
-            <span>Try in VS Code</span>
+            <span>Install in VS Code</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={launchCursorExtension}
             className='cursor-pointer'
             disabled={isAttemptingLaunch}
           >
-            <span>Try in Cursor</span>
+            <span>Install in Cursor</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={openMarketplace}
