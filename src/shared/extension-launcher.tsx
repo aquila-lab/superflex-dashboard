@@ -9,7 +9,7 @@ import {
 } from '@/ui/dialog'
 import { Icons } from '@/ui/icons'
 import { ExternalLink } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export type ExtensionType = 'VS Code' | 'Cursor'
 
@@ -17,12 +17,57 @@ export const useExtensionLauncher = () => {
   const [isAttemptingLaunch, setIsAttemptingLaunch] = useState(false)
   const [showFallbackDialog, setShowFallbackDialog] = useState(false)
   const [currentApp, setCurrentApp] = useState<ExtensionType | ''>('')
+  const [launchStartTime, setLaunchStartTime] = useState(0)
+  const [wasHidden, setWasHidden] = useState(false)
+
+  useEffect(() => {
+    if (!isAttemptingLaunch) {
+      return
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        setWasHidden(true)
+      } else if (document.visibilityState === 'visible' && wasHidden) {
+        setIsAttemptingLaunch(false)
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [isAttemptingLaunch, wasHidden])
+
+  useEffect(() => {
+    if (!isAttemptingLaunch || !launchStartTime) {
+      return
+    }
+
+    const timeoutId = setTimeout(() => {
+      if (
+        isAttemptingLaunch &&
+        document.visibilityState === 'visible' &&
+        !wasHidden
+      ) {
+        setIsAttemptingLaunch(false)
+        setShowFallbackDialog(true)
+      }
+    }, 3000)
+
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  }, [isAttemptingLaunch, launchStartTime, wasHidden])
 
   const launchWithFallback = useCallback(
     (uri: string, appName: ExtensionType) => {
       try {
         setIsAttemptingLaunch(true)
         setCurrentApp(appName)
+        setLaunchStartTime(Date.now())
+        setWasHidden(false)
 
         const a = document.createElement('a')
         a.href = uri
@@ -30,30 +75,6 @@ export const useExtensionLauncher = () => {
         document.body.appendChild(a)
         a.click()
         document.body.removeChild(a)
-
-        const timeoutId = setTimeout(() => {
-          setIsAttemptingLaunch(false)
-
-          if (document.visibilityState === 'visible') {
-            setShowFallbackDialog(true)
-          }
-        }, 2500)
-
-        const handleVisibilityChange = () => {
-          if (document.visibilityState === 'hidden') {
-            clearTimeout(timeoutId)
-            setIsAttemptingLaunch(false)
-          }
-        }
-
-        document.addEventListener('visibilitychange', handleVisibilityChange)
-
-        setTimeout(() => {
-          document.removeEventListener(
-            'visibilitychange',
-            handleVisibilityChange
-          )
-        }, 3000)
       } catch (_error) {
         setIsAttemptingLaunch(false)
         setShowFallbackDialog(true)
@@ -90,7 +111,6 @@ export const useExtensionLauncher = () => {
       return null
     }
 
-    // Extract whether this was an open operation by checking the URL
     const isOpenOperation =
       document.activeElement instanceof HTMLAnchorElement &&
       document.activeElement.href.includes('open=true')
