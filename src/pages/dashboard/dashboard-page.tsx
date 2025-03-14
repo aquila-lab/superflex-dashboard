@@ -201,8 +201,8 @@ const UserInfoCard = () => {
       <CardHeader className='flex flex-row items-center gap-4'>
         <Avatar className='h-14 w-14'>
           <AvatarImage
-            src={user?.picture || ''}
-            alt={user?.username || ''}
+            src={user?.picture || undefined}
+            alt={user?.username || 'User'}
           />
           <AvatarFallback>{usernameInitials}</AvatarFallback>
         </Avatar>

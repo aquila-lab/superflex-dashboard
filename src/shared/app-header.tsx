@@ -41,7 +41,7 @@ const UserAvatar = () => {
     <Avatar>
       <AvatarImage
         key={user?.picture}
-        src={user?.picture || ''}
+        src={user?.picture || undefined}
         alt={user?.username || 'User'}
         width={40}
         height={40}
