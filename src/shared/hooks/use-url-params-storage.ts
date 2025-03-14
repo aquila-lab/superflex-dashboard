@@ -40,9 +40,7 @@ export const useUrlParamsStorage = () => {
 
             sessionStorage.setItem('stateParams', JSON.stringify(stateParams))
           }
-        } catch (error) {
-          console.error('Error parsing state parameter:', error)
-        }
+        } catch (_error) {}
       }
     }
 

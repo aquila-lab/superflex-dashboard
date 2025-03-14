@@ -1,6 +1,6 @@
 import { useAuth } from '@/global/hooks/use-auth'
-import { useUserStore } from '@/store/user-store'
 import { useUrlParamsStorage } from '@/shared/hooks/use-url-params-storage'
+import { useUserStore } from '@/store/user-store'
 import { Loading } from '@/ui/loading'
 import { useEffect, useState } from 'react'
 
