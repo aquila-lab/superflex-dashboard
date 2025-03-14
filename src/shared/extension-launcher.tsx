@@ -21,6 +21,8 @@ export const useExtensionLauncher = () => {
   const [wasHidden, setWasHidden] = useState(false)
   const previousLaunchRef = useRef<string | null>(null)
   const preventDialogChaining = useRef(false)
+  const fallbackActionTakenRef = useRef(false)
+  const isSecondaryLaunchRef = useRef(false)
 
   useEffect(() => {
     if (!isAttemptingLaunch) {
@@ -44,7 +46,12 @@ export const useExtensionLauncher = () => {
   }, [isAttemptingLaunch, wasHidden])
 
   useEffect(() => {
-    if (!isAttemptingLaunch || !launchStartTime) {
+    if (
+      !isAttemptingLaunch ||
+      !launchStartTime ||
+      fallbackActionTakenRef.current ||
+      isSecondaryLaunchRef.current
+    ) {
       return
     }
 
@@ -70,21 +77,32 @@ export const useExtensionLauncher = () => {
   useEffect(() => {
     if (!showFallbackDialog) {
       preventDialogChaining.current = false
+
+      if (!isAttemptingLaunch) {
+        fallbackActionTakenRef.current = false
+        isSecondaryLaunchRef.current = false
+      }
     }
-  }, [showFallbackDialog])
+  }, [showFallbackDialog, isAttemptingLaunch])
 
   const resetLaunchState = useCallback(() => {
     setIsAttemptingLaunch(false)
     setWasHidden(false)
     setShowFallbackDialog(false)
+    fallbackActionTakenRef.current = false
+    isSecondaryLaunchRef.current = false
   }, [])
 
   const launchWithFallback = useCallback(
     (uri: string, appName: ExtensionType) => {
       try {
-        if (showFallbackDialog) {
+        const isFromFallback = showFallbackDialog
+
+        if (isFromFallback) {
           setShowFallbackDialog(false)
           preventDialogChaining.current = true
+          fallbackActionTakenRef.current = true
+          isSecondaryLaunchRef.current = true
         }
 
         const currentLaunch = `${appName}:${uri}`
