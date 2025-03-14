@@ -1,4 +1,5 @@
 import { useAuth } from '@/global/hooks/use-auth'
+import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
 import { useUser } from '@/global/hooks/use-user'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user-store'
@@ -50,9 +51,20 @@ const SuperflexExtensionDropdown = () => {
     isAttemptingLaunch,
     launchVSCodeExtension,
     launchCursorExtension,
+    openVSCodeSuperflex,
+    openCursorSuperflex,
     openMarketplace,
     FallbackDialog
   } = useExtensionLauncher()
+
+  const { isComplete } = useOnboardingStep()
+
+  const dropdownLabel = useMemo(() => {
+    if (isComplete) {
+      return 'Open Superflex'
+    }
+    return 'Install Superflex'
+  }, [isComplete])
 
   return (
     <>
@@ -71,7 +83,7 @@ const SuperflexExtensionDropdown = () => {
             ) : (
               <>
                 <ExternalLink className='size-4' />
-                <span>Install Superflex</span>
+                <span>{dropdownLabel}</span>
                 <ChevronDown className='size-4 ml-1' />
               </>
             )}
@@ -81,31 +93,56 @@ const SuperflexExtensionDropdown = () => {
           align='end'
           className='w-56'
         >
-          <DropdownMenuLabel>Install Options</DropdownMenuLabel>
+          <DropdownMenuLabel>
+            {isComplete ? 'Extension options' : 'Install options'}
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={launchVSCodeExtension}
-            className='cursor-pointer'
-            disabled={isAttemptingLaunch}
-          >
-            <Icons.VSCode className='size-4 text-blue-600' />
-            <span>Install in VS Code</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={launchCursorExtension}
-            className='cursor-pointer'
-            disabled={isAttemptingLaunch}
-          >
-            <Icons.Cursor className='size-4 text-purple-600' />
-            <span>Install in Cursor</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={openMarketplace}
-            className='cursor-pointer'
-          >
-            <ExternalLink className='size-4' />
-            <span>VS Marketplace</span>
-          </DropdownMenuItem>
+          {isComplete ? (
+            <>
+              <DropdownMenuItem
+                onClick={openVSCodeSuperflex}
+                className='cursor-pointer'
+                disabled={isAttemptingLaunch}
+              >
+                <Icons.VSCode className='size-4 text-blue-600' />
+                <span>Open in VS Code</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={openCursorSuperflex}
+                className='cursor-pointer'
+                disabled={isAttemptingLaunch}
+              >
+                <Icons.Cursor className='size-4 text-purple-600' />
+                <span>Open in Cursor</span>
+              </DropdownMenuItem>
+            </>
+          ) : (
+            <>
+              <DropdownMenuItem
+                onClick={launchVSCodeExtension}
+                className='cursor-pointer'
+                disabled={isAttemptingLaunch}
+              >
+                <Icons.VSCode className='size-4 text-blue-600' />
+                <span>Install in VS Code</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={launchCursorExtension}
+                className='cursor-pointer'
+                disabled={isAttemptingLaunch}
+              >
+                <Icons.Cursor className='size-4 text-purple-600' />
+                <span>Install in Cursor</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={openMarketplace}
+                className='cursor-pointer'
+              >
+                <ExternalLink className='size-4' />
+                <span>VS Marketplace</span>
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 

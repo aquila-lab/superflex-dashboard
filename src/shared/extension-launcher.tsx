@@ -70,6 +70,14 @@ export const useExtensionLauncher = () => {
     launchWithFallback('cursor:extension/aquilalabs.superflex', 'Cursor')
   }, [launchWithFallback])
 
+  const openVSCodeSuperflex = useCallback(() => {
+    launchWithFallback('vscode://aquilalabs.superflex?open=true', 'VS Code')
+  }, [launchWithFallback])
+
+  const openCursorSuperflex = useCallback(() => {
+    launchWithFallback('cursor://aquilalabs.superflex?open=true', 'Cursor')
+  }, [launchWithFallback])
+
   const openMarketplace = useCallback(() => {
     window.open(
       'https://marketplace.visualstudio.com/items?itemName=aquilalabs.superflex',
@@ -82,6 +90,14 @@ export const useExtensionLauncher = () => {
       return null
     }
 
+    // Extract whether this was an open operation by checking the URL
+    const isOpenOperation =
+      document.activeElement instanceof HTMLAnchorElement &&
+      document.activeElement.href.includes('open=true')
+
+    const actionText = isOpenOperation ? 'Open' : 'Launch'
+    const actionFailedText = isOpenOperation ? 'open' : 'launch'
+
     return (
       <Dialog
         open={showFallbackDialog}
@@ -89,16 +105,20 @@ export const useExtensionLauncher = () => {
       >
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
-            <DialogTitle>Failed to Launch {currentApp}</DialogTitle>
+            <DialogTitle>
+              Failed to {actionText} {currentApp}
+            </DialogTitle>
             <DialogDescription>
-              We couldn't open {currentApp} automatically. You have the
-              following options:
+              We couldn't {actionFailedText} {currentApp} automatically. You
+              have the following options:
             </DialogDescription>
           </DialogHeader>
           <div className='flex flex-col gap-4 py-4'>
             {currentApp === 'VS Code' ? (
               <Button
-                onClick={launchCursorExtension}
+                onClick={
+                  isOpenOperation ? openCursorSuperflex : launchCursorExtension
+                }
                 className='flex items-center gap-2'
                 variant='outline'
               >
@@ -107,21 +127,25 @@ export const useExtensionLauncher = () => {
               </Button>
             ) : (
               <Button
-                onClick={launchVSCodeExtension}
+                onClick={
+                  isOpenOperation ? openVSCodeSuperflex : launchVSCodeExtension
+                }
                 className='flex items-center gap-2'
               >
                 <Icons.VSCode className='size-4' />
                 Try in VS Code Instead
               </Button>
             )}
-            <Button
-              variant='outline'
-              onClick={openMarketplace}
-              className='flex items-center gap-2'
-            >
-              <ExternalLink className='size-4' />
-              Go to VS Code Marketplace
-            </Button>
+            {!isOpenOperation && (
+              <Button
+                variant='outline'
+                onClick={openMarketplace}
+                className='flex items-center gap-2'
+              >
+                <ExternalLink className='size-4' />
+                Go to VS Code Marketplace
+              </Button>
+            )}
           </div>
           <DialogFooter className='sm:justify-start'>
             <Button
@@ -139,6 +163,8 @@ export const useExtensionLauncher = () => {
     showFallbackDialog,
     launchVSCodeExtension,
     launchCursorExtension,
+    openVSCodeSuperflex,
+    openCursorSuperflex,
     openMarketplace
   ])
 
@@ -147,6 +173,8 @@ export const useExtensionLauncher = () => {
     currentApp,
     launchVSCodeExtension,
     launchCursorExtension,
+    openVSCodeSuperflex,
+    openCursorSuperflex,
     openMarketplace,
     FallbackDialog
   }
