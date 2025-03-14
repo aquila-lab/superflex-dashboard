@@ -4,7 +4,7 @@ import { Button } from '@/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
 import { Icons } from '@/ui/icons'
 import { Check, LogOut, Pen } from 'lucide-react'
-import { useCallback, useMemo, type HTMLAttributes } from 'react'
+import { type HTMLAttributes, useCallback, useMemo } from 'react'
 
 export type OnboardingStep =
   | 'register'

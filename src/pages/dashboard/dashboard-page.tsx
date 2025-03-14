@@ -1,8 +1,8 @@
 import { useUser } from '@/global/hooks/use-user'
+import { buildVSCodeRedirect, useAuthExtensionParams } from '@/lib/auth-utils'
 import { API_BASE_URL } from '@/lib/constants'
 import { type BillingPeriod, cn, formatDate } from '@/lib/utils'
 import { planCards } from '@/lib/utils'
-import { buildVSCodeRedirect, useAuthExtensionParams } from '@/lib/auth-utils'
 import { AppFooter } from '@/shared/app-footer'
 import { AppHeader } from '@/shared/app-header'
 import { PlanCard } from '@/shared/plan-card'
@@ -44,7 +44,7 @@ import {
   TooltipTrigger
 } from '@/ui/tooltip'
 import { Pen } from 'lucide-react'
-import { useCallback, useMemo, useState, useEffect } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { usePlanSelection } from '../select-plan/use-plan-selection'

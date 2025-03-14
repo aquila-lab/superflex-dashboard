@@ -127,8 +127,8 @@ export const AppFooter = () => {
               href='mailto:boris@superflex.ai'
               className='text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1'
             >
-              <Mail className='size-3' />
               <span>Support</span>
+              <Mail className='size-3' />
             </a>
           </FooterLinkGroup>
 

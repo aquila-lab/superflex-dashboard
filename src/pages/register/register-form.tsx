@@ -1,7 +1,7 @@
 import { useAuth } from '@/global/hooks/use-auth'
+import { useAuthExtensionParams } from '@/lib/auth-utils'
 import { API_BASE_URL } from '@/lib/constants'
 import { cn } from '@/lib/utils'
-import { useAuthExtensionParams } from '@/lib/auth-utils'
 import { useAuthStore } from '@/store/auth-store'
 import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'

@@ -4,6 +4,7 @@ import { API_BASE_URL } from '@/lib/constants'
 import { cn, onboardingStepMapping } from '@/lib/utils'
 import { AppFooter } from '@/shared/app-footer'
 import { AppHeader } from '@/shared/app-header'
+import { useExtensionLauncher } from '@/shared/extension-launcher'
 import { useAuthStore } from '@/store/auth-store'
 import { useUserStore } from '@/store/user-store'
 import {
@@ -27,14 +28,6 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/ui/dialog'
 import { Icons } from '@/ui/icons'
 
 type OnboardingSection = {
@@ -380,7 +373,7 @@ const OnboardingDownloadVSCode = ({
       <div className='grid gap-6'>
         <div className='rounded-lg border p-4 space-y-3'>
           <div className='flex items-center gap-2 font-medium'>
-            <Download className='size-5 text-blue-600' />
+            <Icons.VSCode className='size-5 text-blue-600' />
             <h3 className='text-lg'>Visual Studio Code</h3>
           </div>
           <p>
@@ -417,7 +410,7 @@ const OnboardingDownloadVSCode = ({
 
         <div className='rounded-lg border p-4 space-y-3'>
           <div className='flex items-center gap-2 font-medium'>
-            <Sparkles className='size-5 text-purple-600' />
+            <Icons.Cursor className='size-5 text-purple-600' />
             <h3 className='text-lg'>Cursor</h3>
           </div>
           <p>
@@ -464,44 +457,14 @@ const OnboardingStartUsingSuperflex = ({
   markAsComplete: () => void
 }) => {
   const [activeTab, setActiveTab] = useState<'vscode' | 'cursor'>('vscode')
-  const [isAttemptingLaunch, setIsAttemptingLaunch] = useState(false)
-  const [showFallbackDialog, setShowFallbackDialog] = useState(false)
-  const [currentApp, setCurrentApp] = useState<string>('')
-
-  const launchWithFallback = useCallback((uri: string, appName: string) => {
-    try {
-      setIsAttemptingLaunch(true)
-      setCurrentApp(appName)
-
-      window.location.href = uri
-
-      setTimeout(() => {
-        setIsAttemptingLaunch(false)
-
-        if (document.visibilityState === 'visible') {
-          setShowFallbackDialog(true)
-        }
-      }, 1000)
-    } catch (_error) {
-      setIsAttemptingLaunch(false)
-      setShowFallbackDialog(true)
-    }
-  }, [])
-
-  const launchVSCodeExtension = useCallback(() => {
-    launchWithFallback('vscode:extension/aquilalabs.superflex', 'VS Code')
-  }, [launchWithFallback])
-
-  const launchCursorExtension = useCallback(() => {
-    launchWithFallback('cursor:extension/aquilalabs.superflex', 'Cursor')
-  }, [launchWithFallback])
-
-  const openMarketplace = useCallback(() => {
-    window.open(
-      'https://marketplace.visualstudio.com/items?itemName=aquilalabs.superflex',
-      '_blank'
-    )
-  }, [])
+  const {
+    isAttemptingLaunch,
+    currentApp,
+    launchVSCodeExtension,
+    launchCursorExtension,
+    openMarketplace,
+    FallbackDialog
+  } = useExtensionLauncher()
 
   return (
     <div className='space-y-6'>
@@ -518,24 +481,26 @@ const OnboardingStartUsingSuperflex = ({
           type='button'
           onClick={() => setActiveTab('vscode')}
           className={cn(
-            'px-4 py-2 font-medium text-sm transition-colors cursor-pointer',
+            'px-4 py-2 font-medium text-sm transition-colors cursor-pointer flex items-center gap-2',
             activeTab === 'vscode'
               ? 'border-b-2 border-primary text-primary'
               : 'text-muted-foreground hover:text-foreground'
           )}
         >
+          <Icons.VSCode className='size-4' />
           VS Code
         </button>
         <button
           type='button'
           onClick={() => setActiveTab('cursor')}
           className={cn(
-            'px-4 py-2 font-medium text-sm transition-colors cursor-pointer',
+            'px-4 py-2 font-medium text-sm transition-colors cursor-pointer flex items-center gap-2',
             activeTab === 'cursor'
               ? 'border-b-2 border-primary text-primary'
               : 'text-muted-foreground hover:text-foreground'
           )}
         >
+          <Icons.Cursor className='size-4' />
           Cursor
         </button>
       </div>
@@ -544,7 +509,7 @@ const OnboardingStartUsingSuperflex = ({
         <YouTubeVideo videoId='wB7Um6n9bBA' />
         <div className='rounded-lg border p-4 space-y-4'>
           <div className='flex items-center gap-2 font-medium'>
-            <Download className='size-5 text-blue-600' />
+            <Icons.VSCode className='size-5 text-blue-600' />
             <h3 className='text-lg'>Installing Superflex in VS Code</h3>
           </div>
 
@@ -612,9 +577,15 @@ const OnboardingStartUsingSuperflex = ({
                 <span className='text-xs font-medium'>2</span>
               </div>
               <p>
-                Access Superflex from the sidebar or press{' '}
-                <kbd className='px-1.5 py-0.5 bg-muted rounded text-xs'>⌘;</kbd>{' '}
-                to open Superflex
+                Access Superflex from the sidebar or press (
+                <kbd className='px-1.5 py-0.5 bg-muted rounded text-xs'>
+                  Ctrl + ;
+                </kbd>{' '}
+                /
+                <kbd className='px-1.5 py-0.5 bg-muted rounded text-xs'>
+                  Cmd + ;
+                </kbd>
+                ) to open Superflex
               </p>
             </div>
 
@@ -641,7 +612,7 @@ const OnboardingStartUsingSuperflex = ({
         <YouTubeVideo videoId='pM3YPWC_4Oo' />
         <div className='rounded-lg border p-4 space-y-4'>
           <div className='flex items-center gap-2 font-medium'>
-            <Download className='size-5 text-purple-600' />
+            <Icons.Cursor className='size-5 text-purple-600' />
             <h3 className='text-lg'>Installing Superflex in Cursor</h3>
           </div>
 
@@ -692,7 +663,7 @@ const OnboardingStartUsingSuperflex = ({
 
         <div className='rounded-lg border p-4 space-y-4'>
           <div className='flex items-center gap-2 font-medium'>
-            <Zap className='size-5 text-yellow-500' />
+            <Rocket className='size-5 text-red-300' />
             <h3 className='text-lg'>Using Superflex</h3>
           </div>
 
@@ -746,15 +717,16 @@ const OnboardingStartUsingSuperflex = ({
             variant='outline'
             onClick={launchVSCodeExtension}
             disabled={isAttemptingLaunch}
+            className='flex items-center'
           >
             {isAttemptingLaunch && currentApp === 'VS Code' ? (
               <>
-                <Icons.Spinner className='mr-2 size-4 animate-spin' />
+                <Icons.Spinner className='size-4 animate-spin' />
                 <span>Launching...</span>
               </>
             ) : (
               <>
-                <Download className='mr-2 size-4' />
+                <Icons.VSCode className='size-4 text-blue-600' />
                 <span>Install in VS Code</span>
               </>
             )}
@@ -764,15 +736,16 @@ const OnboardingStartUsingSuperflex = ({
             variant='outline'
             onClick={launchCursorExtension}
             disabled={isAttemptingLaunch}
+            className='flex items-center'
           >
             {isAttemptingLaunch && currentApp === 'Cursor' ? (
               <>
-                <Icons.Spinner className='mr-2 size-4 animate-spin' />
+                <Icons.Spinner className='size-4 animate-spin' />
                 <span>Launching...</span>
               </>
             ) : (
               <>
-                <Download className='mr-2 size-4' />
+                <Icons.Cursor className='size-4 text-purple-600' />
                 <span>Install in Cursor</span>
               </>
             )}
@@ -782,51 +755,13 @@ const OnboardingStartUsingSuperflex = ({
             variant='outline'
             onClick={openMarketplace}
           >
-            <ExternalLink className='mr-2 size-4' />
+            <ExternalLink className='size-4' />
             <span>Visit VS Code Marketplace</span>
           </Button>
         </div>
       </div>
 
-      <Dialog
-        open={showFallbackDialog}
-        onOpenChange={setShowFallbackDialog}
-      >
-        <DialogContent className='sm:max-w-md'>
-          <DialogHeader>
-            <DialogTitle>Failed to Launch {currentApp}</DialogTitle>
-            <DialogDescription>
-              We couldn't open {currentApp} automatically. You have the
-              following options:
-            </DialogDescription>
-          </DialogHeader>
-          <div className='flex flex-col gap-4 py-4'>
-            {currentApp === 'VS Code' ? (
-              <Button onClick={launchCursorExtension}>
-                Try in Cursor Instead
-              </Button>
-            ) : (
-              <Button onClick={launchVSCodeExtension}>
-                Try in VS Code Instead
-              </Button>
-            )}
-            <Button
-              variant='outline'
-              onClick={openMarketplace}
-            >
-              Go to VS Code Marketplace
-            </Button>
-          </div>
-          <DialogFooter className='sm:justify-start'>
-            <Button
-              variant='secondary'
-              onClick={() => setShowFallbackDialog(false)}
-            >
-              Cancel
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <FallbackDialog />
 
       <div className='pt-2 flex justify-between items-center'>
         <p className='text-sm text-muted-foreground'>
