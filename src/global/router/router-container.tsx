@@ -1,5 +1,6 @@
 import { useAuth } from '@/global/hooks/use-auth'
 import { useUserStore } from '@/store/user-store'
+import { useUrlParamsStorage } from '@/shared/hooks/use-url-params-storage'
 import { Loading } from '@/ui/loading'
 import { useEffect, useState } from 'react'
 
@@ -8,6 +9,8 @@ interface RouterContainerProps {
 }
 
 export const RouterContainer = ({ children }: RouterContainerProps) => {
+  useUrlParamsStorage()
+
   const { isLoading: authLoading, token } = useAuth()
   const { isLoading: userLoading } = useUserStore()
   const [isReady, setIsReady] = useState(false)

@@ -1,10 +1,7 @@
 import { AuthWallpaper } from '@/shared/auth-wallpaper'
 import { LoginForm } from './login-form'
-import { useUrlParamsStorage } from '@/shared/hooks/use-url-params-storage'
 
 export const LoginPage = () => {
-  useUrlParamsStorage()
-
   return (
     <div className='grid min-h-svh lg:grid-cols-2'>
       <AuthWallpaper />
