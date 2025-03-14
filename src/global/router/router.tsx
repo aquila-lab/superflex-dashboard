@@ -12,7 +12,6 @@ import { Navigate } from 'react-router-dom'
 import { Route, Routes } from 'react-router-dom'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthRoute } from './auth-route'
-import { PaymentSuccessRoute } from './payment-success-route'
 import { ProtectedRoute } from './protected-route'
 import { RouterContainer } from './router-container'
 
@@ -61,9 +60,6 @@ export const Router = () => {
               path='/dashboard'
               element={<DashboardPage />}
             />
-          </Route>
-
-          <Route element={<PaymentSuccessRoute />}>
             <Route
               path='/success'
               element={<SuccessPage />}

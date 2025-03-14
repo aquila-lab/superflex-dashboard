@@ -17,6 +17,41 @@ export const ProtectedRoute = () => {
       }
     }
 
+    if (location.pathname !== '/success') {
+      sessionStorage.removeItem('redirected')
+    }
+
+    const searchParams = new URLSearchParams(location.search)
+    const success = searchParams.get('type')
+
+    if (
+      location.pathname === '/success' &&
+      (success === 'extension-login' ||
+        success === 'payment' ||
+        success === 'figma')
+    ) {
+      return {
+        path: location.pathname + location.search,
+        shouldRedirect: false
+      }
+    }
+
+    if (isAuthenticated) {
+      const redirected = sessionStorage.getItem('redirected')
+
+      if (!redirected && currentStep >= 2) {
+        const decodedState = sessionStorage.getItem('decodedState')
+        sessionStorage.setItem('redirected', 'true')
+
+        if (decodedState) {
+          return {
+            path: '/success?type=extension-login',
+            shouldRedirect: true
+          }
+        }
+      }
+    }
+
     const pathMapping: Record<number, string> = {
       0: '/select-plan',
       1: '/user-info',
@@ -44,7 +79,7 @@ export const ProtectedRoute = () => {
       path: correctPath,
       shouldRedirect: !isOnCorrectPath
     }
-  }, [isAuthenticated, currentStep, location.pathname])
+  }, [isAuthenticated, currentStep, location.pathname, location.search])
 
   if (isLoading) {
     return <Loading size='lg' />

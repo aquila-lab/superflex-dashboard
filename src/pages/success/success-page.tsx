@@ -1,12 +1,15 @@
 import { OnboardingHeader } from '@/shared/onboarding-header'
 import confetti from 'canvas-confetti'
-import { CreditCard, ExternalLink, FileCode, Home } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { CreditCard, ExternalLink, FileCode } from 'lucide-react'
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Button } from '@/ui/button'
 import { cn } from '@/lib/utils'
 import { AppHeader } from '@/shared/app-header'
+import { API_BASE_URL } from '@/lib/constants'
+import { type UserSubscription, useUserStore } from '@/store/user-store'
+import { useAuthStore } from '@/store/auth-store'
 
 type SuccessType = 'figma' | 'payment' | 'extension-login'
 
@@ -24,6 +27,8 @@ type SuccessConfig = {
 const useSuccessConfig = () => {
   const [searchParams] = useSearchParams()
   const successType = searchParams.get('type') as SuccessType | null
+  const { getAuthHeader } = useAuthStore()
+  const updateUser = useUserStore(state => state.updateUser)
 
   const successConfigs = useMemo<Record<SuccessType, SuccessConfig>>(() => {
     return {
@@ -61,6 +66,73 @@ const useSuccessConfig = () => {
     }
   }, [])
 
+  useEffect(() => {
+    const handleExtensionLogin = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/billing/subscription`, {
+          headers: {
+            ...getAuthHeader()
+          }
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch subscription')
+        }
+
+        const subscriptionData: UserSubscription = await response.json()
+
+        if (subscriptionData.plan?.name !== 'Free') {
+          try {
+            const response = await fetch(`${API_BASE_URL}/user`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                ...getAuthHeader()
+              },
+              body: JSON.stringify({
+                onboarding_step: 1
+              })
+            })
+
+            if (!response.ok) {
+              const errorData = await response.json()
+              throw new Error(
+                errorData.message || 'Failed to update user information'
+              )
+            }
+
+            updateUser({ onboarding_step: 1 })
+          } catch (error) {
+            toast.error(
+              error instanceof Error
+                ? error.message
+                : 'An unexpected error occurred'
+            )
+          }
+        }
+      } catch (error) {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred'
+        )
+      }
+    }
+
+    if (successType === 'extension-login') {
+      const decodedState = sessionStorage.getItem('decodedState')
+
+      if (decodedState) {
+        window.location.href = decodedState
+        sessionStorage.clear()
+      }
+    }
+
+    if (successType === 'payment') {
+      handleExtensionLogin()
+    }
+  }, [successType, getAuthHeader, updateUser])
+
   const config = useMemo(() => {
     if (!successType || !successConfigs[successType]) {
       return successConfigs.payment
@@ -88,15 +160,6 @@ const SuccessIcon = ({ children }: { children: React.ReactNode }) => {
 
 const SuccessContent = () => {
   const config = useSuccessConfig()
-  const [searchParams] = useSearchParams()
-  const redirectUrl = useMemo(
-    () => searchParams.get('redirect') || '/dashboard',
-    [searchParams]
-  )
-  const showDashboardLink = useMemo(
-    () => redirectUrl !== '/dashboard',
-    [redirectUrl]
-  )
 
   return (
     <div className='max-w-md w-full mx-auto p-4'>
@@ -112,27 +175,15 @@ const SuccessContent = () => {
 
         <div className='flex flex-col w-full gap-3'>
           <Button asChild>
-            <Link to={redirectUrl}>{config.ctaText}</Link>
+            <Link to='/'>{config.ctaText}</Link>
           </Button>
-
-          {showDashboardLink && (
-            <Button
-              variant='outline'
-              asChild
-            >
-              <Link to='/dashboard'>
-                <Home className='mr-2 h-4 w-4' />
-                Go to Dashboard
-              </Link>
-            </Button>
-          )}
         </div>
       </div>
     </div>
   )
 }
 
-export const SuccessPage = () => {
+export const SuccessPage = memo(() => {
   const config = useSuccessConfig()
   const hasTriggeredNotification = useRef(false)
   const particleColors = useMemo(() => ['#10b981', '#3b82f6', '#8b5cf6'], [])
@@ -169,4 +220,4 @@ export const SuccessPage = () => {
       </main>
     </div>
   )
-}
+})

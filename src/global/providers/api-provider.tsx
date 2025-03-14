@@ -167,6 +167,8 @@ export const ApiProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true)
       clearUser()
       clearToken()
+      sessionStorage.clear()
+      localStorage.clear()
     } catch (error) {
       setError(
         error instanceof Error ? error.message : 'An unexpected error occurred'

@@ -23,7 +23,6 @@ export const useUrlParamsStorage = () => {
 
         sessionStorage.setItem('encodedState', encodedState)
         sessionStorage.setItem('decodedState', decodedState)
-        sessionStorage.setItem('redirected', 'false')
 
         try {
           if (decodedState.includes('?') && decodedState.includes('=')) {
