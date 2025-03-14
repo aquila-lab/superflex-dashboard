@@ -123,6 +123,11 @@ export const AppFooter = () => {
               href='/dashboard/onboarding'
               label='Setup Superflex'
             />
+            <FooterLink
+              href='https://forms.gle/aUZjzeUzLnrmJvdR7'
+              label='Leave Feedback'
+              isExternal
+            />
             <a
               href='mailto:boris@superflex.ai'
               className='text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1'
