@@ -9,7 +9,7 @@ import {
 } from '@/ui/dialog'
 import { Icons } from '@/ui/icons'
 import { ExternalLink } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export type ExtensionType = 'VS Code' | 'Cursor'
 
@@ -19,6 +19,8 @@ export const useExtensionLauncher = () => {
   const [currentApp, setCurrentApp] = useState<ExtensionType | ''>('')
   const [launchStartTime, setLaunchStartTime] = useState(0)
   const [wasHidden, setWasHidden] = useState(false)
+  const previousLaunchRef = useRef<string | null>(null)
+  const preventDialogChaining = useRef(false)
 
   useEffect(() => {
     if (!isAttemptingLaunch) {
@@ -30,6 +32,7 @@ export const useExtensionLauncher = () => {
         setWasHidden(true)
       } else if (document.visibilityState === 'visible' && wasHidden) {
         setIsAttemptingLaunch(false)
+        preventDialogChaining.current = false
       }
     }
 
@@ -49,10 +52,13 @@ export const useExtensionLauncher = () => {
       if (
         isAttemptingLaunch &&
         document.visibilityState === 'visible' &&
-        !wasHidden
+        !wasHidden &&
+        !preventDialogChaining.current
       ) {
         setIsAttemptingLaunch(false)
         setShowFallbackDialog(true)
+      } else {
+        preventDialogChaining.current = false
       }
     }, 3000)
 
@@ -61,9 +67,34 @@ export const useExtensionLauncher = () => {
     }
   }, [isAttemptingLaunch, launchStartTime, wasHidden])
 
+  useEffect(() => {
+    if (!showFallbackDialog) {
+      preventDialogChaining.current = false
+    }
+  }, [showFallbackDialog])
+
+  const resetLaunchState = useCallback(() => {
+    setIsAttemptingLaunch(false)
+    setWasHidden(false)
+    setShowFallbackDialog(false)
+  }, [])
+
   const launchWithFallback = useCallback(
     (uri: string, appName: ExtensionType) => {
       try {
+        if (showFallbackDialog) {
+          setShowFallbackDialog(false)
+          preventDialogChaining.current = true
+        }
+
+        const currentLaunch = `${appName}:${uri}`
+        const isRepeatedLaunch = previousLaunchRef.current === currentLaunch
+
+        if (isRepeatedLaunch && Date.now() - launchStartTime < 5000) {
+          preventDialogChaining.current = true
+        }
+
+        previousLaunchRef.current = currentLaunch
         setIsAttemptingLaunch(true)
         setCurrentApp(appName)
         setLaunchStartTime(Date.now())
@@ -76,11 +107,11 @@ export const useExtensionLauncher = () => {
         a.click()
         document.body.removeChild(a)
       } catch (_error) {
-        setIsAttemptingLaunch(false)
+        resetLaunchState()
         setShowFallbackDialog(true)
       }
     },
-    []
+    [launchStartTime, resetLaunchState, showFallbackDialog]
   )
 
   const launchVSCodeExtension = useCallback(() => {
@@ -121,7 +152,13 @@ export const useExtensionLauncher = () => {
     return (
       <Dialog
         open={showFallbackDialog}
-        onOpenChange={setShowFallbackDialog}
+        onOpenChange={open => {
+          if (!open) {
+            resetLaunchState()
+          } else {
+            setShowFallbackDialog(open)
+          }
+        }}
       >
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
@@ -170,7 +207,7 @@ export const useExtensionLauncher = () => {
           <DialogFooter className='sm:justify-start'>
             <Button
               variant='secondary'
-              onClick={() => setShowFallbackDialog(false)}
+              onClick={() => resetLaunchState()}
             >
               Cancel
             </Button>
@@ -185,7 +222,8 @@ export const useExtensionLauncher = () => {
     launchCursorExtension,
     openVSCodeSuperflex,
     openCursorSuperflex,
-    openMarketplace
+    openMarketplace,
+    resetLaunchState
   ])
 
   return {
