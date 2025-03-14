@@ -1,5 +1,4 @@
 import { useAuth } from '@/global/hooks/use-auth'
-import { useAuthExtensionParams } from '@/lib/auth-utils'
 import { API_BASE_URL } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth-store'
@@ -25,7 +24,6 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchParams] = useSearchParams()
-  const { appendExtensionParams } = useAuthExtensionParams()
 
   const navigate = useNavigate()
   const { googleLogin } = useAuth()
@@ -60,7 +58,7 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
 
         if (authToken) {
           toast.success('Logged in with Google successfully')
-          navigate(appendExtensionParams('/select-plan'), { replace: true })
+          navigate('/select-plan', { replace: true })
         }
       } catch (_error) {
         toast.error('Failed to login with Google. Please try again.')
@@ -68,7 +66,7 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
         setIsSubmitting(false)
       }
     },
-    [googleLogin, navigate, appendExtensionParams]
+    [googleLogin, navigate]
   )
 
   useEffect(() => {
@@ -99,7 +97,7 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
           toast.success('Logged in successfully')
           // Delay navigation slightly to allow the user to see the success message
           setTimeout(() => {
-            navigate(appendExtensionParams('/select-plan'))
+            navigate('/select-plan')
           }, 500)
         }
       } catch (_error) {
@@ -111,15 +109,7 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
         setIsSubmitting(false)
       }
     },
-    [
-      email,
-      password,
-      isFormValid,
-      isSubmitting,
-      handleLoginWithAuth,
-      navigate,
-      appendExtensionParams
-    ]
+    [email, password, isFormValid, isSubmitting, handleLoginWithAuth, navigate]
   )
 
   const handleGoogleLogin = useGoogleLogin({
@@ -211,7 +201,7 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
       </div>
       <div className='text-center text-sm'>
         Don&apos;t have an account?{' '}
-        <Link to={appendExtensionParams('/register')}>
+        <Link to='/register'>
           <div className='underline underline-offset-4'>Sign up</div>
         </Link>
       </div>

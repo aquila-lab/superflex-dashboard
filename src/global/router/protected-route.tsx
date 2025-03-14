@@ -1,6 +1,5 @@
 import { useAuth } from '@/global/hooks/use-auth'
 import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
-import { useAuthExtensionParams } from '@/lib/auth-utils'
 import { Loading } from '@/ui/loading'
 import { useMemo } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
@@ -9,12 +8,11 @@ export const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = useAuth()
   const { currentStep } = useOnboardingStep()
   const location = useLocation()
-  const { appendExtensionParams } = useAuthExtensionParams()
 
   const redirectInfo = useMemo(() => {
     if (!isAuthenticated) {
       return {
-        path: appendExtensionParams('/login'),
+        path: '/login',
         shouldRedirect: true
       }
     }
@@ -35,7 +33,7 @@ export const ProtectedRoute = () => {
       [2, 3, 4, 5].includes(currentStep)
     ) {
       return {
-        path: appendExtensionParams(correctPath),
+        path: correctPath,
         shouldRedirect: false
       }
     }
@@ -43,10 +41,10 @@ export const ProtectedRoute = () => {
     const isOnCorrectPath = location.pathname === correctPath
 
     return {
-      path: appendExtensionParams(correctPath),
+      path: correctPath,
       shouldRedirect: !isOnCorrectPath
     }
-  }, [isAuthenticated, currentStep, location.pathname, appendExtensionParams])
+  }, [isAuthenticated, currentStep, location.pathname])
 
   if (isLoading) {
     return <Loading size='lg' />

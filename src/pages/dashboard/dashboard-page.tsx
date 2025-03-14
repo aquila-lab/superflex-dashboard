@@ -1,5 +1,4 @@
 import { useUser } from '@/global/hooks/use-user'
-import { buildVSCodeRedirect, useAuthExtensionParams } from '@/lib/auth-utils'
 import { API_BASE_URL } from '@/lib/constants'
 import { type BillingPeriod, cn, formatDate } from '@/lib/utils'
 import { planCards } from '@/lib/utils'
@@ -44,7 +43,7 @@ import {
   TooltipTrigger
 } from '@/ui/tooltip'
 import { Pen } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { usePlanSelection } from '../select-plan/use-plan-selection'
@@ -467,38 +466,10 @@ const PlanSelectionDrawer = ({
 }
 
 export const DashboardPage = () => {
-  const { state, hasExtensionParams } = useAuthExtensionParams()
-  const { token } = useAuthStore()
-
-  // Effect to redirect back to VS Code extension if parameters are present
-  useEffect(() => {
-    if (hasExtensionParams && state) {
-      const redirectUrl = buildVSCodeRedirect(state, token)
-
-      if (redirectUrl) {
-        // Short delay to allow the dashboard to briefly render before redirecting
-        const redirectTimer = setTimeout(() => {
-          // Redirect back to VSCode extension
-          window.location.href = redirectUrl
-        }, 1000)
-
-        return () => clearTimeout(redirectTimer)
-      }
-    }
-  }, [hasExtensionParams, state, token])
-
   return (
     <div className='flex flex-col min-h-svh'>
       <AppHeader />
       <div className='flex-1 p-6 container mx-auto max-w-6xl flex flex-col gap-8'>
-        {hasExtensionParams && (
-          <div className='bg-primary/10 rounded-md p-4 mb-4'>
-            <p className='text-sm'>
-              Redirecting back to your VSCode extension...
-            </p>
-          </div>
-        )}
-
         <div>
           <h1 className='text-3xl font-bold mb-2'>Account Settings</h1>
           <p className='text-muted-foreground max-w-2xl'>

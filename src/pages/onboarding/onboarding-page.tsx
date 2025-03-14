@@ -1,5 +1,4 @@
 import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
-import { useAuthExtensionParams } from '@/lib/auth-utils'
 import { API_BASE_URL } from '@/lib/constants'
 import { cn, onboardingStepMapping } from '@/lib/utils'
 import { AppFooter } from '@/shared/app-footer'
@@ -14,21 +13,21 @@ import {
   AccordionTrigger
 } from '@/ui/accordion'
 import { Button } from '@/ui/button'
+import { Icons } from '@/ui/icons'
 import {
+  AlertTriangle,
   Check,
   CheckCircle,
   Download,
   ExternalLink,
   Lock,
+  Rocket,
   Sparkles,
-  Zap,
-  AlertTriangle,
-  Rocket
+  Zap
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import { Icons } from '@/ui/icons'
 
 type OnboardingSection = {
   id: string
@@ -73,7 +72,6 @@ export const OnboardingPage = () => {
   const { user, updateUser } = useUserStore()
   const { getAuthHeader } = useAuthStore()
   const { currentStep, isStepCompleted } = useOnboardingStep()
-  const { appendExtensionParams } = useAuthExtensionParams()
 
   const completeStepNumber = useMemo(() => {
     return onboardingStepMapping.steps.length - 1
@@ -320,7 +318,7 @@ export const OnboardingPage = () => {
                         <OnboardingConnectFigma
                           isCompleted={section.completed}
                           markAsComplete={() => {
-                            navigate(appendExtensionParams('/dashboard'))
+                            navigate('/dashboard')
                             markSectionCompleted('connect-figma', true)
                           }}
                         />
