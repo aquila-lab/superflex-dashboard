@@ -3,29 +3,15 @@ import { API_BASE_URL } from '@/lib/constants'
 import type { PlanId } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth-store'
 import { useUserStore } from '@/store/user-store'
-import confetti from 'canvas-confetti'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 export const usePlanSelection = () => {
   const navigate = useNavigate()
-  const location = useLocation()
   const { user } = useUser()
   const { getAuthHeader } = useAuthStore()
   const { updateUser } = useUserStore()
-
-  const searchParams = useMemo(
-    () => new URLSearchParams(location.search),
-    [location.search]
-  )
-
-  const isPaymentSuccess = useMemo(
-    () => searchParams.get('payment') === 'success',
-    [searchParams]
-  )
-
-  const successToastShown = useRef(false)
 
   const updateOnboardingStep = useCallback(async () => {
     if (!user) {
@@ -49,28 +35,13 @@ export const usePlanSelection = () => {
       }
 
       updateUser({ onboarding_step: 1 })
+      toast.success('Free plan successfully activated!')
+
       navigate('/user-info')
     } catch (_error) {
       toast.error('Failed to update your profile. Please try again.')
     }
   }, [user, getAuthHeader, updateUser, navigate])
-
-  const handleConfetti = useCallback(() => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    })
-  }, [])
-
-  useEffect(() => {
-    if (isPaymentSuccess && !successToastShown.current) {
-      successToastShown.current = true
-      handleConfetti()
-      toast.success('Payment successful! Your subscription is now active.')
-      updateOnboardingStep()
-    }
-  }, [isPaymentSuccess, updateOnboardingStep, handleConfetti])
 
   const getStripeUrl = useCallback(
     (planId: PlanId): string | null => {
@@ -113,6 +84,8 @@ export const usePlanSelection = () => {
         return
       }
 
+      sessionStorage.setItem('planId', planId)
+
       const stripeUrl = getStripeUrl(planId)
       if (stripeUrl) {
         window.location.href = stripeUrl
@@ -122,7 +95,6 @@ export const usePlanSelection = () => {
   )
 
   return {
-    handlePlanSelection,
-    isPaymentSuccess
+    handlePlanSelection
   }
 }
