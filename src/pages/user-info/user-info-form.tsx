@@ -66,13 +66,25 @@ export const UserInfoForm = ({
       setIsSubmitting(true)
 
       try {
-        await updateUser.mutateAsync({
+        const payload = {
           first_name: firstName,
           last_name: lastName,
-          title,
-          company,
           onboarding_step: 2
-        })
+        }
+
+        if (title) {
+          Object.assign(payload, { title })
+        }
+
+        if (company) {
+          Object.assign(payload, { company })
+        }
+
+        if (referralSource) {
+          Object.assign(payload, { referral_source: referralSource })
+        }
+
+        await updateUser.mutateAsync(payload)
 
         toast.success('Your profile information has been saved')
         navigate('/dashboard/onboarding')
@@ -86,7 +98,7 @@ export const UserInfoForm = ({
         setIsSubmitting(false)
       }
     },
-    [firstName, lastName, title, company, updateUser, navigate]
+    [firstName, lastName, title, company, referralSource, updateUser, navigate]
   )
 
   return (
