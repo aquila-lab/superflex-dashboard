@@ -282,6 +282,7 @@ const UserInfoCard = () => {
 
 const SubscriptionCard = () => {
   const { data: subscription } = useSubscription()
+  const navigate = useNavigate()
 
   const formattedStartDate = useMemo(() => {
     return formatDate(subscription?.created_at)
@@ -306,8 +307,8 @@ const SubscriptionCard = () => {
   }, [subscription?.billing_portal_url])
 
   const handleUpgradeClick = useCallback(() => {
-    window.location.href = '/dashboard/upgrade-subscription'
-  }, [])
+    navigate('/dashboard/upgrade-subscription')
+  }, [navigate])
 
   return (
     <Card>
