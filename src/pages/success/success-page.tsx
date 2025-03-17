@@ -12,7 +12,8 @@ import type { SuccessType, SuccessConfig } from '@/lib/types'
 
 const globalExecutionState = {
   extensionLoginProcessed: false,
-  paymentSuccessProcessed: false
+  paymentSuccessProcessed: false,
+  figmaSuccessProcessed: false
 }
 
 const useHandleExtensionLogin = () => {
@@ -21,7 +22,7 @@ const useHandleExtensionLogin = () => {
   const successType = searchParams.get('type') as SuccessType | null
 
   if (
-    (successType === 'extension-login' || successType === 'figma') &&
+    successType === 'extension-login' &&
     !globalExecutionState.extensionLoginProcessed
   ) {
     const decodedState = sessionStorage.getItem('decodedState')
@@ -29,14 +30,8 @@ const useHandleExtensionLogin = () => {
     if (decodedState) {
       globalExecutionState.extensionLoginProcessed = true
 
-      let url = decodedState
-
-      if (successType === 'extension-login') {
-        url += `&access_token=${token}`
-      }
-
       queueMicrotask(() => {
-        window.location.href = url
+        window.location.href = `${decodedState}&access_token=${token}`
         sessionStorage.clear()
       })
     }
@@ -67,12 +62,33 @@ const useHandlePaymentSuccess = () => {
   }
 }
 
+const useHandleFigmaSuccess = () => {
+  const [searchParams] = useSearchParams()
+  const successType = searchParams.get('type') as SuccessType | null
+
+  if (successType === 'figma' && !globalExecutionState.figmaSuccessProcessed) {
+    globalExecutionState.figmaSuccessProcessed = true
+
+    const decodedState = sessionStorage.getItem('decodedState')
+
+    if (decodedState) {
+      globalExecutionState.extensionLoginProcessed = true
+
+      queueMicrotask(() => {
+        window.location.href = decodedState
+        sessionStorage.clear()
+      })
+    }
+  }
+}
+
 const useSuccessConfig = () => {
   const [searchParams] = useSearchParams()
   const successType = searchParams.get('type') as SuccessType | null
 
   useHandleExtensionLogin()
   useHandlePaymentSuccess()
+  useHandleFigmaSuccess()
 
   const successConfigs = useMemo<Record<SuccessType, SuccessConfig>>(() => {
     return {
