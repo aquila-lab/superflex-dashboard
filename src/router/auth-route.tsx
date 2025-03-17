@@ -1,16 +1,15 @@
-import { useAuth } from '@/global/hooks/use-auth'
-import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
+import { useOnboardingStep, useUser } from '@/lib/hooks'
 import { Loading } from '@/ui/loading'
 import { useMemo } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
 export const AuthRoute = () => {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { data: user, isLoading } = useUser()
   const { currentStep } = useOnboardingStep()
   const location = useLocation()
 
   const redirectInfo = useMemo(() => {
-    if (!isAuthenticated) {
+    if (!user) {
       return {
         path: null,
         shouldRedirect: false
@@ -30,7 +29,7 @@ export const AuthRoute = () => {
       path: pathMapping[currentStep] || '/dashboard/onboarding',
       shouldRedirect: true
     }
-  }, [isAuthenticated, currentStep])
+  }, [user, currentStep])
 
   if (isLoading) {
     return <Loading size='lg' />

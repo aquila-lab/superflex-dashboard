@@ -1,33 +1,11 @@
-import { useAuth } from '@/global/hooks/use-auth'
+import { stepsData } from '@/lib/constants'
+import { useLogout } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
 import { Icons } from '@/ui/icons'
 import { Check, LogOut, Pen } from 'lucide-react'
 import { type HTMLAttributes, useCallback, useMemo } from 'react'
-
-export const stepsData = [
-  {
-    id: 0,
-    label: 'Sign Up',
-    description: 'Covers registration'
-  },
-  {
-    id: 1,
-    label: 'Choose Plan',
-    description: 'Plan selection and subscription'
-  },
-  {
-    id: 2,
-    label: 'Profile Setup',
-    description: 'Covers additional user info'
-  },
-  {
-    id: 3,
-    label: 'Get Started',
-    description: 'VSCode extension onboarding flow'
-  }
-] as const
 
 export const OnboardingHeader = ({
   className,
@@ -36,10 +14,10 @@ export const OnboardingHeader = ({
 }: HTMLAttributes<HTMLDivElement> & {
   currentStep?: number
 }) => {
-  const { logout } = useAuth()
+  const { mutateAsync: logout } = useLogout()
 
   const handleLogout = useCallback(async () => {
-    await logout()
+    logout()
   }, [logout])
 
   const headerClasses = useMemo(

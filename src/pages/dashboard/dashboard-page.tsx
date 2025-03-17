@@ -1,12 +1,16 @@
-import { useUser } from '@/global/hooks/use-user'
-import { API_BASE_URL } from '@/lib/constants'
-import { type BillingPeriod, cn, formatDate } from '@/lib/utils'
-import { planCards } from '@/lib/utils'
+import { planCards } from '@/lib/constants'
+import { withErrorHandling } from '@/lib/error-handling'
+import {
+  usePlanSelection,
+  useSubscription,
+  useUpdateUser,
+  useUser
+} from '@/lib/hooks'
+import type { BillingPeriod } from '@/lib/types'
+import { cn, formatDate } from '@/lib/utils'
 import { AppFooter } from '@/shared/app-footer'
 import { AppHeader } from '@/shared/app-header'
 import { PlanCard } from '@/shared/plan-card'
-import { useAuthStore } from '@/store/auth-store'
-import { useUserStore } from '@/store/user-store'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
@@ -44,13 +48,11 @@ import {
 } from '@/ui/tooltip'
 import { Pen } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import { usePlanSelection } from '../select-plan/use-plan-selection'
 
 const RequestsCard = () => {
-  const { basicRequestsPercentage, premiumRequestsPercentage, subscription } =
-    useUser()
+  const { data: subscription } = useSubscription()
 
   const isBasicUnlimited = useMemo(() => {
     return (subscription?.plan?.basic_request_limit || 0) > 9999
@@ -67,6 +69,30 @@ const RequestsCard = () => {
   const premiumRequestsUsed = useMemo(() => {
     return subscription?.premium_requests_used || 0
   }, [subscription?.premium_requests_used])
+
+  const basicRequestsPercentage = useMemo(() => {
+    if (isBasicUnlimited) {
+      return 0
+    }
+    const limit = subscription?.plan?.basic_request_limit || 0
+    return (basicRequestsUsed / limit) * 100
+  }, [
+    basicRequestsUsed,
+    isBasicUnlimited,
+    subscription?.plan?.basic_request_limit
+  ])
+
+  const premiumRequestsPercentage = useMemo(() => {
+    if (isPremiumUnlimited) {
+      return 0
+    }
+    const limit = subscription?.plan?.premium_request_limit || 0
+    return (premiumRequestsUsed / limit) * 100
+  }, [
+    premiumRequestsUsed,
+    isPremiumUnlimited,
+    subscription?.plan?.premium_request_limit
+  ])
 
   return (
     <Card>
@@ -138,13 +164,10 @@ const RequestsCard = () => {
 }
 
 const UserInfoCard = () => {
-  const { user } = useUser()
+  const { data: user } = useUser()
   const [username, setUsername] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const updateUser = useUserStore(state => state.updateUser)
-  const { getAuthHeader } = useAuthStore()
-  const navigate = useNavigate()
+  const updateUser = useUpdateUser()
 
   const handleSubmit = useCallback(async () => {
     if (!username.trim()) {
@@ -152,34 +175,22 @@ const UserInfoCard = () => {
       return
     }
 
-    setIsSubmitting(true)
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/user`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...getAuthHeader()
-        },
-        body: JSON.stringify({ username })
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Failed to update username')
+    const updateUsername = withErrorHandling(
+      async () => {
+        const result = await updateUser.mutateAsync({ username })
+        return result
+      },
+      {
+        successMessage: 'Username updated successfully',
+        errorMessage: 'Failed to update username. Please try again.',
+        onSuccess: () => {
+          setIsDialogOpen(false)
+        }
       }
+    )
 
-      updateUser({ username })
-      toast.success('Username updated successfully')
-      setIsDialogOpen(false)
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : 'Failed to update username'
-      )
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [username, updateUser, getAuthHeader])
+    await updateUsername()
+  }, [username, updateUser])
 
   const usernameInitials = useMemo(() => {
     if (!user?.username) {
@@ -239,9 +250,9 @@ const UserInfoCard = () => {
                 <DialogFooter>
                   <Button
                     onClick={handleSubmit}
-                    disabled={isSubmitting || !username.trim()}
+                    disabled={updateUser.isPending || !username.trim()}
                   >
-                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                    {updateUser.isPending ? 'Saving...' : 'Save Changes'}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -251,34 +262,28 @@ const UserInfoCard = () => {
         </div>
       </CardHeader>
       <CardContent>
-        <div className='flex items-center gap-2'>
-          <span className='text-sm font-medium'>Onboarding:</span>
-          <Badge variant={isOnboardingComplete ? 'secondary' : 'destructive'}>
-            {isOnboardingComplete ? 'Completed' : 'In progress'}
-          </Badge>
-          {!isOnboardingComplete && (
-            <span className='text-sm text-muted-foreground'>
-              Complete setup to unlock all features
-            </span>
-          )}
+        <div className='space-y-4'>
+          <div className='space-y-2'>
+            <div className='flex items-center justify-between'>
+              <span className='text-sm font-medium'>Onboarding Status</span>
+              <Badge variant={isOnboardingComplete ? 'default' : 'secondary'}>
+                {isOnboardingComplete ? 'Complete' : 'In Progress'}
+              </Badge>
+            </div>
+            {!isOnboardingComplete && (
+              <div className='text-sm text-muted-foreground'>
+                Complete the onboarding process to access all features
+              </div>
+            )}
+          </div>
         </div>
       </CardContent>
-      {!isOnboardingComplete && (
-        <CardFooter>
-          <Button
-            size='sm'
-            onClick={() => navigate('/dashboard/onboarding')}
-          >
-            Continue Setup
-          </Button>
-        </CardFooter>
-      )}
     </Card>
   )
 }
 
 const SubscriptionCard = () => {
-  const { subscription } = useUser()
+  const { data: subscription } = useSubscription()
   const navigate = useNavigate()
 
   const formattedStartDate = useMemo(() => {

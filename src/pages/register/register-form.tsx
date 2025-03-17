@@ -1,7 +1,6 @@
-import { useAuth } from '@/global/hooks/use-auth'
-import { API_BASE_URL } from '@/lib/constants'
+import { withErrorHandling } from '@/lib/error-handling'
+import { useGoogleAuth, useRegister } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
-import { useAuthStore } from '@/store/auth-store'
 import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
 import { Input } from '@/ui/input'
@@ -26,51 +25,30 @@ export const RegisterForm = ({
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchParams] = useSearchParams()
 
   const navigate = useNavigate()
-  const { googleLogin } = useAuth()
-  const { setToken } = useAuthStore()
-
-  const handleRegisterWithAuth = useCallback(
-    async (email: string, password: string) => {
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, username: email })
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Failed to register')
-      }
-
-      const authResponse = await response.json()
-      setToken(authResponse.token)
-
-      return authResponse.token
-    },
-    [setToken]
-  )
+  const { mutateAsync: register, isPending: isRegisterPending } = useRegister()
+  const { mutateAsync: googleAuth, isPending: isGoogleAuthPending } =
+    useGoogleAuth()
 
   const handleGoogleAuthCode = useCallback(
     async (code: string) => {
-      try {
-        setIsSubmitting(true)
-        const authToken = await googleLogin(code)
-
-        if (authToken) {
-          toast.success('Account created with Google successfully')
-          navigate('/select-plan', { replace: true })
+      const handleGoogleAuth = withErrorHandling(
+        async (authCode: string) => {
+          return await googleAuth({ code: authCode })
+        },
+        {
+          successMessage: 'Account created with Google successfully',
+          onSuccess: () => {
+            navigate('/select-plan', { replace: true })
+          }
         }
-      } catch (_error) {
-        toast.error('Failed to create account with Google. Please try again.')
-      } finally {
-        setIsSubmitting(false)
-      }
+      )
+
+      await handleGoogleAuth(code)
     },
-    [googleLogin, navigate]
+    [googleAuth, navigate]
   )
 
   useEffect(() => {
@@ -84,8 +62,7 @@ export const RegisterForm = ({
     return (
       email.trim() !== '' &&
       password.trim() !== '' &&
-      confirmPassword.trim() !== '' &&
-      password === confirmPassword
+      confirmPassword.trim() !== ''
     )
   }, [email, password, confirmPassword])
 
@@ -93,33 +70,42 @@ export const RegisterForm = ({
     async (e: FormEvent) => {
       e.preventDefault()
 
-      if (!isFormValid || isSubmitting) {
+      if (!isFormValid || isRegisterPending) {
         return
       }
 
       if (password !== confirmPassword) {
-        toast.error('Passwords do not match')
+        toast.error('Passwords do not match, please try again.')
         return
       }
 
       try {
-        setIsSubmitting(true)
-
-        await handleRegisterWithAuth(email, password)
-
-        toast.success('Account created successfully')
-        // Delay navigation slightly to allow the user to see the success message
-        setTimeout(() => {
-          navigate('/select-plan')
-        }, 500)
-      } catch (_error) {
+        await register(
+          { email, password, username: email },
+          {
+            onSuccess: () => {
+              toast.success('Account created successfully')
+              setTimeout(() => {
+                navigate('/select-plan')
+              }, 500)
+            },
+            onError: (error: any) => {
+              setPassword('')
+              setConfirmPassword('')
+              const errorMessage =
+                error?.response?.data?.error?.message ||
+                'Failed to create account. Please try again with a different email.'
+              toast.error(errorMessage)
+            }
+          }
+        )
+      } catch (error: any) {
         setPassword('')
         setConfirmPassword('')
-        toast.error(
+        const errorMessage =
+          error?.response?.data?.error?.message ||
           'Failed to create account. Please try again with a different email.'
-        )
-      } finally {
-        setIsSubmitting(false)
+        toast.error(errorMessage)
       }
     },
     [
@@ -127,8 +113,8 @@ export const RegisterForm = ({
       password,
       confirmPassword,
       isFormValid,
-      isSubmitting,
-      handleRegisterWithAuth,
+      isRegisterPending,
+      register,
       navigate
     ]
   )
@@ -144,6 +130,8 @@ export const RegisterForm = ({
       toast.error('Google sign up failed. Please try again.')
     }
   })
+
+  const isSubmitting = isRegisterPending || isGoogleAuthPending
 
   return (
     <form

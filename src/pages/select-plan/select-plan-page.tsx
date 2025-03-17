@@ -1,8 +1,10 @@
-import { type BillingPeriod, cn, planCards } from '@/lib/utils'
+import { planCards } from '@/lib/constants'
+import { usePlanSelection } from '@/lib/hooks'
+import type { BillingPeriod } from '@/lib/types'
+import { cn } from '@/lib/utils'
 import { OnboardingHeader } from '@/shared/onboarding-header'
 import { PlanCard } from '@/shared/plan-card'
 import { useMemo, useState } from 'react'
-import { usePlanSelection } from './use-plan-selection'
 
 export const SelectPlanPage = () => {
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('annual')

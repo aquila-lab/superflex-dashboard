@@ -1,8 +1,5 @@
-import { useAuth } from '@/global/hooks/use-auth'
-import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
-import { useUser } from '@/global/hooks/use-user'
+import { useLogout, useOnboardingStep, useUser } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
-import { useUserStore } from '@/store/user-store'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 import { Button } from '@/ui/button'
 import {
@@ -21,7 +18,7 @@ import { Link } from 'react-router-dom'
 import { useExtensionLauncher } from './extension-launcher'
 
 const UserAvatar = () => {
-  const { user } = useUser()
+  const { data: user } = useUser()
 
   const userInitials = useMemo(() => {
     if (!user?.username) {
@@ -53,8 +50,7 @@ const SuperflexExtensionDropdown = () => {
     launchCursorExtension,
     openVSCodeSuperflex,
     openCursorSuperflex,
-    openMarketplace,
-    FallbackDialog
+    openMarketplace
   } = useExtensionLauncher()
 
   const { isComplete } = useOnboardingStep()
@@ -67,87 +63,83 @@ const SuperflexExtensionDropdown = () => {
   }, [isComplete])
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant='outline'
-            className='flex items-center gap-2'
-            disabled={isAttemptingLaunch}
-          >
-            {isAttemptingLaunch ? (
-              <>
-                <Icons.Spinner className='size-4 animate-spin' />
-                <span>Launching...</span>
-              </>
-            ) : (
-              <>
-                <ExternalLink className='size-4' />
-                <span>{dropdownLabel}</span>
-                <ChevronDown className='size-4 ml-1' />
-              </>
-            )}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align='end'
-          className='w-56'
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant='outline'
+          className='flex items-center gap-2'
+          disabled={isAttemptingLaunch}
         >
-          <DropdownMenuLabel>
-            {isComplete ? 'Extension options' : 'Install options'}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          {isComplete ? (
+          {isAttemptingLaunch ? (
             <>
-              <DropdownMenuItem
-                onClick={openVSCodeSuperflex}
-                className='cursor-pointer'
-                disabled={isAttemptingLaunch}
-              >
-                <Icons.VSCode className='size-4 text-blue-600' />
-                <span>Open in VS Code</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={openCursorSuperflex}
-                className='cursor-pointer'
-                disabled={isAttemptingLaunch}
-              >
-                <Icons.Cursor className='size-4 text-purple-600' />
-                <span>Open in Cursor</span>
-              </DropdownMenuItem>
+              <Icons.Spinner className='size-4 animate-spin' />
+              <span>Launching...</span>
             </>
           ) : (
             <>
-              <DropdownMenuItem
-                onClick={launchVSCodeExtension}
-                className='cursor-pointer'
-                disabled={isAttemptingLaunch}
-              >
-                <Icons.VSCode className='size-4 text-blue-600' />
-                <span>Install in VS Code</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={launchCursorExtension}
-                className='cursor-pointer'
-                disabled={isAttemptingLaunch}
-              >
-                <Icons.Cursor className='size-4 text-purple-600' />
-                <span>Install in Cursor</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={openMarketplace}
-                className='cursor-pointer'
-              >
-                <ExternalLink className='size-4' />
-                <span>VS Marketplace</span>
-              </DropdownMenuItem>
+              <ExternalLink className='size-4' />
+              <span>{dropdownLabel}</span>
+              <ChevronDown className='size-4 ml-1' />
             </>
           )}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <FallbackDialog />
-    </>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align='end'
+        className='w-56'
+      >
+        <DropdownMenuLabel>
+          {isComplete ? 'Extension options' : 'Install options'}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {isComplete ? (
+          <>
+            <DropdownMenuItem
+              onClick={openVSCodeSuperflex}
+              className='cursor-pointer'
+              disabled={isAttemptingLaunch}
+            >
+              <Icons.VSCode className='size-4 text-blue-600' />
+              <span>Open in VS Code</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={openCursorSuperflex}
+              className='cursor-pointer'
+              disabled={isAttemptingLaunch}
+            >
+              <Icons.Cursor className='size-4 text-purple-600' />
+              <span>Open in Cursor</span>
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <>
+            <DropdownMenuItem
+              onClick={launchVSCodeExtension}
+              className='cursor-pointer'
+              disabled={isAttemptingLaunch}
+            >
+              <Icons.VSCode className='size-4 text-blue-600' />
+              <span>Install in VS Code</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={launchCursorExtension}
+              className='cursor-pointer'
+              disabled={isAttemptingLaunch}
+            >
+              <Icons.Cursor className='size-4 text-purple-600' />
+              <span>Install in Cursor</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={openMarketplace}
+              className='cursor-pointer'
+            >
+              <ExternalLink className='size-4' />
+              <span>VS Marketplace</span>
+            </DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
@@ -155,8 +147,8 @@ export const AppHeader = ({
   className,
   ...props
 }: HTMLAttributes<HTMLDivElement>) => {
-  const { logout } = useAuth()
-  const { user } = useUserStore()
+  const { mutateAsync: logout } = useLogout()
+  const { data: user } = useUser()
 
   const handleLogout = useCallback(async () => {
     await logout()

@@ -1,4 +1,5 @@
-import { API_BASE_URL } from '@/lib/constants'
+import { withErrorHandling } from '@/lib/error-handling'
+import { useRequestPasswordReset } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
@@ -6,16 +7,14 @@ import { Label } from '@/ui/label'
 import { type FormEvent, useCallback, useMemo, useState } from 'react'
 import type { ComponentProps } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
 
 export const ResetPasswordForm = ({
   className,
   ...props
 }: ComponentProps<'form'>) => {
   const [email, setEmail] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
   const navigate = useNavigate()
+  const requestPasswordReset = useRequestPasswordReset()
 
   const isFormValid = useMemo(() => {
     return email.trim() !== ''
@@ -25,35 +24,26 @@ export const ResetPasswordForm = ({
     async (e: FormEvent) => {
       e.preventDefault()
 
-      if (!isFormValid || isSubmitting) {
+      if (!isFormValid || requestPasswordReset.isPending) {
         return
       }
 
-      try {
-        setIsSubmitting(true)
-
-        const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email })
-        })
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.message || 'Failed to reset password')
+      const handleRequestReset = withErrorHandling(
+        async () => {
+          const result = await requestPasswordReset.mutateAsync(email)
+          return result
+        },
+        {
+          successMessage: 'Password reset email sent',
+          onSuccess: () => {
+            navigate('/forgot-password-request')
+          }
         }
+      )
 
-        toast.success('Password reset email sent')
-        navigate('/forgot-password-request')
-      } catch (_error) {
-        toast.error('Failed to reset password. Please try again.')
-      } finally {
-        setIsSubmitting(false)
-      }
+      await handleRequestReset()
     },
-    [email, isFormValid, isSubmitting, navigate]
+    [email, isFormValid, requestPasswordReset, navigate]
   )
 
   return (
@@ -79,15 +69,17 @@ export const ResetPasswordForm = ({
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
-            disabled={isSubmitting}
+            disabled={requestPasswordReset.isPending}
           />
         </div>
         <Button
           type='submit'
           className='w-full'
-          disabled={isSubmitting}
+          disabled={requestPasswordReset.isPending}
         >
-          {isSubmitting ? 'Resetting password...' : 'Reset password'}
+          {requestPasswordReset.isPending
+            ? 'Resetting password...'
+            : 'Reset password'}
         </Button>
       </div>
       <div className='text-center text-sm'>

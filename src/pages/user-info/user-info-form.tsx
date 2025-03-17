@@ -1,7 +1,7 @@
-import { API_BASE_URL } from '@/lib/constants'
+import { withErrorHandling } from '@/lib/error-handling'
+import { useUpdateUser, useUser } from '@/lib/hooks'
+import type { ReferralSource, TechnicalLevel } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { useAuthStore } from '@/store/auth-store'
-import { useUserStore } from '@/store/user-store'
 import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
@@ -13,31 +13,18 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/ui/select'
+import posthog from 'posthog-js'
 import { useCallback, useMemo, useState } from 'react'
 import type { ComponentProps } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
-
-type TechnicalLevel = 'non-technical' | 'technical' | 'highly-technical'
-type ReferralSource =
-  | 'vscode'
-  | 'google'
-  | 'reddit'
-  | 'tiktok'
-  | 'youtube'
-  | 'twitter'
-  | 'instagram'
-  | 'friend'
-  | 'linkedin'
-  | 'other'
 
 export const UserInfoForm = ({
   className,
   ...props
 }: ComponentProps<'form'>) => {
   const navigate = useNavigate()
-  const { getAuthHeader } = useAuthStore()
-  const { updateUser } = useUserStore()
+  const updateUser = useUpdateUser()
+  const { data: user } = useUser()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [firstName, setFirstName] = useState('')
@@ -77,48 +64,73 @@ export const UserInfoForm = ({
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
-
       setIsSubmitting(true)
 
-      try {
-        const response = await fetch(`${API_BASE_URL}/user`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            ...getAuthHeader()
+      const payload = {
+        first_name: firstName,
+        last_name: lastName,
+        onboarding_step: 2,
+        ...(title ? { title } : {}),
+        ...(company ? { company } : {}),
+        ...(referralSource ? { referral_source: referralSource } : {}),
+        ...(technicalLevel ? { technical_level: technicalLevel } : {})
+      }
+
+      const updateUserInfo = withErrorHandling(
+        async () => {
+          const result = await updateUser.mutateAsync(payload)
+          return result
+        },
+        {
+          successMessage: 'Your profile information has been saved',
+          onSuccess: () => {
+            const uniqueID = localStorage.getItem('uniqueID')
+
+            if (uniqueID && user) {
+              posthog.identify(uniqueID, {
+                userID: user.id,
+                email: user.email,
+                firstName,
+                lastName,
+                technicalLevel,
+                title,
+                company,
+                referralSource
+              })
+            }
+
+            if (user) {
+              posthog.capture('referral_source', {
+                referralSource,
+                userID: user.id
+              })
+            }
+
+            navigate('/dashboard/onboarding')
           },
-          body: JSON.stringify({
-            first_name: firstName,
-            last_name: lastName,
-            title,
-            company,
-            onboarding_step: 2
-          })
-        })
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(
-            errorData.message || 'Failed to update user information'
-          )
+          onError: () => {
+            setIsSubmitting(false)
+          }
         }
+      )
 
-        updateUser({ onboarding_step: 2 })
-
-        toast.success('Your profile information has been saved')
-
-        navigate('/dashboard/onboarding')
-      } catch (error) {
-        toast.error(
-          error instanceof Error
-            ? error.message
-            : 'An unexpected error occurred'
-        )
+      try {
+        await updateUserInfo()
       } finally {
         setIsSubmitting(false)
       }
     },
-    [firstName, lastName, title, company, getAuthHeader, updateUser, navigate]
+    [
+      firstName,
+      lastName,
+      title,
+      company,
+      referralSource,
+      technicalLevel,
+      updateUser,
+      user,
+      navigate
+    ]
   )
 
   return (

@@ -1,16 +1,20 @@
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'sonner'
-import { ApiProvider } from './global/providers/api-provider'
-import { Router } from './global/router/router'
 import { GOOGLE_CLIENT_ID } from './lib/constants'
+import { getQueryClient } from './lib/utils'
+import { PostHogProvider } from './posthog-provider'
+import { Router } from './router/router'
 
 export const App = () => {
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <ApiProvider>
-        <Router />
-        <Toaster position='bottom-right' />
-      </ApiProvider>
-    </GoogleOAuthProvider>
+    <PostHogProvider>
+      <QueryClientProvider client={getQueryClient()}>
+        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+          <Router />
+          <Toaster position='bottom-right' />
+        </GoogleOAuthProvider>
+      </QueryClientProvider>
+    </PostHogProvider>
   )
 }

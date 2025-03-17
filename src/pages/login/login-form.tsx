@@ -1,7 +1,6 @@
-import { useAuth } from '@/global/hooks/use-auth'
-import { API_BASE_URL } from '@/lib/constants'
+import { withErrorHandling } from '@/lib/error-handling'
+import { useGoogleAuth, useLogin } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
-import { useAuthStore } from '@/store/auth-store'
 import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
 import { Input } from '@/ui/input'
@@ -22,51 +21,30 @@ import { toast } from 'sonner'
 export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchParams] = useSearchParams()
 
   const navigate = useNavigate()
-  const { googleLogin } = useAuth()
-  const { setToken } = useAuthStore()
-
-  const handleLoginWithAuth = useCallback(
-    async (email: string, password: string) => {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username_or_email: email, password })
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Failed to login')
-      }
-
-      const authResponse = await response.json()
-      setToken(authResponse.token)
-
-      return authResponse.token
-    },
-    [setToken]
-  )
+  const { mutateAsync: login, isPending: isLoginPending } = useLogin()
+  const { mutateAsync: googleAuth, isPending: isGoogleAuthPending } =
+    useGoogleAuth()
 
   const handleGoogleAuthCode = useCallback(
     async (code: string) => {
-      try {
-        setIsSubmitting(true)
-        const authToken = await googleLogin(code)
-
-        if (authToken) {
-          toast.success('Logged in with Google successfully')
-          navigate('/select-plan', { replace: true })
+      const handleGoogleAuth = withErrorHandling(
+        async (authCode: string) => {
+          return await googleAuth({ code: authCode })
+        },
+        {
+          successMessage: 'Logged in with Google successfully',
+          onSuccess: () => {
+            navigate('/select-plan', { replace: true })
+          }
         }
-      } catch (_error) {
-        toast.error('Failed to login with Google. Please try again.')
-      } finally {
-        setIsSubmitting(false)
-      }
+      )
+
+      await handleGoogleAuth(code)
     },
-    [googleLogin, navigate]
+    [googleAuth, navigate]
   )
 
   useEffect(() => {
@@ -84,32 +62,39 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
     async (e: FormEvent) => {
       e.preventDefault()
 
-      if (!isFormValid || isSubmitting) {
+      if (!isFormValid || isLoginPending) {
         return
       }
 
       try {
-        setIsSubmitting(true)
-
-        const authToken = await handleLoginWithAuth(email, password)
-
-        if (authToken) {
-          toast.success('Logged in successfully')
-          // Delay navigation slightly to allow the user to see the success message
-          setTimeout(() => {
-            navigate('/select-plan')
-          }, 500)
-        }
-      } catch (_error) {
-        setPassword('')
-        toast.error(
-          'Failed to login. Please check your credentials and try again.'
+        await login(
+          { username_or_email: email, password },
+          {
+            onSuccess: () => {
+              toast.success('Logged in successfully')
+              setTimeout(() => {
+                navigate('/select-plan')
+              }, 500)
+            },
+            onError: (error: any) => {
+              setPassword('')
+              // Directly access the error message from the response
+              const errorMessage =
+                error?.response?.data?.error?.message ||
+                'Failed to login. Please check your credentials and try again.'
+              toast.error(errorMessage)
+            }
+          }
         )
-      } finally {
-        setIsSubmitting(false)
+      } catch (error: any) {
+        setPassword('')
+        const errorMessage =
+          error?.response?.data?.error?.message ||
+          'Failed to login. Please check your credentials and try again.'
+        toast.error(errorMessage)
       }
     },
-    [email, password, isFormValid, isSubmitting, handleLoginWithAuth, navigate]
+    [email, password, isFormValid, isLoginPending, login, navigate]
   )
 
   const handleGoogleLogin = useGoogleLogin({
@@ -123,6 +108,8 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
       toast.error('Google login failed. Please try again.')
     }
   })
+
+  const isSubmitting = isLoginPending || isGoogleAuthPending
 
   return (
     <form
@@ -154,7 +141,7 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
           <div className='flex items-center'>
             <Label htmlFor='password'>Password</Label>
             <Link
-              to={'/forgot-password-request'}
+              to={'/forgot-password'}
               className='ml-auto text-sm leading-none underline-offset-4 hover:underline'
             >
               Forgot your password?

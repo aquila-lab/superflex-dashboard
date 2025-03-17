@@ -1,6 +1,6 @@
-import { API_BASE_URL } from '@/lib/constants'
+import { withErrorHandling } from '@/lib/error-handling'
+import { useResetPassword } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
-import { useAuthStore } from '@/store/auth-store'
 import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
@@ -15,12 +15,11 @@ export const NewPasswordForm = ({
 }: ComponentProps<'form'>) => {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchParams] = useSearchParams()
   const code = searchParams.get('code')
 
   const navigate = useNavigate()
-  const { setToken } = useAuthStore()
+  const resetPassword = useResetPassword()
 
   useEffect(() => {
     if (!code) {
@@ -35,7 +34,7 @@ export const NewPasswordForm = ({
     async (e: FormEvent) => {
       e.preventDefault()
 
-      if (isSubmitting) {
+      if (resetPassword.isPending) {
         return
       }
 
@@ -57,38 +56,25 @@ export const NewPasswordForm = ({
         return
       }
 
-      try {
-        setIsSubmitting(true)
-
-        const response = await fetch(
-          `${API_BASE_URL}/auth/reset-password-set`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ code, new_password: password })
+      const handleResetPassword = withErrorHandling(
+        async () => {
+          const result = await resetPassword.mutateAsync({
+            code,
+            new_password: password
+          })
+          return result
+        },
+        {
+          successMessage: 'Password updated successfully',
+          onSuccess: () => {
+            navigate('/dashboard')
           }
-        )
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.message || 'Failed to update password')
         }
+      )
 
-        const { token } = await response.json()
-
-        setToken(token)
-
-        toast.success('Password updated successfully')
-        navigate('/dashboard')
-      } catch (_error) {
-        toast.error('Failed to update password. The link may have expired.')
-      } finally {
-        setIsSubmitting(false)
-      }
+      await handleResetPassword()
     },
-    [password, confirmPassword, isSubmitting, code, navigate, setToken]
+    [password, confirmPassword, resetPassword, code, navigate]
   )
 
   return (
@@ -114,7 +100,7 @@ export const NewPasswordForm = ({
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
-            disabled={isSubmitting || !code}
+            disabled={resetPassword.isPending || !code}
           />
         </div>
         <div className='grid gap-3'>
@@ -126,15 +112,15 @@ export const NewPasswordForm = ({
             value={confirmPassword}
             onChange={e => setConfirmPassword(e.target.value)}
             required
-            disabled={isSubmitting || !code}
+            disabled={resetPassword.isPending || !code}
           />
         </div>
         <Button
           type='submit'
           className='w-full'
-          disabled={isSubmitting || !code}
+          disabled={resetPassword.isPending || !code}
         >
-          {isSubmitting ? 'Updating password...' : 'Update password'}
+          {resetPassword.isPending ? 'Updating password...' : 'Update password'}
         </Button>
       </div>
 
