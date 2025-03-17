@@ -15,6 +15,7 @@ import type {
   UserUpdate
 } from './types'
 import { onboardingStepMapping, parseJwtToken } from './utils'
+import posthog from 'posthog-js'
 
 export const useAuth = () => {
   const getToken = () => localStorage.getItem(TOKEN_KEY)
@@ -223,6 +224,10 @@ export const useUrlParamsStorage = () => {
 
       if (uniqueID) {
         sessionStorage.setItem('uniqueID', uniqueID)
+
+        posthog.identify(uniqueID, {
+          userID: uniqueID
+        })
       }
 
       if (encodedState) {
