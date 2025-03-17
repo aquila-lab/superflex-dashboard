@@ -64,7 +64,11 @@ export const ProtectedRoute = () => {
     const correctPath = pathMapping[currentStep] || '/dashboard/onboarding'
 
     if (
-      ['/dashboard', '/dashboard/onboarding'].includes(location.pathname) &&
+      [
+        '/dashboard',
+        '/dashboard/onboarding',
+        '/dashboard/upgrade-subscription'
+      ].includes(location.pathname) &&
       [2, 3, 4, 5].includes(currentStep)
     ) {
       return {

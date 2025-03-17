@@ -44,7 +44,7 @@ import {
 } from '@/ui/tooltip'
 import { Pen } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
 import { usePlanSelection } from '../select-plan/use-plan-selection'
 
@@ -279,7 +279,7 @@ const UserInfoCard = () => {
 
 const SubscriptionCard = () => {
   const { subscription } = useUser()
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const navigate = useNavigate()
 
   const formattedStartDate = useMemo(() => {
     return formatDate(subscription?.created_at)
@@ -304,76 +304,78 @@ const SubscriptionCard = () => {
   }, [subscription?.billing_portal_url])
 
   const handleUpgradeClick = useCallback(() => {
-    setIsDrawerOpen(true)
-  }, [])
+    navigate('/dashboard/upgrade-subscription')
+  }, [navigate])
 
   return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Subscription</CardTitle>
-          <CardDescription>Your current plan and usage</CardDescription>
-        </CardHeader>
-        <CardContent className='space-y-4'>
-          <div className='flex justify-between'>
-            <span className='font-medium'>Plan:</span>
-            <Badge variant={isFreePlan ? 'secondary' : 'default'}>
-              <span>{subscription?.plan?.name || 'Free Plan'}</span>
-            </Badge>
-          </div>
-          <div className='flex justify-between'>
-            <span className='font-medium'>Start Date:</span>
-            <span>{formattedStartDate}</span>
-          </div>
-          <div className='flex justify-between'>
-            <span className='font-medium'>End Date:</span>
-            <span>{formattedEndDate}</span>
-          </div>
-        </CardContent>
-        <CardFooter>
-          {isFreePlan ? (
-            <Button
-              className='w-full'
-              onClick={handleUpgradeClick}
-            >
-              Upgrade Subscription
-            </Button>
-          ) : hasBillingPortalUrl ? (
-            <Button
-              className='w-full'
-              variant='outline'
-              onClick={handleManageBilling}
-            >
-              Manage Billing
-            </Button>
-          ) : (
-            <Badge
-              variant='outline'
-              className='w-full py-2 flex justify-center'
-            >
-              Infinite subscription
-            </Badge>
-          )}
-        </CardFooter>
-      </Card>
-
-      <PlanSelectionDrawer
-        open={isDrawerOpen}
-        onOpenChange={setIsDrawerOpen}
-      />
-    </>
+    <Card>
+      <CardHeader>
+        <CardTitle>Subscription</CardTitle>
+        <CardDescription>Your current plan and usage</CardDescription>
+      </CardHeader>
+      <CardContent className='space-y-4'>
+        <div className='flex justify-between'>
+          <span className='font-medium'>Plan:</span>
+          <Badge variant={isFreePlan ? 'secondary' : 'default'}>
+            <span>{subscription?.plan?.name || 'Free Plan'}</span>
+          </Badge>
+        </div>
+        <div className='flex justify-between'>
+          <span className='font-medium'>Start Date:</span>
+          <span>{formattedStartDate}</span>
+        </div>
+        <div className='flex justify-between'>
+          <span className='font-medium'>End Date:</span>
+          <span>{formattedEndDate}</span>
+        </div>
+      </CardContent>
+      <CardFooter>
+        {isFreePlan ? (
+          <Button
+            className='w-full'
+            onClick={handleUpgradeClick}
+          >
+            Upgrade Subscription
+          </Button>
+        ) : hasBillingPortalUrl ? (
+          <Button
+            className='w-full'
+            variant='outline'
+            onClick={handleManageBilling}
+          >
+            Manage Billing
+          </Button>
+        ) : (
+          <Badge
+            variant='outline'
+            className='w-full py-2 flex justify-center'
+          >
+            Infinite subscription
+          </Badge>
+        )}
+      </CardFooter>
+    </Card>
   )
 }
 
-const PlanSelectionDrawer = ({
-  open,
-  onOpenChange
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}) => {
+const PlanSelectionDrawer = () => {
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('annual')
   const { handlePlanSelection } = usePlanSelection()
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const isOpen = useMemo(() => {
+    return location.pathname === '/dashboard/upgrade-subscription'
+  }, [location.pathname])
+
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open) {
+        navigate('/dashboard')
+      }
+    },
+    [navigate]
+  )
 
   const planIdMapping = useMemo(() => {
     return {
@@ -390,8 +392,8 @@ const PlanSelectionDrawer = ({
 
   return (
     <Drawer
-      open={open}
-      onOpenChange={onOpenChange}
+      open={isOpen}
+      onOpenChange={handleOpenChange}
     >
       <DrawerContent className='min-h-fit'>
         <div className='max-w-4xl mx-auto pb-12 pt-6'>
@@ -486,6 +488,7 @@ export const DashboardPage = () => {
         </div>
       </div>
       <AppFooter />
+      <PlanSelectionDrawer />
     </div>
   )
 }

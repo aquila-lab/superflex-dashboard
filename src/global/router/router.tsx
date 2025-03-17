@@ -61,6 +61,10 @@ export const Router = () => {
               element={<DashboardPage />}
             />
             <Route
+              path='/dashboard/upgrade-subscription'
+              element={<DashboardPage />}
+            />
+            <Route
               path='/success'
               element={<SuccessPage />}
             />
