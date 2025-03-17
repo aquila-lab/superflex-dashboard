@@ -1,5 +1,4 @@
-import { useUrlParamsStorage } from '@/shared/hooks/use-url-params-storage'
-import { useUser } from '@/lib/hooks'
+import { useUrlParamsStorage, useUser } from '@/lib/hooks'
 import { Loading } from '@/ui/loading'
 import { useEffect, useState } from 'react'
 
