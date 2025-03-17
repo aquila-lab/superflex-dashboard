@@ -73,11 +73,12 @@ export const Router = () => {
                 />
               }
             />
-            <Route
-              path='/success'
-              element={<SuccessPage />}
-            />
           </Route>
+
+          <Route
+            path='/success'
+            element={<SuccessPage />}
+          />
 
           <Route
             path='*'
