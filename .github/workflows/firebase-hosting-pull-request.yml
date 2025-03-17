@@ -25,10 +25,10 @@ jobs:
           echo "VITE_POSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}" >> .env
 
       - name: Install dependencies
-        run: yarn install
+        run: npm install
 
       - name: Build the project
-        run: yarn run build
+        run: npm run build
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
