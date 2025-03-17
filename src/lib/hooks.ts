@@ -4,21 +4,17 @@ import type {
   AuthTokenResponse,
   GoogleAuthRequest,
   LoginRequest,
+  PlanId,
   RegisterRequest,
   User,
   UserSubscription,
   UserUpdate
 } from './types'
 import { onboardingStepMapping, parseJwtToken } from './utils'
-import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-
-const queryKeys = {
-  user: ['user'] as const,
-  subscription: ['subscription'] as const
-}
-
-const TOKEN_KEY = 'token'
+import { useCallback, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import { TOKEN_KEY, queryKeys } from './constants'
 
 export const useAuth = () => {
   const getToken = () => localStorage.getItem(TOKEN_KEY)
@@ -258,4 +254,112 @@ export const useUrlParamsStorage = () => {
 
     saveUrlParamsToSession()
   }, [location.search])
+}
+
+export const useResetPassword = () => {
+  const queryClient = useQueryClient()
+  const { setToken } = useAuth()
+
+  return useMutation({
+    mutationFn: async ({
+      code,
+      new_password
+    }: {
+      code: string
+      new_password: string
+    }) => {
+      const { data } = await apiClient.post<AuthTokenResponse>(
+        '/auth/reset-password-set',
+        { code, new_password }
+      )
+      return data
+    },
+    onSuccess: (data: AuthTokenResponse) => {
+      setToken(data.token)
+      queryClient.invalidateQueries({ queryKey: queryKeys.user })
+      queryClient.invalidateQueries({ queryKey: queryKeys.subscription })
+    }
+  })
+}
+
+export const useRequestPasswordReset = () => {
+  return useMutation({
+    mutationFn: async (email: string) => {
+      const { data } = await apiClient.post('/auth/reset-password', { email })
+      return data
+    }
+  })
+}
+
+export const usePlanSelection = () => {
+  const navigate = useNavigate()
+  const { data: user } = useUser()
+  const updateOnboardingStep = useUpdateOnboardingStep()
+
+  const handleFreePlanSelection = useCallback(() => {
+    updateOnboardingStep.mutate(1, {
+      onSuccess: () => {
+        toast.success('Free plan successfully activated!')
+        navigate('/user-info')
+      },
+      onError: () => {
+        toast.error('Failed to update your profile. Please try again.')
+      }
+    })
+  }, [updateOnboardingStep, navigate])
+
+  const getStripeUrl = useCallback(
+    (planId: PlanId): string | null => {
+      if (!user) {
+        return null
+      }
+
+      if (import.meta.env.DEV && planId !== 'free') {
+        return `https://buy.stripe.com/test_7sI03HdeB15hcX6cN4?client_reference_id=${user.id}&prefilled_email=${user.email}`
+      }
+
+      switch (planId) {
+        case 'individual_pro_monthly': {
+          return `https://buy.stripe.com/eVag2Q3mm1Mm7qEbIZ?client_reference_id=${user.id}&prefilled_email=${user.email}`
+        }
+        case 'individual_pro_yearly': {
+          return `https://buy.stripe.com/dR6aIw4qq3UufXa3cu?client_reference_id=${user.id}&prefilled_email=${user.email}`
+        }
+        case 'team_monthly': {
+          return `https://buy.stripe.com/bIYbMAcWW3UufXafZe?client_reference_id=${user.id}&prefilled_email=${user.email}`
+        }
+        case 'team_yearly': {
+          return `https://buy.stripe.com/fZe3g4aOObmWdP2eVd?client_reference_id=${user.id}&prefilled_email=${user.email}`
+        }
+        case 'free': {
+          return null
+        }
+        default: {
+          return null
+        }
+      }
+    },
+    [user]
+  )
+
+  const handlePlanSelection = useCallback(
+    (planId: PlanId) => {
+      if (planId === 'free') {
+        handleFreePlanSelection()
+        return
+      }
+
+      sessionStorage.setItem('planId', planId)
+
+      const stripeUrl = getStripeUrl(planId)
+      if (stripeUrl) {
+        window.location.href = stripeUrl
+      }
+    },
+    [getStripeUrl, handleFreePlanSelection]
+  )
+
+  return {
+    handlePlanSelection
+  }
 }

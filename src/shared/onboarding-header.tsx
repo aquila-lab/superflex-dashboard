@@ -5,29 +5,7 @@ import { Icons } from '@/ui/icons'
 import { Check, LogOut, Pen } from 'lucide-react'
 import { type HTMLAttributes, useCallback, useMemo } from 'react'
 import { useLogout } from '@/lib/hooks'
-
-export const stepsData = [
-  {
-    id: 0,
-    label: 'Sign Up',
-    description: 'Covers registration'
-  },
-  {
-    id: 1,
-    label: 'Choose Plan',
-    description: 'Plan selection and subscription'
-  },
-  {
-    id: 2,
-    label: 'Profile Setup',
-    description: 'Covers additional user info'
-  },
-  {
-    id: 3,
-    label: 'Get Started',
-    description: 'VSCode extension onboarding flow'
-  }
-] as const
+import { stepsData } from '@/lib/constants'
 
 export const OnboardingHeader = ({
   className,

@@ -3,6 +3,7 @@ import {
   useUser,
   useUpdateOnboardingStep
 } from '@/lib/hooks'
+import type { OnboardingSection } from '@/lib/types'
 import { cn, onboardingStepMapping } from '@/lib/utils'
 import { AppFooter } from '@/shared/app-footer'
 import { AppHeader } from '@/shared/app-header'
@@ -28,14 +29,6 @@ import {
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-type OnboardingSection = {
-  id: string
-  title: string
-  defaultOpen: boolean
-  completed: boolean
-  stepNumber: number
-}
 
 const CompleteButton = ({
   sectionId,

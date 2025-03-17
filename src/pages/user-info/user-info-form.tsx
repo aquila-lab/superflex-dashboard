@@ -15,19 +15,7 @@ import { useCallback, useMemo, useState } from 'react'
 import type { ComponentProps } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-
-type TechnicalLevel = 'non-technical' | 'technical' | 'highly-technical'
-type ReferralSource =
-  | 'vscode'
-  | 'google'
-  | 'reddit'
-  | 'tiktok'
-  | 'youtube'
-  | 'twitter'
-  | 'instagram'
-  | 'friend'
-  | 'linkedin'
-  | 'other'
+import type { TechnicalLevel, ReferralSource } from '@/lib/types'
 
 export const UserInfoForm = ({
   className,

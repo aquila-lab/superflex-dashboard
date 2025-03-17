@@ -1,5 +1,25 @@
+import { QueryClient } from '@tanstack/react-query'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+
+export const getQueryClient = (() => {
+  let queryClient: QueryClient | null = null
+
+  return () => {
+    if (!queryClient) {
+      queryClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 1000 * 60 * 5,
+            retry: 1
+          }
+        }
+      })
+    }
+
+    return queryClient
+  }
+})()
 
 export const onboardingStepMapping = {
   steps: [
@@ -91,132 +111,3 @@ export const formatDate = (dateString: string | null | undefined): string => {
     year: 'numeric'
   })
 }
-
-export type PlanCardFeature = {
-  text: string
-  included: boolean
-}
-
-export type PlanCardPricing = {
-  monthly: {
-    price: string
-    billingLabel: string
-  }
-  annual: {
-    price: string
-    billingLabel: string
-  }
-}
-
-export type PlanCard = {
-  title: string
-  description: string
-  pricing: PlanCardPricing
-  buttonText: string
-  popular?: boolean
-  features: PlanCardFeature[]
-}
-
-export const planCards = [
-  {
-    title: 'Free Plan',
-    description:
-      "Explore Superflex with no commitment. Get access to essential features and see if it's the right fit for you.",
-    pricing: {
-      monthly: {
-        price: 'Free',
-        billingLabel: ''
-      },
-      annual: {
-        price: 'Free',
-        billingLabel: ''
-      }
-    },
-    buttonText: 'Get started',
-    features: [
-      { text: 'One project', included: true },
-      { text: '15 premium requests per month', included: true },
-      { text: '100 basic requests per month', included: true }
-    ]
-  },
-  {
-    title: 'Individual Pro Plan',
-    description:
-      'Perfect for building and scaling projects. Unlock premium tools, gain deeper insights, and maximize efficiency.',
-    pricing: {
-      monthly: {
-        price: '$29',
-        billingLabel: '/mo *billed monthly'
-      },
-      annual: {
-        price: '$19',
-        billingLabel: '/mo *billed yearly'
-      }
-    },
-    buttonText: 'Subscribe',
-    popular: true,
-    features: [
-      { text: 'Up to 3 projects', included: true },
-      { text: '250 premium requests per month', included: true },
-      { text: 'Unlimited basic requests per month', included: true },
-      { text: 'Import from Figma', included: true },
-      { text: 'Priority email support', included: true }
-    ]
-  },
-  {
-    title: 'Team Plan',
-    description:
-      'Empower your team with unlimited requests, centralized billing, and advanced analytics for seamless collaboration.',
-    pricing: {
-      monthly: {
-        price: '$299',
-        billingLabel: '/mo *billed monthly'
-      },
-      annual: {
-        price: '$199',
-        billingLabel: '/mo *billed yearly'
-      }
-    },
-    buttonText: 'Subscribe',
-    features: [
-      { text: 'Centralized team billing', included: true },
-      { text: 'Advanced Figma to code generation', included: true },
-      { text: 'Unlimited projects', included: true },
-      { text: 'Unlimited premium requests per month', included: true },
-      { text: 'Zero data retention policy', included: true },
-      { text: 'Priority support via Slack Connect', included: true }
-    ],
-    teamSize: {
-      monthly: {
-        users: '5 users ',
-        price: '$69 per new user'
-      },
-      annual: {
-        users: '5 users ',
-        price: '$59 per new user'
-      }
-    }
-  }
-] as PlanCard[]
-
-export type ExtendedPlanCard = PlanCard & {
-  teamSize?: {
-    monthly: {
-      users: string
-      price: string
-    }
-    annual: {
-      users: string
-      price: string
-    }
-  }
-}
-
-export type BillingPeriod = 'monthly' | 'annual'
-
-export type PlanId =
-  | 'free'
-  | 'individual_pro_monthly'
-  | 'individual_pro_yearly'
-  | 'team_monthly'
-  | 'team_yearly'

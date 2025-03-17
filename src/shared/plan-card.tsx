@@ -1,5 +1,5 @@
-import { type BillingPeriod, cn } from '@/lib/utils'
-import type { ExtendedPlanCard } from '@/lib/utils'
+import type { ExtendedPlanCard, BillingPeriod } from '@/lib/types'
+import { cn } from '@/lib/utils'
 import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
 import {

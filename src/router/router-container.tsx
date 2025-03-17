@@ -1,12 +1,12 @@
 import { useUrlParamsStorage, useUser } from '@/lib/hooks'
 import { Loading } from '@/ui/loading'
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 
-interface RouterContainerProps {
-  children: React.ReactNode
-}
-
-export const RouterContainer = ({ children }: RouterContainerProps) => {
+export const RouterContainer = ({
+  children
+}: {
+  children: ReactNode
+}) => {
   useUrlParamsStorage()
 
   const { isLoading: userLoading } = useUser()

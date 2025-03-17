@@ -8,19 +8,7 @@ import { CreditCard, ExternalLink, FileCode } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
-
-type SuccessType = 'figma' | 'payment' | 'extension-login'
-
-type SuccessConfig = {
-  pageTitle: string
-  pageDescription: string
-  cardTitle: string
-  cardDescription: string
-  toastMessage: string
-  ctaText: string
-  icon: React.ReactNode
-  onboardingStep?: number
-}
+import type { SuccessType, SuccessConfig } from '@/lib/types'
 
 const useSuccessConfig = () => {
   const [searchParams] = useSearchParams()

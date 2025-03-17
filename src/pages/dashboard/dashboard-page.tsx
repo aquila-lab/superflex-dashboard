@@ -1,9 +1,12 @@
-import { type BillingPeriod, cn, formatDate } from '@/lib/utils'
-import { planCards } from '@/lib/utils'
 import { AppFooter } from '@/shared/app-footer'
 import { AppHeader } from '@/shared/app-header'
 import { PlanCard } from '@/shared/plan-card'
-import { useUser, useSubscription, useUpdateUser } from '@/lib/hooks'
+import {
+  useUser,
+  useSubscription,
+  useUpdateUser,
+  usePlanSelection
+} from '@/lib/hooks'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
@@ -43,7 +46,9 @@ import { Pen } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
-import { usePlanSelection } from '../select-plan/use-plan-selection'
+import { planCards } from '@/lib/constants'
+import type { BillingPeriod } from '@/lib/types'
+import { formatDate, cn } from '@/lib/utils'
 
 const RequestsCard = () => {
   const { data: subscription } = useSubscription()
