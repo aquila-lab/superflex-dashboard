@@ -10,11 +10,62 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import type { SuccessType, SuccessConfig } from '@/lib/types'
 
-const useSuccessConfig = () => {
+const globalExecutionState = {
+  extensionLoginProcessed: false,
+  paymentSuccessProcessed: false
+}
+
+const useHandleExtensionLogin = () => {
+  const [searchParams] = useSearchParams()
+  const successType = searchParams.get('type') as SuccessType | null
+
+  if (
+    successType === 'extension-login' &&
+    !globalExecutionState.extensionLoginProcessed
+  ) {
+    const decodedState = sessionStorage.getItem('decodedState')
+
+    if (decodedState) {
+      globalExecutionState.extensionLoginProcessed = true
+
+      queueMicrotask(() => {
+        window.location.href = decodedState
+        sessionStorage.clear()
+      })
+    }
+  }
+}
+
+const useHandlePaymentSuccess = () => {
   const [searchParams] = useSearchParams()
   const successType = searchParams.get('type') as SuccessType | null
   const { data: subscription } = useSubscription()
   const updateOnboardingStep = useUpdateOnboardingStep()
+
+  if (
+    successType === 'payment' &&
+    subscription?.plan?.name !== 'Free' &&
+    !globalExecutionState.paymentSuccessProcessed &&
+    subscription !== undefined
+  ) {
+    globalExecutionState.paymentSuccessProcessed = true
+
+    queueMicrotask(() => {
+      updateOnboardingStep.mutate(1, {
+        onError: error => {
+          toast.error(error ? error.message : 'An unexpected error occurred')
+        }
+      })
+    })
+  }
+}
+
+const useSuccessConfig = () => {
+  const [searchParams] = useSearchParams()
+  const successType = searchParams.get('type') as SuccessType | null
+
+  useHandleExtensionLogin()
+  useHandlePaymentSuccess()
 
   const successConfigs = useMemo<Record<SuccessType, SuccessConfig>>(() => {
     return {
@@ -51,29 +102,6 @@ const useSuccessConfig = () => {
       }
     }
   }, [])
-
-  useEffect(() => {
-    if (successType === 'extension-login') {
-      const decodedState = sessionStorage.getItem('decodedState')
-
-      if (decodedState) {
-        window.location.href = decodedState
-        sessionStorage.clear()
-      }
-    }
-
-    if (successType === 'payment' && subscription?.plan?.name !== 'Free') {
-      updateOnboardingStep.mutate(1, {
-        onError: error => {
-          toast.error(
-            error instanceof Error
-              ? error.message
-              : 'An unexpected error occurred'
-          )
-        }
-      })
-    }
-  }, [successType, subscription?.plan?.name, updateOnboardingStep])
 
   const config = useMemo(() => {
     if (!successType || !successConfigs[successType]) {
