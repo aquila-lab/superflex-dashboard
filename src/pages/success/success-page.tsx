@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { AppHeader } from '@/shared/app-header'
 import { OnboardingHeader } from '@/shared/onboarding-header'
-import { useSubscription, useUpdateOnboardingStep } from '@/lib/hooks'
+import { useAuth, useSubscription, useUpdateOnboardingStep } from '@/lib/hooks'
 import { Button } from '@/ui/button'
 import confetti from 'canvas-confetti'
 import { CreditCard, ExternalLink, FileCode } from 'lucide-react'
@@ -17,6 +17,7 @@ const globalExecutionState = {
 
 const useHandleExtensionLogin = () => {
   const [searchParams] = useSearchParams()
+  const { token } = useAuth()
   const successType = searchParams.get('type') as SuccessType | null
 
   if (
@@ -29,7 +30,7 @@ const useHandleExtensionLogin = () => {
       globalExecutionState.extensionLoginProcessed = true
 
       queueMicrotask(() => {
-        window.location.href = decodedState
+        window.location.href = `${decodedState}&access_token=${token}`
         sessionStorage.clear()
       })
     }
