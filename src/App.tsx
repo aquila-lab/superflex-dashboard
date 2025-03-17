@@ -4,14 +4,17 @@ import { Toaster } from 'sonner'
 import { GOOGLE_CLIENT_ID } from './lib/constants'
 import { getQueryClient } from './lib/utils'
 import { Router } from './router/router'
+import { PostHogProvider } from './posthog-provider'
 
 export const App = () => {
   return (
-    <QueryClientProvider client={getQueryClient()}>
-      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-        <Router />
-        <Toaster position='bottom-right' />
-      </GoogleOAuthProvider>
-    </QueryClientProvider>
+    <PostHogProvider>
+      <QueryClientProvider client={getQueryClient()}>
+        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+          <Router />
+          <Toaster position='bottom-right' />
+        </GoogleOAuthProvider>
+      </QueryClientProvider>
+    </PostHogProvider>
   )
 }
