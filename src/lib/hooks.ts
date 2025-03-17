@@ -13,8 +13,8 @@ import type {
 import { onboardingStepMapping, parseJwtToken } from './utils'
 import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
 import { TOKEN_KEY, queryKeys } from './constants'
+import { useErrorHandler, withErrorHandling } from './error-handling'
 
 export const useAuth = () => {
   const getToken = () => localStorage.getItem(TOKEN_KEY)
@@ -83,8 +83,11 @@ export const useLogin = () => {
         '/auth/login',
         credentials
       )
-      setToken(data.token)
-      return data
+      if (data?.token) {
+        setToken(data.token)
+        return data
+      }
+      throw new Error('Invalid response from server')
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.user })
@@ -297,15 +300,20 @@ export const usePlanSelection = () => {
   const updateOnboardingStep = useUpdateOnboardingStep()
 
   const handleFreePlanSelection = useCallback(() => {
-    updateOnboardingStep.mutate(1, {
-      onSuccess: () => {
-        toast.success('Free plan successfully activated!')
-        navigate('/user-info')
+    const activateFreePlan = withErrorHandling(
+      async () => {
+        const result = await updateOnboardingStep.mutateAsync(1)
+        return result
       },
-      onError: () => {
-        toast.error('Failed to update your profile. Please try again.')
+      {
+        successMessage: 'Free plan successfully activated!',
+        onSuccess: () => {
+          navigate('/user-info')
+        }
       }
-    })
+    )
+
+    activateFreePlan()
   }, [updateOnboardingStep, navigate])
 
   const getStripeUrl = useCallback(
@@ -362,4 +370,18 @@ export const usePlanSelection = () => {
   return {
     handlePlanSelection
   }
+}
+
+export const useWithErrorToast = <
+  TData = unknown,
+  TError = unknown,
+  TVariables = void
+>() => {
+  const { handleError } = useErrorHandler()
+
+  return useMutation<TData, TError, TVariables>({
+    onError: (error: any) => {
+      handleError(error)
+    }
+  })
 }

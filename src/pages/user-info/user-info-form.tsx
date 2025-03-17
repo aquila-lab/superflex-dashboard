@@ -14,8 +14,8 @@ import {
 import { useCallback, useMemo, useState } from 'react'
 import type { ComponentProps } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
 import type { TechnicalLevel, ReferralSource } from '@/lib/types'
+import { withErrorHandling } from '@/lib/error-handling'
 
 export const UserInfoForm = ({
   className,
@@ -62,43 +62,50 @@ export const UserInfoForm = ({
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
-
       setIsSubmitting(true)
 
+      const payload = {
+        first_name: firstName,
+        last_name: lastName,
+        onboarding_step: 2,
+        ...(title ? { title } : {}),
+        ...(company ? { company } : {}),
+        ...(referralSource ? { referral_source: referralSource } : {}),
+        ...(technicalLevel ? { technical_level: technicalLevel } : {})
+      }
+
+      const updateUserInfo = withErrorHandling(
+        async () => {
+          const result = await updateUser.mutateAsync(payload)
+          return result
+        },
+        {
+          successMessage: 'Your profile information has been saved',
+          onSuccess: () => {
+            navigate('/dashboard/onboarding')
+          },
+          onError: () => {
+            setIsSubmitting(false)
+          }
+        }
+      )
+
       try {
-        const payload = {
-          first_name: firstName,
-          last_name: lastName,
-          onboarding_step: 2
-        }
-
-        if (title) {
-          Object.assign(payload, { title })
-        }
-
-        if (company) {
-          Object.assign(payload, { company })
-        }
-
-        if (referralSource) {
-          Object.assign(payload, { referral_source: referralSource })
-        }
-
-        await updateUser.mutateAsync(payload)
-
-        toast.success('Your profile information has been saved')
-        navigate('/dashboard/onboarding')
-      } catch (error) {
-        toast.error(
-          error instanceof Error
-            ? error.message
-            : 'An unexpected error occurred'
-        )
+        await updateUserInfo()
       } finally {
         setIsSubmitting(false)
       }
     },
-    [firstName, lastName, title, company, referralSource, updateUser, navigate]
+    [
+      firstName,
+      lastName,
+      title,
+      company,
+      referralSource,
+      technicalLevel,
+      updateUser,
+      navigate
+    ]
   )
 
   return (

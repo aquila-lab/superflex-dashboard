@@ -16,6 +16,7 @@ import {
 import type { ComponentProps } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { withErrorHandling } from '@/lib/error-handling'
 
 export const RegisterForm = ({
   className,
@@ -32,13 +33,20 @@ export const RegisterForm = ({
 
   const handleGoogleAuthCode = useCallback(
     async (code: string) => {
-      try {
-        await googleAuth({ code })
-        toast.success('Account created with Google successfully')
-        navigate('/select-plan', { replace: true })
-      } catch (_error) {
-        toast.error('Failed to create account with Google. Please try again.')
-      }
+      const handleGoogleAuth = withErrorHandling(
+        async (authCode: string) => {
+          const result = await googleAuth({ code: authCode })
+          return result
+        },
+        {
+          successMessage: 'Account created with Google successfully',
+          onSuccess: () => {
+            navigate('/select-plan', { replace: true })
+          }
+        }
+      )
+
+      await handleGoogleAuth(code)
     },
     [googleAuth, navigate]
   )
@@ -54,8 +62,7 @@ export const RegisterForm = ({
     return (
       email.trim() !== '' &&
       password.trim() !== '' &&
-      confirmPassword.trim() !== '' &&
-      password === confirmPassword
+      confirmPassword.trim() !== ''
     )
   }, [email, password, confirmPassword])
 
@@ -68,7 +75,7 @@ export const RegisterForm = ({
       }
 
       if (password !== confirmPassword) {
-        toast.error('Passwords do not match')
+        toast.error('Passwords do not match, please try again.')
         return
       }
 
@@ -82,21 +89,23 @@ export const RegisterForm = ({
                 navigate('/select-plan')
               }, 500)
             },
-            onError: () => {
+            onError: (error: any) => {
               setPassword('')
               setConfirmPassword('')
-              toast.error(
+              const errorMessage =
+                error?.response?.data?.error?.message ||
                 'Failed to create account. Please try again with a different email.'
-              )
+              toast.error(errorMessage)
             }
           }
         )
-      } catch (_error) {
+      } catch (error: any) {
         setPassword('')
         setConfirmPassword('')
-        toast.error(
+        const errorMessage =
+          error?.response?.data?.error?.message ||
           'Failed to create account. Please try again with a different email.'
-        )
+        toast.error(errorMessage)
       }
     },
     [

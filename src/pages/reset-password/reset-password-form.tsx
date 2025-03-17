@@ -6,7 +6,7 @@ import { Label } from '@/ui/label'
 import { type FormEvent, useCallback, useMemo, useState } from 'react'
 import type { ComponentProps } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
+import { withErrorHandling } from '@/lib/error-handling'
 
 export const ResetPasswordForm = ({
   className,
@@ -28,15 +28,20 @@ export const ResetPasswordForm = ({
         return
       }
 
-      requestPasswordReset.mutate(email, {
-        onSuccess: () => {
-          toast.success('Password reset email sent')
-          navigate('/forgot-password-request')
+      const handleRequestReset = withErrorHandling(
+        async () => {
+          const result = await requestPasswordReset.mutateAsync(email)
+          return result
         },
-        onError: () => {
-          toast.error('Failed to reset password. Please try again.')
+        {
+          successMessage: 'Password reset email sent',
+          onSuccess: () => {
+            navigate('/forgot-password-request')
+          }
         }
-      })
+      )
+
+      await handleRequestReset()
     },
     [email, isFormValid, requestPasswordReset, navigate]
   )

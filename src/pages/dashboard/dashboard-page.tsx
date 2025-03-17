@@ -49,6 +49,7 @@ import { toast } from 'sonner'
 import { planCards } from '@/lib/constants'
 import type { BillingPeriod } from '@/lib/types'
 import { formatDate, cn } from '@/lib/utils'
+import { withErrorHandling } from '@/lib/error-handling'
 
 const RequestsCard = () => {
   const { data: subscription } = useSubscription()
@@ -174,20 +175,21 @@ const UserInfoCard = () => {
       return
     }
 
-    updateUser.mutate(
-      { username },
+    const updateUsername = withErrorHandling(
+      async () => {
+        const result = await updateUser.mutateAsync({ username })
+        return result
+      },
       {
+        successMessage: 'Username updated successfully',
+        errorMessage: 'Failed to update username. Please try again.',
         onSuccess: () => {
-          toast.success('Username updated successfully')
           setIsDialogOpen(false)
-        },
-        onError: error => {
-          toast.error(
-            error instanceof Error ? error.message : 'Failed to update username'
-          )
         }
       }
     )
+
+    await updateUsername()
   }, [username, updateUser])
 
   const usernameInitials = useMemo(() => {

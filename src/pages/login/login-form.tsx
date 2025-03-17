@@ -16,6 +16,7 @@ import {
 import type { ComponentProps } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { withErrorHandling } from '@/lib/error-handling'
 
 export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
   const [email, setEmail] = useState('')
@@ -28,13 +29,20 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
 
   const handleGoogleAuthCode = useCallback(
     async (code: string) => {
-      try {
-        await googleAuth({ code })
-        toast.success('Logged in with Google successfully')
-        navigate('/select-plan', { replace: true })
-      } catch (_error) {
-        toast.error('Failed to login with Google. Please try again.')
-      }
+      const handleGoogleAuth = withErrorHandling(
+        async (authCode: string) => {
+          const result = await googleAuth({ code: authCode })
+          return result
+        },
+        {
+          successMessage: 'Logged in with Google successfully',
+          onSuccess: () => {
+            navigate('/select-plan', { replace: true })
+          }
+        }
+      )
+
+      await handleGoogleAuth(code)
     },
     [googleAuth, navigate]
   )
@@ -68,19 +76,22 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
                 navigate('/select-plan')
               }, 500)
             },
-            onError: () => {
+            onError: (error: any) => {
               setPassword('')
-              toast.error(
+              // Directly access the error message from the response
+              const errorMessage =
+                error?.response?.data?.error?.message ||
                 'Failed to login. Please check your credentials and try again.'
-              )
+              toast.error(errorMessage)
             }
           }
         )
-      } catch (_error) {
+      } catch (error: any) {
         setPassword('')
-        toast.error(
+        const errorMessage =
+          error?.response?.data?.error?.message ||
           'Failed to login. Please check your credentials and try again.'
-        )
+        toast.error(errorMessage)
       }
     },
     [email, password, isFormValid, isLoginPending, login, navigate]

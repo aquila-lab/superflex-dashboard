@@ -7,6 +7,7 @@ import { type FormEvent, useCallback, useEffect, useState } from 'react'
 import type { ComponentProps } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { withErrorHandling } from '@/lib/error-handling'
 
 export const NewPasswordForm = ({
   className,
@@ -55,18 +56,23 @@ export const NewPasswordForm = ({
         return
       }
 
-      resetPassword.mutate(
-        { code, new_password: password },
+      const handleResetPassword = withErrorHandling(
+        async () => {
+          const result = await resetPassword.mutateAsync({
+            code,
+            new_password: password
+          })
+          return result
+        },
         {
+          successMessage: 'Password updated successfully',
           onSuccess: () => {
-            toast.success('Password updated successfully')
             navigate('/dashboard')
-          },
-          onError: () => {
-            toast.error('Failed to update password. The link may have expired.')
           }
         }
       )
+
+      await handleResetPassword()
     },
     [password, confirmPassword, resetPassword, code, navigate]
   )
