@@ -1,5 +1,5 @@
-import { IS_PROD, POSTHOG_API_KEY } from './lib/constants'
 import posthog from 'posthog-js'
+import { IS_PROD, POSTHOG_API_KEY } from './lib/constants'
 
 export const PostHogProvider = ({
   children

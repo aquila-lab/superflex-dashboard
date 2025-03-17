@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import posthog from 'posthog-js'
 import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { apiClient } from './api-client'
@@ -15,7 +16,6 @@ import type {
   UserUpdate
 } from './types'
 import { onboardingStepMapping, parseJwtToken } from './utils'
-import posthog from 'posthog-js'
 
 export const useAuth = () => {
   const getToken = () => localStorage.getItem(TOKEN_KEY)

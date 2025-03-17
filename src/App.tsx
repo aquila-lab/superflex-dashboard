@@ -3,8 +3,8 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'sonner'
 import { GOOGLE_CLIENT_ID } from './lib/constants'
 import { getQueryClient } from './lib/utils'
-import { Router } from './router/router'
 import { PostHogProvider } from './posthog-provider'
+import { Router } from './router/router'
 
 export const App = () => {
   return (
