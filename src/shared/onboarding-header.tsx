@@ -14,7 +14,7 @@ export const OnboardingHeader = ({
 }: HTMLAttributes<HTMLDivElement> & {
   currentStep?: number
 }) => {
-  const { mutate: logout } = useLogout()
+  const { mutateAsync: logout } = useLogout()
 
   const handleLogout = useCallback(async () => {
     logout()

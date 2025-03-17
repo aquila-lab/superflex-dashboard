@@ -24,15 +24,15 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
   const [searchParams] = useSearchParams()
 
   const navigate = useNavigate()
-  const { mutate: login, isPending: isLoginPending } = useLogin()
-  const { mutate: googleAuth, isPending: isGoogleAuthPending } = useGoogleAuth()
+  const { mutateAsync: login, isPending: isLoginPending } = useLogin()
+  const { mutateAsync: googleAuth, isPending: isGoogleAuthPending } =
+    useGoogleAuth()
 
   const handleGoogleAuthCode = useCallback(
     async (code: string) => {
       const handleGoogleAuth = withErrorHandling(
         async (authCode: string) => {
-          const result = await googleAuth({ code: authCode })
-          return result
+          return await googleAuth({ code: authCode })
         },
         {
           successMessage: 'Logged in with Google successfully',

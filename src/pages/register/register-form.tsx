@@ -28,15 +28,15 @@ export const RegisterForm = ({
   const [searchParams] = useSearchParams()
 
   const navigate = useNavigate()
-  const { mutate: register, isPending: isRegisterPending } = useRegister()
-  const { mutate: googleAuth, isPending: isGoogleAuthPending } = useGoogleAuth()
+  const { mutateAsync: register, isPending: isRegisterPending } = useRegister()
+  const { mutateAsync: googleAuth, isPending: isGoogleAuthPending } =
+    useGoogleAuth()
 
   const handleGoogleAuthCode = useCallback(
     async (code: string) => {
       const handleGoogleAuth = withErrorHandling(
         async (authCode: string) => {
-          const result = await googleAuth({ code: authCode })
-          return result
+          return await googleAuth({ code: authCode })
         },
         {
           successMessage: 'Account created with Google successfully',

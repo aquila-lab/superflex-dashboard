@@ -147,7 +147,7 @@ export const AppHeader = ({
   className,
   ...props
 }: HTMLAttributes<HTMLDivElement>) => {
-  const { mutate: logout } = useLogout()
+  const { mutateAsync: logout } = useLogout()
   const { data: user } = useUser()
 
   const handleLogout = useCallback(async () => {
