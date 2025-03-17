@@ -1,32 +1,20 @@
-import './App.css';
+import { GoogleOAuthProvider } from '@react-oauth/google'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { Toaster } from 'sonner'
+import { GOOGLE_CLIENT_ID } from './lib/constants'
+import { getQueryClient } from './lib/utils'
+import { PostHogProvider } from './posthog-provider'
+import { Router } from './router/router'
 
-import React from 'react';
-
-import AppPages from '@/pages/AppPages';
-import { useAppSelector } from '@/core/store';
-import { useLoginToken } from '@/hooks/useLoginToken';
-import { LoadingSpinner, Toaster } from '@/components';
-import { AppContextProviders } from './AppContextProviders';
-
-const App = (): JSX.Element => {
-  const isLoginPending = useAppSelector((state) => state.auth.isLoginPending);
-
-  useLoginToken();
-
-  if (isLoginPending) {
-    return <LoadingSpinner />;
-  }
-
+export const App = () => {
   return (
-    <AppContextProviders>
-      <div className="App">
-        <div id="AppContent" className="h-full">
-          <AppPages />
-        </div>
-        <Toaster />
-      </div>
-    </AppContextProviders>
-  );
-};
-
-export default App;
+    <PostHogProvider>
+      <QueryClientProvider client={getQueryClient()}>
+        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+          <Router />
+          <Toaster position='bottom-right' />
+        </GoogleOAuthProvider>
+      </QueryClientProvider>
+    </PostHogProvider>
+  )
+}

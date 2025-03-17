@@ -15,18 +15,18 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "REACT_APP_NODE_ENV=production" >> .env
-          echo "REACT_APP_API_BASE_URL=https://api.superflex.ai" >> .env
-          echo "REACT_APP_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
-          echo "REACT_APP_GOOGLE_OAUTH_REDIRECT_URI=https://app.superflex.ai" >> .env
-          echo "REACT_APP_COOKIE_DOMAIN=.superflex.ai" >> .env
-          echo "REACT_APP_POSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}" >> .env
+          echo "VITE_NODE_ENV=production" >> .env
+          echo "VITE_API_BASE_URL=https://api.superflex.ai" >> .env
+          echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+          echo "VITE_GOOGLE_OAUTH_REDIRECT_URI=https://app.superflex.ai" >> .env
+          echo "VITE_COOKIE_DOMAIN=.superflex.ai" >> .env
+          echo "VITE_POSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}" >> .env
 
       - name: Install dependencies
-        run: yarn install
+        run: npm install
 
       - name: Build the project
-        run: yarn run build
+        run: npm run build
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
