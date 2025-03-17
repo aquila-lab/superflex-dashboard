@@ -21,7 +21,7 @@ const useHandleExtensionLogin = () => {
   const successType = searchParams.get('type') as SuccessType | null
 
   if (
-    successType === 'extension-login' &&
+    (successType === 'extension-login' || successType === 'figma') &&
     !globalExecutionState.extensionLoginProcessed
   ) {
     const decodedState = sessionStorage.getItem('decodedState')
@@ -29,8 +29,14 @@ const useHandleExtensionLogin = () => {
     if (decodedState) {
       globalExecutionState.extensionLoginProcessed = true
 
+      let url = decodedState
+
+      if (successType === 'extension-login') {
+        url += `&access_token=${token}`
+      }
+
       queueMicrotask(() => {
-        window.location.href = `${decodedState}&access_token=${token}`
+        window.location.href = url
         sessionStorage.clear()
       })
     }
