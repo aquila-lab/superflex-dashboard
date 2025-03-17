@@ -419,8 +419,7 @@ const OnboardingStartUsingSuperflex = ({
     currentApp,
     launchVSCodeExtension,
     launchCursorExtension,
-    openMarketplace,
-    FallbackDialog
+    openMarketplace
   } = useExtensionLauncher()
 
   return (
@@ -717,8 +716,6 @@ const OnboardingStartUsingSuperflex = ({
           </Button>
         </div>
       </div>
-
-      <FallbackDialog />
 
       <div className='pt-2 flex justify-between items-center'>
         <p className='text-sm text-muted-foreground'>
