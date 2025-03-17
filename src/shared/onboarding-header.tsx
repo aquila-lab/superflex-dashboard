@@ -1,10 +1,10 @@
-import { useAuth } from '@/global/hooks/use-auth'
 import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
 import { Icons } from '@/ui/icons'
 import { Check, LogOut, Pen } from 'lucide-react'
 import { type HTMLAttributes, useCallback, useMemo } from 'react'
+import { useLogout } from '@/lib/hooks'
 
 export const stepsData = [
   {
@@ -36,10 +36,10 @@ export const OnboardingHeader = ({
 }: HTMLAttributes<HTMLDivElement> & {
   currentStep?: number
 }) => {
-  const { logout } = useAuth()
+  const { mutate: logout } = useLogout()
 
   const handleLogout = useCallback(async () => {
-    await logout()
+    logout()
   }, [logout])
 
   const headerClasses = useMemo(

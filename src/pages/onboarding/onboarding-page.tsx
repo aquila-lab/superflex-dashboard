@@ -1,11 +1,12 @@
-import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
-import { API_BASE_URL } from '@/lib/constants'
+import {
+  useOnboardingStep,
+  useUser,
+  useUpdateOnboardingStep
+} from '@/lib/hooks'
 import { cn, onboardingStepMapping } from '@/lib/utils'
 import { AppFooter } from '@/shared/app-footer'
 import { AppHeader } from '@/shared/app-header'
 import { useExtensionLauncher } from '@/shared/extension-launcher'
-import { useAuthStore } from '@/store/auth-store'
-import { useUserStore } from '@/store/user-store'
 import {
   Accordion,
   AccordionContent,
@@ -27,7 +28,6 @@ import {
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
 
 type OnboardingSection = {
   id: string
@@ -68,49 +68,17 @@ const CompleteButton = ({
 
 export const OnboardingPage = () => {
   const navigate = useNavigate()
-
-  const { user, updateUser } = useUserStore()
-  const { getAuthHeader } = useAuthStore()
+  const { data: user } = useUser()
   const { currentStep, isStepCompleted } = useOnboardingStep()
+  const updateOnboardingStep = useUpdateOnboardingStep()
 
   const completeStepNumber = useMemo(() => {
     return onboardingStepMapping.steps.length - 1
   }, [])
 
-  const updateOnboardingStep = useCallback(
-    async (stepNumber: number) => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/user`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            ...getAuthHeader()
-          },
-          body: JSON.stringify({
-            onboarding_step: stepNumber
-          })
-        })
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.message || 'Failed to update progress')
-        }
-
-        updateUser({ onboarding_step: stepNumber })
-      } catch (error) {
-        toast.error(
-          error instanceof Error
-            ? error.message
-            : 'Failed to update your progress'
-        )
-      }
-    },
-    [getAuthHeader, updateUser]
-  )
-
   useEffect(() => {
     if (user && user.onboarding_step === null) {
-      updateOnboardingStep(completeStepNumber)
+      updateOnboardingStep.mutate(completeStepNumber)
     }
   }, [user, completeStepNumber, updateOnboardingStep])
 
@@ -175,11 +143,9 @@ export const OnboardingPage = () => {
         const currentSection = prev[currentIndex]
         const isLastSection = currentIndex === prev.length - 1
 
-        if (isCompleted) {
-          if (currentSection) {
-            const nextStepNumber = currentSection.stepNumber + 1
-            updateOnboardingStep(nextStepNumber)
-          }
+        if (isCompleted && currentSection) {
+          const nextStepNumber = currentSection.stepNumber + 1
+          updateOnboardingStep.mutate(nextStepNumber)
 
           if (!isLastSection) {
             const nextSectionIndex = currentIndex + 1

@@ -1,16 +1,15 @@
-import { useAuth } from '@/global/hooks/use-auth'
-import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
+import { useOnboardingStep, useUser } from '@/lib/hooks'
 import { Loading } from '@/ui/loading'
 import { useMemo } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
 export const ProtectedRoute = () => {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { data: user, isLoading } = useUser()
   const { currentStep } = useOnboardingStep()
   const location = useLocation()
 
   const redirectInfo = useMemo(() => {
-    if (!isAuthenticated) {
+    if (!user) {
       return {
         path: '/login',
         shouldRedirect: true
@@ -36,7 +35,7 @@ export const ProtectedRoute = () => {
       }
     }
 
-    if (isAuthenticated) {
+    if (user) {
       const redirected = sessionStorage.getItem('redirected')
 
       if (!redirected && currentStep >= 2) {
@@ -83,7 +82,7 @@ export const ProtectedRoute = () => {
       path: correctPath,
       shouldRedirect: !isOnCorrectPath
     }
-  }, [isAuthenticated, currentStep, location.pathname, location.search])
+  }, [user, currentStep, location.pathname, location.search])
 
   if (isLoading) {
     return <Loading size='lg' />

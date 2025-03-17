@@ -1,9 +1,7 @@
-import { API_BASE_URL } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { AppHeader } from '@/shared/app-header'
 import { OnboardingHeader } from '@/shared/onboarding-header'
-import { useAuthStore } from '@/store/auth-store'
-import { type UserSubscription, useUserStore } from '@/store/user-store'
+import { useSubscription, useUpdateOnboardingStep } from '@/lib/hooks'
 import { Button } from '@/ui/button'
 import confetti from 'canvas-confetti'
 import { CreditCard, ExternalLink, FileCode } from 'lucide-react'
@@ -27,8 +25,8 @@ type SuccessConfig = {
 const useSuccessConfig = () => {
   const [searchParams] = useSearchParams()
   const successType = searchParams.get('type') as SuccessType | null
-  const { getAuthHeader } = useAuthStore()
-  const updateUser = useUserStore(state => state.updateUser)
+  const { data: subscription } = useSubscription()
+  const updateOnboardingStep = useUpdateOnboardingStep()
 
   const successConfigs = useMemo<Record<SuccessType, SuccessConfig>>(() => {
     return {
@@ -67,58 +65,6 @@ const useSuccessConfig = () => {
   }, [])
 
   useEffect(() => {
-    const handleExtensionLogin = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/billing/subscription`, {
-          headers: {
-            ...getAuthHeader()
-          }
-        })
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch subscription')
-        }
-
-        const subscriptionData: UserSubscription = await response.json()
-
-        if (subscriptionData.plan?.name !== 'Free') {
-          try {
-            const response = await fetch(`${API_BASE_URL}/user`, {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                ...getAuthHeader()
-              },
-              body: JSON.stringify({
-                onboarding_step: 1
-              })
-            })
-
-            if (!response.ok) {
-              const errorData = await response.json()
-              throw new Error(
-                errorData.message || 'Failed to update user information'
-              )
-            }
-
-            updateUser({ onboarding_step: 1 })
-          } catch (error) {
-            toast.error(
-              error instanceof Error
-                ? error.message
-                : 'An unexpected error occurred'
-            )
-          }
-        }
-      } catch (error) {
-        toast.error(
-          error instanceof Error
-            ? error.message
-            : 'An unexpected error occurred'
-        )
-      }
-    }
-
     if (successType === 'extension-login') {
       const decodedState = sessionStorage.getItem('decodedState')
 
@@ -128,10 +74,18 @@ const useSuccessConfig = () => {
       }
     }
 
-    if (successType === 'payment') {
-      handleExtensionLogin()
+    if (successType === 'payment' && subscription?.plan?.name !== 'Free') {
+      updateOnboardingStep.mutate(1, {
+        onError: error => {
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : 'An unexpected error occurred'
+          )
+        }
+      })
     }
-  }, [successType, getAuthHeader, updateUser])
+  }, [successType, subscription?.plan?.name, updateOnboardingStep])
 
   const config = useMemo(() => {
     if (!successType || !successConfigs[successType]) {

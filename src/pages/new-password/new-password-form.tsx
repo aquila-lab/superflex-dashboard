@@ -1,6 +1,6 @@
 import { API_BASE_URL } from '@/lib/constants'
 import { cn } from '@/lib/utils'
-import { useAuthStore } from '@/store/auth-store'
+import { useAuth } from '@/lib/hooks'
 import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
@@ -20,7 +20,7 @@ export const NewPasswordForm = ({
   const code = searchParams.get('code')
 
   const navigate = useNavigate()
-  const { setToken } = useAuthStore()
+  const { setToken } = useAuth()
 
   useEffect(() => {
     if (!code) {

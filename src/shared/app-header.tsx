@@ -1,8 +1,5 @@
-import { useAuth } from '@/global/hooks/use-auth'
-import { useOnboardingStep } from '@/global/hooks/use-onboarding-step'
-import { useUser } from '@/global/hooks/use-user'
+import { useLogout, useOnboardingStep, useUser } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
-import { useUserStore } from '@/store/user-store'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 import { Button } from '@/ui/button'
 import {
@@ -21,7 +18,7 @@ import { Link } from 'react-router-dom'
 import { useExtensionLauncher } from './extension-launcher'
 
 const UserAvatar = () => {
-  const { user } = useUser()
+  const { data: user } = useUser()
 
   const userInitials = useMemo(() => {
     if (!user?.username) {
@@ -155,8 +152,8 @@ export const AppHeader = ({
   className,
   ...props
 }: HTMLAttributes<HTMLDivElement>) => {
-  const { logout } = useAuth()
-  const { user } = useUserStore()
+  const { mutate: logout } = useLogout()
+  const { data: user } = useUser()
 
   const handleLogout = useCallback(async () => {
     await logout()

@@ -1,7 +1,5 @@
-import { useAuth } from '@/global/hooks/use-auth'
-import { API_BASE_URL } from '@/lib/constants'
+import { useLogin, useGoogleAuth } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
-import { useAuthStore } from '@/store/auth-store'
 import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
 import { Input } from '@/ui/input'
@@ -22,51 +20,23 @@ import { toast } from 'sonner'
 export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchParams] = useSearchParams()
 
   const navigate = useNavigate()
-  const { googleLogin } = useAuth()
-  const { setToken } = useAuthStore()
-
-  const handleLoginWithAuth = useCallback(
-    async (email: string, password: string) => {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username_or_email: email, password })
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Failed to login')
-      }
-
-      const authResponse = await response.json()
-      setToken(authResponse.token)
-
-      return authResponse.token
-    },
-    [setToken]
-  )
+  const { mutate: login, isPending: isLoginPending } = useLogin()
+  const { mutate: googleAuth, isPending: isGoogleAuthPending } = useGoogleAuth()
 
   const handleGoogleAuthCode = useCallback(
     async (code: string) => {
       try {
-        setIsSubmitting(true)
-        const authToken = await googleLogin(code)
-
-        if (authToken) {
-          toast.success('Logged in with Google successfully')
-          navigate('/select-plan', { replace: true })
-        }
+        await googleAuth({ code })
+        toast.success('Logged in with Google successfully')
+        navigate('/select-plan', { replace: true })
       } catch (_error) {
         toast.error('Failed to login with Google. Please try again.')
-      } finally {
-        setIsSubmitting(false)
       }
     },
-    [googleLogin, navigate]
+    [googleAuth, navigate]
   )
 
   useEffect(() => {
@@ -84,32 +54,36 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
     async (e: FormEvent) => {
       e.preventDefault()
 
-      if (!isFormValid || isSubmitting) {
+      if (!isFormValid || isLoginPending) {
         return
       }
 
       try {
-        setIsSubmitting(true)
-
-        const authToken = await handleLoginWithAuth(email, password)
-
-        if (authToken) {
-          toast.success('Logged in successfully')
-          // Delay navigation slightly to allow the user to see the success message
-          setTimeout(() => {
-            navigate('/select-plan')
-          }, 500)
-        }
+        await login(
+          { username_or_email: email, password },
+          {
+            onSuccess: () => {
+              toast.success('Logged in successfully')
+              setTimeout(() => {
+                navigate('/select-plan')
+              }, 500)
+            },
+            onError: () => {
+              setPassword('')
+              toast.error(
+                'Failed to login. Please check your credentials and try again.'
+              )
+            }
+          }
+        )
       } catch (_error) {
         setPassword('')
         toast.error(
           'Failed to login. Please check your credentials and try again.'
         )
-      } finally {
-        setIsSubmitting(false)
       }
     },
-    [email, password, isFormValid, isSubmitting, handleLoginWithAuth, navigate]
+    [email, password, isFormValid, isLoginPending, login, navigate]
   )
 
   const handleGoogleLogin = useGoogleLogin({
@@ -123,6 +97,8 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
       toast.error('Google login failed. Please try again.')
     }
   })
+
+  const isSubmitting = isLoginPending || isGoogleAuthPending
 
   return (
     <form

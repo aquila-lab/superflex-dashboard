@@ -1,7 +1,5 @@
-import { API_BASE_URL } from '@/lib/constants'
 import { cn } from '@/lib/utils'
-import { useAuthStore } from '@/store/auth-store'
-import { useUserStore } from '@/store/user-store'
+import { useUpdateUser } from '@/lib/hooks'
 import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
@@ -36,8 +34,7 @@ export const UserInfoForm = ({
   ...props
 }: ComponentProps<'form'>) => {
   const navigate = useNavigate()
-  const { getAuthHeader } = useAuthStore()
-  const { updateUser } = useUserStore()
+  const updateUser = useUpdateUser()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [firstName, setFirstName] = useState('')
@@ -81,32 +78,15 @@ export const UserInfoForm = ({
       setIsSubmitting(true)
 
       try {
-        const response = await fetch(`${API_BASE_URL}/user`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            ...getAuthHeader()
-          },
-          body: JSON.stringify({
-            first_name: firstName,
-            last_name: lastName,
-            title,
-            company,
-            onboarding_step: 2
-          })
+        await updateUser.mutateAsync({
+          first_name: firstName,
+          last_name: lastName,
+          title,
+          company,
+          onboarding_step: 2
         })
 
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(
-            errorData.message || 'Failed to update user information'
-          )
-        }
-
-        updateUser({ onboarding_step: 2 })
-
         toast.success('Your profile information has been saved')
-
         navigate('/dashboard/onboarding')
       } catch (error) {
         toast.error(
@@ -118,7 +98,7 @@ export const UserInfoForm = ({
         setIsSubmitting(false)
       }
     },
-    [firstName, lastName, title, company, getAuthHeader, updateUser, navigate]
+    [firstName, lastName, title, company, updateUser, navigate]
   )
 
   return (

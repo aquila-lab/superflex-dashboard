@@ -1,29 +1,22 @@
-import { useUser } from '@/global/hooks/use-user'
 import { API_BASE_URL } from '@/lib/constants'
 import type { PlanId } from '@/lib/utils'
-import { useAuthStore } from '@/store/auth-store'
-import { useUserStore } from '@/store/user-store'
+import { useUser } from '@/lib/hooks'
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export const usePlanSelection = () => {
   const navigate = useNavigate()
-  const { user } = useUser()
-  const { getAuthHeader } = useAuthStore()
-  const { updateUser } = useUserStore()
+  const queryClient = useQueryClient()
+  const { data: user } = useUser()
 
-  const updateOnboardingStep = useCallback(async () => {
-    if (!user) {
-      return
-    }
-
-    try {
+  const updateOnboardingStepMutation = useMutation({
+    mutationFn: async () => {
       const response = await fetch(`${API_BASE_URL}/user`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json',
-          ...getAuthHeader()
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           onboarding_step: 1
@@ -34,14 +27,25 @@ export const usePlanSelection = () => {
         throw new Error('Failed to update onboarding step')
       }
 
-      updateUser({ onboarding_step: 1 })
+      return response.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] })
       toast.success('Free plan successfully activated!')
-
       navigate('/user-info')
-    } catch (_error) {
+    },
+    onError: () => {
       toast.error('Failed to update your profile. Please try again.')
     }
-  }, [user, getAuthHeader, updateUser, navigate])
+  })
+
+  const updateOnboardingStep = useCallback(async () => {
+    if (!user) {
+      return
+    }
+
+    updateOnboardingStepMutation.mutate()
+  }, [user, updateOnboardingStepMutation])
 
   const getStripeUrl = useCallback(
     (planId: PlanId): string | null => {
