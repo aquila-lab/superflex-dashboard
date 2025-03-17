@@ -204,7 +204,14 @@ export const useUpdateUser = () => {
 
   return useMutation({
     mutationFn: async (userData: UserUpdate) => {
-      const { data } = await apiClient.patch<User>('/user', userData)
+      const { data } = await apiClient.patch<User>('/user', {
+        username: userData.username,
+        first_name: userData.first_name,
+        last_name: userData.last_name,
+        title: userData.title,
+        company: userData.company,
+        onboarding_step: userData.onboarding_step
+      })
       return data
     },
     onSuccess: () => {
