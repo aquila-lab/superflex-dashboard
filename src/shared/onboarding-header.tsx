@@ -1,11 +1,11 @@
+import { stepsData } from '@/lib/constants'
+import { useLogout } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
 import { Icons } from '@/ui/icons'
 import { Check, LogOut, Pen } from 'lucide-react'
 import { type HTMLAttributes, useCallback, useMemo } from 'react'
-import { useLogout } from '@/lib/hooks'
-import { stepsData } from '@/lib/constants'
 
 export const OnboardingHeader = ({
   className,

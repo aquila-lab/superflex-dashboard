@@ -1,5 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { apiClient } from './api-client'
+import { TOKEN_KEY, queryKeys } from './constants'
+import { useErrorHandler, withErrorHandling } from './error-handling'
 import type {
   AuthTokenResponse,
   GoogleAuthRequest,
@@ -11,10 +15,6 @@ import type {
   UserUpdate
 } from './types'
 import { onboardingStepMapping, parseJwtToken } from './utils'
-import { useCallback, useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { TOKEN_KEY, queryKeys } from './constants'
-import { useErrorHandler, withErrorHandling } from './error-handling'
 
 export const useAuth = () => {
   const getToken = () => localStorage.getItem(TOKEN_KEY)

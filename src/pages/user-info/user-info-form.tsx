@@ -1,5 +1,7 @@
-import { cn } from '@/lib/utils'
+import { withErrorHandling } from '@/lib/error-handling'
 import { useUpdateUser } from '@/lib/hooks'
+import type { ReferralSource, TechnicalLevel } from '@/lib/types'
+import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
@@ -14,8 +16,6 @@ import {
 import { useCallback, useMemo, useState } from 'react'
 import type { ComponentProps } from 'react'
 import { useNavigate } from 'react-router-dom'
-import type { TechnicalLevel, ReferralSource } from '@/lib/types'
-import { withErrorHandling } from '@/lib/error-handling'
 
 export const UserInfoForm = ({
   className,

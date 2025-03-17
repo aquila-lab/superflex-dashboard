@@ -1,12 +1,12 @@
-import { cn } from '@/lib/utils'
+import { withErrorHandling } from '@/lib/error-handling'
 import { useRequestPasswordReset } from '@/lib/hooks'
+import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
 import { type FormEvent, useCallback, useMemo, useState } from 'react'
 import type { ComponentProps } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { withErrorHandling } from '@/lib/error-handling'
 
 export const ResetPasswordForm = ({
   className,

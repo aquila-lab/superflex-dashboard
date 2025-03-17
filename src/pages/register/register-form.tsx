@@ -1,4 +1,5 @@
-import { useRegister, useGoogleAuth } from '@/lib/hooks'
+import { withErrorHandling } from '@/lib/error-handling'
+import { useGoogleAuth, useRegister } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
@@ -16,7 +17,6 @@ import {
 import type { ComponentProps } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { withErrorHandling } from '@/lib/error-handling'
 
 export const RegisterForm = ({
   className,

@@ -1,7 +1,7 @@
 import {
   useOnboardingStep,
-  useUser,
-  useUpdateOnboardingStep
+  useUpdateOnboardingStep,
+  useUser
 } from '@/lib/hooks'
 import type { OnboardingSection } from '@/lib/types'
 import { cn, onboardingStepMapping } from '@/lib/utils'

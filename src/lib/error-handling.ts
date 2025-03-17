@@ -1,5 +1,5 @@
-import { IS_PROD } from './constants'
 import { toast } from 'sonner'
+import { IS_PROD } from './constants'
 
 export type ApiError = {
   statusCode: number

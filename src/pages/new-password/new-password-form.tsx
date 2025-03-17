@@ -1,5 +1,6 @@
-import { cn } from '@/lib/utils'
+import { withErrorHandling } from '@/lib/error-handling'
 import { useResetPassword } from '@/lib/hooks'
+import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
@@ -7,7 +8,6 @@ import { type FormEvent, useCallback, useEffect, useState } from 'react'
 import type { ComponentProps } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { withErrorHandling } from '@/lib/error-handling'
 
 export const NewPasswordForm = ({
   className,
