@@ -215,6 +215,7 @@ export const useUpdateUser = () => {
 
 export const useUrlParamsStorage = () => {
   const location = useLocation()
+  const { data: user } = useUser()
 
   useEffect(() => {
     const saveUrlParamsToSession = () => {
@@ -224,9 +225,11 @@ export const useUrlParamsStorage = () => {
 
       if (uniqueID) {
         sessionStorage.setItem('uniqueID', uniqueID)
+        localStorage.setItem('uniqueID', uniqueID)
 
         posthog.identify(uniqueID, {
-          userID: uniqueID
+          userID: user?.id,
+          email: user?.email
         })
       }
 
@@ -261,7 +264,7 @@ export const useUrlParamsStorage = () => {
     }
 
     saveUrlParamsToSession()
-  }, [location.search])
+  }, [location.search, user?.id, user?.email])
 }
 
 export const useResetPassword = () => {

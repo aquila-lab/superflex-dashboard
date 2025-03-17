@@ -1,5 +1,5 @@
 import { withErrorHandling } from '@/lib/error-handling'
-import { useUpdateUser } from '@/lib/hooks'
+import { useUpdateUser, useUser } from '@/lib/hooks'
 import type { ReferralSource, TechnicalLevel } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/ui/select'
+import posthog from 'posthog-js'
 import { useCallback, useMemo, useState } from 'react'
 import type { ComponentProps } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -23,6 +24,7 @@ export const UserInfoForm = ({
 }: ComponentProps<'form'>) => {
   const navigate = useNavigate()
   const updateUser = useUpdateUser()
+  const { data: user } = useUser()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [firstName, setFirstName] = useState('')
@@ -82,6 +84,28 @@ export const UserInfoForm = ({
         {
           successMessage: 'Your profile information has been saved',
           onSuccess: () => {
+            const uniqueID = localStorage.getItem('uniqueID')
+
+            if (uniqueID && user) {
+              posthog.identify(uniqueID, {
+                userID: user.id,
+                email: user.email,
+                firstName,
+                lastName,
+                technicalLevel,
+                title,
+                company,
+                referralSource
+              })
+            }
+
+            if (user) {
+              posthog.capture('referral_source', {
+                referralSource,
+                userID: user.id
+              })
+            }
+
             navigate('/dashboard/onboarding')
           },
           onError: () => {
@@ -104,6 +128,7 @@ export const UserInfoForm = ({
       referralSource,
       technicalLevel,
       updateUser,
+      user,
       navigate
     ]
   )
