@@ -105,7 +105,7 @@ const useSuccessConfig = () => {
         pageDescription: 'Your Figma account is now connected to Superflex',
         cardTitle: 'Figma Connected Successfully!',
         cardDescription:
-          'Your Figma account has been connected to Superflex. You can now import your designs directly into your projects.',
+          'Your Figma account has been connected to Superflex. You can now close this tab and return to your IDE to continue with the next steps.',
         toastMessage: 'Figma account successfully connected!',
         ctaText: 'Continue',
         icon: <FileCode className='h-10 w-10 text-green-500' />
@@ -125,7 +125,7 @@ const useSuccessConfig = () => {
         pageDescription: 'You are now logged in to the Superflex extension',
         cardTitle: 'Extension Login Successful!',
         cardDescription:
-          'You have successfully logged in to the Superflex extension. You can now use all the features of the extension.',
+          'You have successfully logged in to the Superflex extension. You can now close this tab and return to your IDE to continue with the next steps.',
         toastMessage: 'Extension login successful!',
         ctaText: 'Continue',
         icon: <ExternalLink className='h-10 w-10 text-green-500' />
