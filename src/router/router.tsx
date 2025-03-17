@@ -65,6 +65,15 @@ export const Router = () => {
               element={<DashboardPage />}
             />
             <Route
+              path='/pricing'
+              element={
+                <Navigate
+                  to='/dashboard/upgrade-subscription'
+                  replace
+                />
+              }
+            />
+            <Route
               path='/success'
               element={<SuccessPage />}
             />

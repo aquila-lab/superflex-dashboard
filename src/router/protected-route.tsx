@@ -66,7 +66,8 @@ export const ProtectedRoute = () => {
       [
         '/dashboard',
         '/dashboard/onboarding',
-        '/dashboard/upgrade-subscription'
+        '/dashboard/upgrade-subscription',
+        '/pricing'
       ].includes(location.pathname) &&
       [2, 3, 4, 5].includes(currentStep)
     ) {
