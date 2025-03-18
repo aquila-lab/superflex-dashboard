@@ -8,6 +8,7 @@ import type { SuccessConfig, SuccessType } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { AppHeader } from '@/shared/app-header'
 import { OnboardingHeader } from '@/shared/onboarding-header'
+import { useExtensionLauncher } from '@/shared/extension-launcher'
 import { Button } from '@/ui/button'
 import confetti from 'canvas-confetti'
 import { CreditCard, ExternalLink, FileCode } from 'lucide-react'
@@ -49,25 +50,46 @@ const useHandlePaymentSuccess = () => {
   const { data: subscription } = useSubscription()
   const updateOnboardingStep = useUpdateOnboardingStep()
   const onboardingStep = useOnboardingStep()
+  const { openVSCodeSuperflex, openCursorSuperflex } = useExtensionLauncher()
 
-  if (
-    successType === 'payment' &&
-    subscription?.plan?.name !== 'Free' &&
-    !globalExecutionState.paymentSuccessProcessed &&
-    subscription !== undefined
-  ) {
-    globalExecutionState.paymentSuccessProcessed = true
+  useEffect(() => {
+    if (
+      successType === 'payment' &&
+      subscription?.plan?.name !== 'Free' &&
+      !globalExecutionState.paymentSuccessProcessed &&
+      subscription !== undefined
+    ) {
+      globalExecutionState.paymentSuccessProcessed = true
 
-    if (onboardingStep.currentStep === 0) {
-      queueMicrotask(() => {
+      if (onboardingStep.currentStep === 0) {
         updateOnboardingStep.mutate(1, {
           onError: error => {
             toast.error(error ? error.message : 'An unexpected error occurred')
           }
         })
-      })
+      }
+
+      // Check if redirect source exists in localStorage
+      const redirectSource = localStorage.getItem('redirectSource')
+      if (redirectSource) {
+        // Open the appropriate IDE based on the source
+        if (redirectSource === 'vscode') {
+          openVSCodeSuperflex()
+        } else if (redirectSource === 'cursor') {
+          openCursorSuperflex()
+        }
+        // Clear the localStorage after use
+        localStorage.removeItem('redirectSource')
+      }
     }
-  }
+  }, [
+    successType,
+    subscription,
+    updateOnboardingStep,
+    onboardingStep.currentStep,
+    openVSCodeSuperflex,
+    openCursorSuperflex
+  ])
 }
 
 const useHandleFigmaSuccess = () => {

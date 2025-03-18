@@ -11,6 +11,7 @@ import { cn, formatDate } from '@/lib/utils'
 import { AppFooter } from '@/shared/app-footer'
 import { AppHeader } from '@/shared/app-header'
 import { PlanCard } from '@/shared/plan-card'
+import { SaveRedirectSource } from '@/shared/save-redirect-source'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
@@ -475,6 +476,7 @@ const PlanSelectionDrawer = () => {
 export const DashboardPage = () => {
   return (
     <div className='flex flex-col min-h-svh'>
+      <SaveRedirectSource />
       <AppHeader />
       <div className='flex-1 p-6 container mx-auto max-w-6xl flex flex-col gap-8'>
         <div>
