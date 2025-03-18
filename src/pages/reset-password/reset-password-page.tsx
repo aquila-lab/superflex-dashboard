@@ -1,4 +1,4 @@
-import { AuthWallpaper } from '@/shared/auth-wallpaper'
+import { AuthWallpaper } from '@/shared/auth-wallpaper/auth-wallpaper'
 import { ResetPasswordForm } from './reset-password-form'
 
 export const ResetPasswordPage = () => (

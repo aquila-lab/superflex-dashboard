@@ -1,30 +1,108 @@
-import type { PlanCard } from './types'
+import type { ApiError, PlanCard, SuccessType } from './types'
 
+// Environment & API constants
 export const IS_PROD = import.meta.env.VITE_NODE_ENV === 'production'
-
 export const IS_DEV = import.meta.env.VITE_NODE_ENV === 'development'
-
 export const API_BASE_URL = `${
   import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
 }/v1`
+export const COOKIE_DOMAIN = import.meta.env.VITE_COOKIE_DOMAIN ?? ''
 
+// Authentication constants
+export const TOKEN_KEY = 'token'
 export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''
-
 export const GOOGLE_OAUTH_REDIRECT_URI =
   import.meta.env.VITE_GOOGLE_OAUTH_REDIRECT_URI ?? 'http://localhost:5173'
 
-export const COOKIE_DOMAIN = import.meta.env.VITE_COOKIE_DOMAIN ?? ''
-
+// Analytics constants
 export const POSTHOG_API_KEY = import.meta.env.VITE_POSTHOG_API_KEY ?? ''
 
+// Query keys
 export const queryKeys = {
   user: ['user'] as const,
   subscription: ['subscription'] as const
 }
 
-export const TOKEN_KEY = 'token'
+// Subscription constants
+export const UNLIMITED_THRESHOLD = 9999
 
-export const planCards = [
+// Onboarding constants
+export const COMPLETED_ONBOARDING_STEP = 5
+export const STEPS_DATA = [
+  {
+    id: 0,
+    label: 'Sign Up',
+    description: 'Covers registration'
+  },
+  {
+    id: 1,
+    label: 'Choose Plan',
+    description: 'Plan selection and subscription'
+  },
+  {
+    id: 2,
+    label: 'Profile Setup',
+    description: 'Covers additional user info'
+  },
+  {
+    id: 3,
+    label: 'Get Started',
+    description: 'VSCode extension onboarding flow'
+  }
+] as const
+
+export const ONBOARDING_PATH_MAPPING: Record<number, string> = {
+  0: '/select-plan',
+  1: '/user-info',
+  2: '/dashboard/onboarding',
+  3: '/dashboard/onboarding',
+  4: '/dashboard/onboarding',
+  5: '/dashboard'
+}
+
+export const PROTECTED_PATH_WHITELIST = [
+  '/dashboard',
+  '/dashboard/onboarding',
+  '/dashboard/upgrade-subscription',
+  '/pricing'
+] as const
+
+export const ALLOWED_ONBOARDING_STEPS = [2, 3, 4, 5] as const
+
+// Extension related constants
+export const EXTENSION_URIS = {
+  'VS Code': {
+    install: 'vscode:extension/aquilalabs.superflex',
+    open: 'vscode://aquilalabs.superflex?open=true'
+  },
+  Cursor: {
+    install: 'cursor:extension/aquilalabs.superflex',
+    open: 'cursor://aquilalabs.superflex?open=true'
+  },
+  marketplace:
+    'https://marketplace.visualstudio.com/items?itemName=aquilalabs.superflex'
+} as const
+
+// Success flow constants
+export const SUCCESS_TYPES: SuccessType[] = [
+  'extension-login',
+  'payment',
+  'figma'
+]
+
+// UI constants
+export const LOADING_CONTAINER_CLASSES =
+  'h-screen w-screen flex items-center justify-center'
+
+// Error constants
+export const INTERNAL_SERVER_ERROR: ApiError = {
+  statusCode: 500,
+  slug: 'internal_server',
+  message: 'Internal server error'
+}
+
+// Plan data
+export const PLAN_CARD = [
   {
     title: 'Free Plan',
     description:
@@ -105,26 +183,3 @@ export const planCards = [
     }
   }
 ] as PlanCard[]
-
-export const stepsData = [
-  {
-    id: 0,
-    label: 'Sign Up',
-    description: 'Covers registration'
-  },
-  {
-    id: 1,
-    label: 'Choose Plan',
-    description: 'Plan selection and subscription'
-  },
-  {
-    id: 2,
-    label: 'Profile Setup',
-    description: 'Covers additional user info'
-  },
-  {
-    id: 3,
-    label: 'Get Started',
-    description: 'VSCode extension onboarding flow'
-  }
-] as const

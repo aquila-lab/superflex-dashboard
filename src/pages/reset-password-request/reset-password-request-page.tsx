@@ -1,4 +1,4 @@
-import { AuthWallpaper } from '@/shared/auth-wallpaper'
+import { AuthWallpaper } from '@/shared/auth-wallpaper/auth-wallpaper'
 import { Button } from '@/ui/button'
 import { Check } from 'lucide-react'
 import { Link } from 'react-router-dom'

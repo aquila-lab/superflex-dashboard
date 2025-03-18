@@ -1,4 +1,4 @@
-import { OnboardingHeader } from '@/shared/onboarding-header'
+import { OnboardingHeader } from '@/shared/onboarding-header/onboarding-header'
 import { UserInfoForm } from './user-info-form'
 
 export const UserInfoPage = () => {

@@ -1,19 +1,8 @@
 import { toast } from 'sonner'
-import { IS_PROD } from './constants'
+import { INTERNAL_SERVER_ERROR, IS_PROD } from './constants'
+import type { ApiError } from './types'
 
-export type ApiError = {
-  statusCode: number
-  slug: string
-  message: string
-} | null
-
-const internalServerError: ApiError = {
-  statusCode: 500,
-  slug: 'internal_server',
-  message: 'Internal server error'
-}
-
-export function parseError(err: any): ApiError {
+export const parseError = (err: any): ApiError => {
   if (!IS_PROD) {
     console.error('Error details:', err)
   }
@@ -34,13 +23,13 @@ export function parseError(err: any): ApiError {
     }
   }
 
-  return internalServerError
+  return INTERNAL_SERVER_ERROR
 }
 
-export function getErrorMessage(
+export const getErrorMessage = (
   err: ApiError,
   defaultMsg = 'Something went wrong. Please try again.'
-): string {
+): string => {
   return err?.message || defaultMsg
 }
 

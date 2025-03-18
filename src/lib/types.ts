@@ -1,3 +1,6 @@
+import type { ReactNode } from 'react'
+
+// User related types
 export type User = {
   id: string
   email: string
@@ -25,22 +28,12 @@ export type UserUpdate = Partial<
   >
 >
 
-export type Plan = {
-  name: string
-  basic_request_limit: number | null
-  premium_request_limit: number | null
+export type UpdateUserMutation = {
+  mutateAsync: (data: UserUpdate) => Promise<User>
+  isPending: boolean
 }
 
-export type UserSubscription = {
-  plan: Plan | null
-  basic_requests_used: number
-  premium_requests_used: number
-  last_reset_date: string
-  created_at: string
-  end_date: string | null
-  billing_portal_url: string | null
-}
-
+// Authentication types
 export type AuthTokenResponse = {
   token: string
 }
@@ -61,6 +54,33 @@ export type GoogleAuthRequest = {
   redirect_uri?: string
 }
 
+// Subscription and plan types
+export type Plan = {
+  name: string
+  basic_request_limit: number | null
+  premium_request_limit: number | null
+}
+
+export type UserSubscription = {
+  plan: Plan | null
+  basic_requests_used: number
+  premium_requests_used: number
+  last_reset_date: string
+  created_at: string
+  end_date: string | null
+  billing_portal_url: string | null
+}
+
+export type BillingPeriod = 'monthly' | 'annual'
+
+export type PlanId =
+  | 'free'
+  | 'individual_pro_monthly'
+  | 'individual_pro_yearly'
+  | 'team_monthly'
+  | 'team_yearly'
+
+// Plan card types
 export type PlanCardFeature = {
   text: string
   included: boolean
@@ -99,21 +119,20 @@ export type ExtendedPlanCard = PlanCard & {
   }
 }
 
-export type BillingPeriod = 'monthly' | 'annual'
-
-export type PlanId =
-  | 'free'
-  | 'individual_pro_monthly'
-  | 'individual_pro_yearly'
-  | 'team_monthly'
-  | 'team_yearly'
-
+// Onboarding types
 export type OnboardingSection = {
   id: string
   title: string
   defaultOpen: boolean
   completed: boolean
   stepNumber: number
+}
+
+export type StepStatus = {
+  isCompleted: boolean
+  isCurrent: boolean
+  isUpcoming: boolean
+  index: number
 }
 
 export type SuccessType = 'figma' | 'payment' | 'extension-login'
@@ -142,4 +161,24 @@ export type ReferralSource =
   | 'linkedin'
   | 'other'
 
+// Extension types
 export type ExtensionType = 'VS Code' | 'Cursor'
+
+export type ExtensionAction = 'install' | 'open' | 'marketplace'
+
+// Routing types
+export type RedirectInfo = {
+  path: string
+  shouldRedirect: boolean
+}
+
+export type RouterContainerProps = {
+  children: ReactNode
+}
+
+// API types
+export type ApiError = {
+  statusCode: number
+  slug: string
+  message: string
+} | null

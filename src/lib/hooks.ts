@@ -1,12 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import posthog from 'posthog-js'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { apiClient } from './api-client'
-import { TOKEN_KEY, queryKeys } from './constants'
+import { EXTENSION_URIS, TOKEN_KEY, queryKeys } from './constants'
 import { useErrorHandler, withErrorHandling } from './error-handling'
 import type {
   AuthTokenResponse,
+  ExtensionAction,
+  ExtensionType,
   GoogleAuthRequest,
   LoginRequest,
   PlanId,
@@ -399,4 +401,51 @@ export const useWithErrorToast = <
       handleError(error)
     }
   })
+}
+
+export const useExtensionLauncher = () => {
+  const [isAttemptingLaunch, setIsAttemptingLaunch] = useState(false)
+  const [currentApp, setCurrentApp] = useState<ExtensionType | ''>('')
+
+  const handleExtensionAction = useCallback(
+    (action: ExtensionAction, app?: ExtensionType) => {
+      try {
+        if (action === 'marketplace') {
+          window.open(EXTENSION_URIS.marketplace, '_blank')
+          return
+        }
+
+        if (!app) {
+          return
+        }
+
+        setIsAttemptingLaunch(true)
+        setCurrentApp(app)
+
+        const uri = EXTENSION_URIS[app][action]
+        window.location.href = uri
+      } catch (_error) {
+        setIsAttemptingLaunch(false)
+      }
+    },
+    []
+  )
+
+  const helpers = useMemo(
+    () => ({
+      launchVSCodeExtension: () => handleExtensionAction('install', 'VS Code'),
+      launchCursorExtension: () => handleExtensionAction('install', 'Cursor'),
+      openVSCodeSuperflex: () => handleExtensionAction('open', 'VS Code'),
+      openCursorSuperflex: () => handleExtensionAction('open', 'Cursor'),
+      openMarketplace: () => handleExtensionAction('marketplace')
+    }),
+    [handleExtensionAction]
+  )
+
+  return {
+    isAttemptingLaunch,
+    currentApp,
+    handleExtensionAction,
+    ...helpers
+  }
 }

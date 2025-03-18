@@ -1,14 +1,14 @@
 import {
   useAuth,
+  useExtensionLauncher,
   useOnboardingStep,
   useSubscription,
   useUpdateOnboardingStep
 } from '@/lib/hooks'
 import type { SuccessConfig, SuccessType } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { AppHeader } from '@/shared/app-header'
-import { OnboardingHeader } from '@/shared/onboarding-header'
-import { useExtensionLauncher } from '@/shared/extension-launcher'
+import { DashboardHeader } from '@/shared/dashboard-header/dashboard-header'
+import { OnboardingHeader } from '@/shared/onboarding-header/onboarding-header'
 import { Button } from '@/ui/button'
 import confetti from 'canvas-confetti'
 import { CreditCard, ExternalLink, FileCode } from 'lucide-react'
@@ -231,7 +231,7 @@ export const SuccessPage = memo(() => {
   return (
     <div className='flex min-h-screen flex-col'>
       {onboardingStep.currentStep < 2 && <OnboardingHeader currentStep={1} />}
-      {onboardingStep.currentStep >= 2 && <AppHeader />}
+      {onboardingStep.currentStep >= 2 && <DashboardHeader />}
       <main className='flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8'>
         <div className='max-w-md w-full'>
           <div className='bg-card rounded-xl p-6'>

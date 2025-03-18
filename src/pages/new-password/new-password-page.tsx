@@ -1,4 +1,4 @@
-import { AuthWallpaper } from '@/shared/auth-wallpaper'
+import { AuthWallpaper } from '@/shared/auth-wallpaper/auth-wallpaper'
 import { NewPasswordForm } from './new-password-form'
 
 export const NewPasswordPage = () => (

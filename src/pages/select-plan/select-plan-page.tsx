@@ -1,9 +1,9 @@
-import { planCards } from '@/lib/constants'
+import { PLAN_CARD } from '@/lib/constants'
 import { usePlanSelection } from '@/lib/hooks'
 import type { BillingPeriod } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { OnboardingHeader } from '@/shared/onboarding-header'
-import { PlanCard } from '@/shared/plan-card'
+import { OnboardingHeader } from '@/shared/onboarding-header/onboarding-header'
+import { PlanCard } from '@/shared/plan-card/plan-card'
 import { useMemo, useState } from 'react'
 
 export const SelectPlanPage = () => {
@@ -70,7 +70,7 @@ export const SelectPlanPage = () => {
           </div>
 
           <div className='grid gap-8 md:grid-cols-3 items-start'>
-            {planCards.map(plan => (
+            {PLAN_CARD.map(plan => (
               <PlanCard
                 key={plan.title}
                 plan={plan}

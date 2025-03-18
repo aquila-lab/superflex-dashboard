@@ -1,4 +1,4 @@
-import { AuthWallpaper } from '@/shared/auth-wallpaper'
+import { AuthWallpaper } from '@/shared/auth-wallpaper/auth-wallpaper'
 import { LoginForm } from './login-form'
 
 export const LoginPage = () => {

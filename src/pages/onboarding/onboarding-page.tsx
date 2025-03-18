@@ -1,13 +1,13 @@
 import {
+  useExtensionLauncher,
   useOnboardingStep,
   useUpdateOnboardingStep,
   useUser
 } from '@/lib/hooks'
 import type { OnboardingSection } from '@/lib/types'
 import { cn, onboardingStepMapping } from '@/lib/utils'
-import { AppFooter } from '@/shared/app-footer'
-import { AppHeader } from '@/shared/app-header'
-import { useExtensionLauncher } from '@/shared/extension-launcher'
+import { DashboardHeader } from '@/shared/dashboard-header/dashboard-header'
+import { Footer } from '@/shared/footer/footer'
 import {
   Accordion,
   AccordionContent,
@@ -196,7 +196,7 @@ export const OnboardingPage = () => {
 
   return (
     <div className='flex flex-col min-h-svh'>
-      <AppHeader />
+      <DashboardHeader />
       <div className='flex flex-col items-center justify-start p-4 max-w-4xl mx-auto w-full gap-8 pt-8 pb-12'>
         <div className='text-center'>
           <h1 className='text-3xl font-bold mb-2'>Setup Superflex</h1>
@@ -290,7 +290,7 @@ export const OnboardingPage = () => {
           })}
         </Accordion>
       </div>
-      <AppFooter />
+      <Footer />
     </div>
   )
 }

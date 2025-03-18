@@ -1,26 +1,18 @@
+import { LOADING_CONTAINER_CLASSES } from '@/lib/constants'
 import { useUrlParamsStorage, useUser } from '@/lib/hooks'
+import type { RouterContainerProps } from '@/lib/types'
 import { Loading } from '@/ui/loading'
-import { type ReactNode, useEffect, useState } from 'react'
+import { useMemo } from 'react'
 
-export const RouterContainer = ({
-  children
-}: {
-  children: ReactNode
-}) => {
+export const RouterContainer = ({ children }: RouterContainerProps) => {
   useUrlParamsStorage()
-
   const { isLoading: userLoading } = useUser()
-  const [isReady, setIsReady] = useState(false)
 
-  useEffect(() => {
-    if (!userLoading) {
-      setIsReady(true)
-    }
-  }, [userLoading])
+  const isReady = useMemo(() => !userLoading, [userLoading])
 
   if (!isReady) {
     return (
-      <div className='h-screen w-screen flex items-center justify-center'>
+      <div className={LOADING_CONTAINER_CLASSES}>
         <Loading size='lg' />
       </div>
     )
