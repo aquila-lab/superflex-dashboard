@@ -1,14 +1,13 @@
-import { AuthWallpaper } from '@/shared/auth-wallpaper/auth-wallpaper'
+import { AuthLayout } from '@/shared/auth-layout/auth-layout'
 import { NewPasswordForm } from './new-password-form'
+import { NewPasswordProvider } from './new-password-provider'
 
-export const NewPasswordPage = () => (
-  <div className='grid min-h-svh lg:grid-cols-2'>
-    <AuthWallpaper />
-
-    <div className='flex flex-1 items-center justify-center'>
-      <div className='w-full max-w-xs'>
+export const NewPasswordPage = () => {
+  return (
+    <AuthLayout>
+      <NewPasswordProvider>
         <NewPasswordForm />
-      </div>
-    </div>
-  </div>
-)
+      </NewPasswordProvider>
+    </AuthLayout>
+  )
+}

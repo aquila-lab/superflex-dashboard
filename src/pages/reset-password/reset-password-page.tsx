@@ -1,14 +1,13 @@
-import { AuthWallpaper } from '@/shared/auth-wallpaper/auth-wallpaper'
 import { ResetPasswordForm } from './reset-password-form'
+import { ResetPasswordProvider } from './reset-password-provider'
+import { AuthLayout } from '@/shared/auth-layout/auth-layout'
 
-export const ResetPasswordPage = () => (
-  <div className='grid min-h-svh lg:grid-cols-2'>
-    <AuthWallpaper />
-
-    <div className='flex flex-1 items-center justify-center'>
-      <div className='w-full max-w-xs'>
+export const ResetPasswordPage = () => {
+  return (
+    <AuthLayout>
+      <ResetPasswordProvider>
         <ResetPasswordForm />
-      </div>
-    </div>
-  </div>
-)
+      </ResetPasswordProvider>
+    </AuthLayout>
+  )
+}
