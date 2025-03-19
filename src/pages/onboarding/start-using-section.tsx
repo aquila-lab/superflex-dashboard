@@ -5,7 +5,7 @@ import { SectionFooter } from '@/shared/onboarding-components/section-footer'
 import { SectionIntro } from '@/shared/onboarding-components/section-intro'
 import { TabSelector } from '@/shared/onboarding-components/tab-selector'
 import { Icons } from '@/ui/icons'
-import { useState, useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { EditorContentTab } from './editor-content-tab'
 import { QuickInstallOptions } from './quick-install-options'
 

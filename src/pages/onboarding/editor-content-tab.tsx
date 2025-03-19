@@ -2,8 +2,8 @@ import type { Editor } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { YouTubeVideo } from '@/shared/youtube-video/youtube-video'
 import { memo } from 'react'
-import { UsageSteps } from './usage-steps'
 import { InstallationSteps } from './installation-steps'
+import { UsageSteps } from './usage-steps'
 
 export const EditorContentTab = memo(
   ({

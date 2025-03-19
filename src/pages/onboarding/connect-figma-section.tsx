@@ -1,11 +1,11 @@
-import { CheckCircle, Sparkles } from 'lucide-react'
-import { YouTubeVideo } from '@/shared/youtube-video/youtube-video'
+import { FIGMA_CONNECTION_STEPS } from '@/lib/constants'
 import { InfoBox } from '@/shared/onboarding-components/info-box'
 import { OnboardingSection } from '@/shared/onboarding-components/onboarding-section'
 import { SectionFooter } from '@/shared/onboarding-components/section-footer'
 import { SectionIntro } from '@/shared/onboarding-components/section-intro'
 import { StepList } from '@/shared/onboarding-components/step-list'
-import { FIGMA_CONNECTION_STEPS } from '@/lib/constants'
+import { YouTubeVideo } from '@/shared/youtube-video/youtube-video'
+import { CheckCircle, Sparkles } from 'lucide-react'
 
 export const ConnectFigmaSection = ({
   isCompleted,

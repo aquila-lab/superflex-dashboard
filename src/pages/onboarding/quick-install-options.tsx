@@ -2,7 +2,7 @@ import { useExtensionLauncher } from '@/lib/hooks'
 import { InfoBox } from '@/shared/onboarding-components/info-box'
 import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
-import { Rocket, ExternalLink } from 'lucide-react'
+import { ExternalLink, Rocket } from 'lucide-react'
 import { memo } from 'react'
 
 export const QuickInstallOptions = memo(() => {

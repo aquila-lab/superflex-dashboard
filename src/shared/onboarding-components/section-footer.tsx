@@ -1,5 +1,5 @@
-import { memo } from 'react'
 import { CompleteButton } from '@/shared/onboarding-components/complete-button'
+import { memo } from 'react'
 
 export const SectionFooter = memo(
   ({
