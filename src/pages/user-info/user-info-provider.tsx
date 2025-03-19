@@ -3,9 +3,9 @@ import { useUpdateUser, useUser } from '@/lib/hooks'
 import type { ReferralSource, TechnicalLevel } from '@/lib/types'
 import posthog from 'posthog-js'
 import {
-  createContext,
   type FormEvent,
   type ReactNode,
+  createContext,
   useCallback,
   useContext,
   useMemo,

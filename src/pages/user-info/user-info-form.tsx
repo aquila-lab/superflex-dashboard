@@ -2,8 +2,8 @@ import { cn } from '@/lib/utils'
 import { useMemo } from 'react'
 import type { ComponentProps } from 'react'
 import { UserInfoFormContent } from './user-info-form-content'
-import { useUserInfoContext } from './user-info-provider'
 import { UserInfoHeader } from './user-info-header'
+import { useUserInfoContext } from './user-info-provider'
 
 export const UserInfoForm = ({
   className,

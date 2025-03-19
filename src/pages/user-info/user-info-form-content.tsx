@@ -1,12 +1,12 @@
-import { SubmitButton } from '@/shared/form-components/submit-button'
-import { TextField } from '@/shared/form-components/text-field'
-import { SelectField } from '@/shared/form-components/select-field'
-import { useUserInfoContext } from './user-info-provider'
-import type { ReferralSource, TechnicalLevel } from '@/lib/types'
 import {
   REFERAL_SOURCE_OPTIONS,
   TECHNICAL_LEVEL_OPTIONS
 } from '@/lib/constants'
+import type { ReferralSource, TechnicalLevel } from '@/lib/types'
+import { SelectField } from '@/shared/form-components/select-field'
+import { SubmitButton } from '@/shared/form-components/submit-button'
+import { TextField } from '@/shared/form-components/text-field'
+import { useUserInfoContext } from './user-info-provider'
 
 export const UserInfoFormContent = () => {
   const {

@@ -1,7 +1,7 @@
+import { USER_INFO_LAYOUT_CLASSES } from '@/lib/constants'
 import { OnboardingHeader } from '@/shared/onboarding-header/onboarding-header'
 import { UserInfoForm } from './user-info-form'
 import { UserInfoProvider } from './user-info-provider'
-import { USER_INFO_LAYOUT_CLASSES } from '@/lib/constants'
 
 export const UserInfoPage = () => (
   <div className={USER_INFO_LAYOUT_CLASSES.container}>
