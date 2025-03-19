@@ -1,5 +1,6 @@
 import { AuthWallpaper } from '@/shared/auth-wallpaper/auth-wallpaper'
 import { LoginForm } from './login-form'
+import { LoginProvider } from './login-provider'
 
 export const LoginPage = () => {
   return (
@@ -8,7 +9,9 @@ export const LoginPage = () => {
 
       <div className='flex flex-1 items-center justify-center'>
         <div className='w-full max-w-xs'>
-          <LoginForm />
+          <LoginProvider>
+            <LoginForm />
+          </LoginProvider>
         </div>
       </div>
     </div>

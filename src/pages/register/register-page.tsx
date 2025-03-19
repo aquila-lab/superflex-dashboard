@@ -1,5 +1,6 @@
 import { AuthWallpaper } from '@/shared/auth-wallpaper/auth-wallpaper'
 import { RegisterForm } from './register-form'
+import { RegisterProvider } from './register-provider'
 
 export const RegisterPage = () => {
   return (
@@ -8,7 +9,9 @@ export const RegisterPage = () => {
 
       <div className='flex flex-1 items-center justify-center'>
         <div className='w-full max-w-xs'>
-          <RegisterForm />
+          <RegisterProvider>
+            <RegisterForm />
+          </RegisterProvider>
         </div>
       </div>
     </div>
