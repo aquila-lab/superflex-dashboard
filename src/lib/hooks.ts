@@ -17,7 +17,7 @@ import type {
   UserSubscription,
   UserUpdate
 } from './types'
-import { onboardingStepMapping, parseJwtToken } from './utils'
+import { onboardingStepMapping, parseJwtToken, trackConversion } from './utils'
 
 export const useAuth = () => {
   const getToken = () => localStorage.getItem(TOKEN_KEY)
@@ -317,6 +317,8 @@ export const usePlanSelection = () => {
   const updateOnboardingStep = useUpdateOnboardingStep()
 
   const handleFreePlanSelection = useCallback(() => {
+    trackConversion.freePlanClick()
+
     const activateFreePlan = withErrorHandling(
       async () => {
         const result = await updateOnboardingStep.mutateAsync(1)
@@ -373,6 +375,10 @@ export const usePlanSelection = () => {
         handleFreePlanSelection()
         return
       }
+
+      const planName = planId.includes('individual') ? 'Individual Pro' : 'Team'
+      trackConversion.paidPlanClick(planName)
+      trackConversion.planChangedToPaid(planName)
 
       sessionStorage.setItem('planId', planId)
 
@@ -435,6 +441,14 @@ export const useExtensionLauncher = () => {
 
         setIsAttemptingLaunch(true)
         setCurrentApp(app)
+
+        if (action === 'install') {
+          if (app === 'VS Code') {
+            trackConversion.installVSCodeClick()
+          } else if (app === 'Cursor') {
+            trackConversion.installCursorClick()
+          }
+        }
 
         const uri = EXTENSION_URIS[app][action]
         window.location.href = uri

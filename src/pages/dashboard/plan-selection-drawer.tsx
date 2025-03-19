@@ -1,7 +1,7 @@
 import { PLAN_CARD } from '@/lib/constants'
 import { usePlanSelection } from '@/lib/hooks'
 import type { BillingPeriod } from '@/lib/types'
-import { cn, getPlanIdFromTitle } from '@/lib/utils'
+import { cn, getPlanIdFromTitle, trackConversion } from '@/lib/utils'
 import { PlanCard } from '@/shared/plan-card/plan-card'
 import {
   Drawer,
@@ -10,7 +10,7 @@ import {
   DrawerHeader,
   DrawerTitle
 } from '@/ui/drawer'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 export const PlanSelectionDrawer = () => {
@@ -22,6 +22,12 @@ export const PlanSelectionDrawer = () => {
   const isOpen = useMemo(() => {
     return location.pathname === '/dashboard/upgrade-subscription'
   }, [location.pathname])
+
+  useEffect(() => {
+    if (isOpen) {
+      trackConversion.pricingPageVisit()
+    }
+  }, [isOpen])
 
   const handleOpenChange = useCallback(
     (open: boolean) => {

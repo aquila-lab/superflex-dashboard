@@ -10,6 +10,7 @@ import {
   UNLIMITED_THRESHOLD
 } from './constants'
 import type { BillingPeriod, PlanId, RedirectInfo, User } from './types'
+import posthog from 'posthog-js'
 
 // Query client singleton
 export const getQueryClient = (() => {
@@ -255,4 +256,39 @@ export const getPlanIdFromTitle = (
   }
 
   return mapping[title]?.[billingPeriod] || null
+}
+
+// PostHog tracking utilities
+export const trackPageView = (pageName: string) => {
+  posthog.capture('$pageview', {
+    pageName,
+    url: window.location.href,
+    path: window.location.pathname
+  })
+}
+
+export const trackUserJourney = (
+  eventName: string,
+  properties?: Record<string, unknown>
+) => {
+  posthog.capture(eventName, {
+    url: window.location.href,
+    path: window.location.pathname,
+    ...properties
+  })
+}
+
+export const trackConversion = {
+  landingPageVisit: () => trackUserJourney('landing_page_visit'),
+  registerPageVisit: () => trackUserJourney('register_page_visit'),
+  userRegistered: (userId?: string) =>
+    trackUserJourney('user_registered', { userId }),
+  pricingPageVisit: () => trackUserJourney('pricing_page_visit'),
+  paidPlanClick: (planName: string) =>
+    trackUserJourney('paid_plan_click', { planName }),
+  planChangedToPaid: (planName: string) =>
+    trackUserJourney('plan_changed_to_paid', { planName }),
+  freePlanClick: () => trackUserJourney('free_plan_click'),
+  installVSCodeClick: () => trackUserJourney('install_vscode_click'),
+  installCursorClick: () => trackUserJourney('install_cursor_click')
 }
