@@ -192,3 +192,8 @@ export type TabOption = {
 export type Editor = 'vscode' | 'cursor'
 
 export type InfoBoxVariant = 'default' | 'success' | 'warning'
+
+export type Option = {
+  readonly value: string
+  readonly label: string
+}
