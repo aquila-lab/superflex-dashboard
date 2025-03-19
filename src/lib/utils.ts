@@ -240,6 +240,10 @@ export const getPlanIdFromTitle = (
   billingPeriod: BillingPeriod
 ): PlanId | null => {
   const mapping: Record<string, Record<BillingPeriod, PlanId>> = {
+    'Free Plan': {
+      monthly: 'free',
+      annual: 'free'
+    },
     'Individual Pro Plan': {
       monthly: 'individual_pro_monthly',
       annual: 'individual_pro_yearly'
