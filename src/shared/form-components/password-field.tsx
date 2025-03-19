@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom'
-import { Label } from '@/ui/label'
 import { Input } from '@/ui/input'
+import { Label } from '@/ui/label'
+import { Link } from 'react-router-dom'
 
 export const PasswordField = ({
   password,

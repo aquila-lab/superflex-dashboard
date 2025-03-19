@@ -1,5 +1,5 @@
-import { Icons } from '@/ui/icons'
 import { Button } from '@/ui/button'
+import { Icons } from '@/ui/icons'
 
 export const GoogleButton = ({
   isSubmitting,

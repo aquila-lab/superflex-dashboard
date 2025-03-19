@@ -1,7 +1,7 @@
 import { PasswordField } from '@/shared/form-components/password-field'
 import { SubmitButton } from '@/shared/form-components/submit-button'
-import { useNewPasswordContext } from './new-password-provider'
 import { useMemo } from 'react'
+import { useNewPasswordContext } from './new-password-provider'
 
 export const NewPasswordFormContent = () => {
   const {

@@ -1,6 +1,6 @@
+import { AuthLayout } from '@/shared/auth-layout/auth-layout'
 import { LoginForm } from './login-form'
 import { LoginProvider } from './login-provider'
-import { AuthLayout } from '@/shared/auth-layout/auth-layout'
 
 export const LoginPage = () => {
   return (

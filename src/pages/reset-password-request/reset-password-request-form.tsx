@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils'
-import { ResetPasswordRequestContent } from './reset-password-request-content'
 import { AuthLink } from '@/shared/form-components/auth-link'
 import { FormHeader } from '@/shared/form-components/form-header'
 import type { ComponentProps } from 'react'
+import { ResetPasswordRequestContent } from './reset-password-request-content'
 
 export const ResetPasswordRequestForm = ({
   className,

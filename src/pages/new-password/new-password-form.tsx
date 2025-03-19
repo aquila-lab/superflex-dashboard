@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils'
-import { useNewPasswordContext } from './new-password-provider'
-import type { ComponentProps } from 'react'
-import { NewPasswordFormContent } from './new-password-form-content'
 import { AuthLink } from '@/shared/form-components/auth-link'
 import { FormHeader } from '@/shared/form-components/form-header'
+import type { ComponentProps } from 'react'
+import { NewPasswordFormContent } from './new-password-form-content'
+import { useNewPasswordContext } from './new-password-provider'
 
 export const NewPasswordForm = ({
   className,

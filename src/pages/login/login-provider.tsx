@@ -1,5 +1,5 @@
 import { withErrorHandling } from '@/lib/error-handling'
-import { useLogin, useGoogleAuth } from '@/lib/hooks'
+import { useGoogleAuth, useLogin } from '@/lib/hooks'
 import { useGoogleLogin } from '@react-oauth/google'
 import {
   type FormEvent,
@@ -12,7 +12,7 @@ import {
 } from 'react'
 
 import { createContext } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 const LoginContext = createContext<

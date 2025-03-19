@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils'
-import { useLoginContext } from './login-provider'
-import type { ComponentProps } from 'react'
-import { LoginFormContent } from './login-form-content'
 import { AuthLink } from '@/shared/form-components/auth-link'
 import { FormHeader } from '@/shared/form-components/form-header'
+import type { ComponentProps } from 'react'
+import { LoginFormContent } from './login-form-content'
+import { useLoginContext } from './login-provider'
 
 export const LoginForm = ({ className, ...props }: ComponentProps<'form'>) => {
   const { handleSubmit } = useLoginContext()

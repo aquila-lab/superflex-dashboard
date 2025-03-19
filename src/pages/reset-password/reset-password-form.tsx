@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils'
-import { useResetPasswordContext } from './reset-password-provider'
-import type { ComponentProps } from 'react'
-import { ResetPasswordFormContent } from './reset-password-form-content'
 import { AuthLink } from '@/shared/form-components/auth-link'
 import { FormHeader } from '@/shared/form-components/form-header'
+import type { ComponentProps } from 'react'
+import { ResetPasswordFormContent } from './reset-password-form-content'
+import { useResetPasswordContext } from './reset-password-provider'
 
 export const ResetPasswordForm = ({
   className,

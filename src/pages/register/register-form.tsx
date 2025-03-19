@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils'
-import { useRegisterContext } from './register-provider'
-import type { ComponentProps } from 'react'
-import { RegisterFormContent } from './register-form-content'
 import { AuthLink } from '@/shared/form-components/auth-link'
 import { FormHeader } from '@/shared/form-components/form-header'
+import type { ComponentProps } from 'react'
+import { RegisterFormContent } from './register-form-content'
+import { useRegisterContext } from './register-provider'
 
 export const RegisterForm = ({
   className,
