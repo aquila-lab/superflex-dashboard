@@ -49,7 +49,7 @@ export const UserInfoFormContent = () => {
 
       <SelectField
         id='technicalLevel'
-        label='Technical Expertise Level'
+        label='Technical expertise'
         placeholder='Select your technical level'
         value={technicalLevel}
         setValue={value => setTechnicalLevel(value as TechnicalLevel | '')}

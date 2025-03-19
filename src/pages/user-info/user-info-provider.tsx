@@ -12,6 +12,7 @@ import {
   useState
 } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 const UserInfoContext = createContext<
   | {
@@ -49,6 +50,17 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault()
+
+      if (!technicalLevel) {
+        toast.error('Technical expertise field is required')
+        return
+      }
+
+      if (!referralSource) {
+        toast.error('Referral source field is required')
+        return
+      }
+
       setIsSubmitting(true)
 
       const payload = {
