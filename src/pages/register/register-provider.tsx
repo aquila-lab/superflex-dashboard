@@ -93,34 +93,25 @@ export const RegisterProvider = ({
         return
       }
 
-      try {
-        await register(
-          { email, password, username: email },
-          {
-            onSuccess: () => {
-              toast.success('Account created successfully')
-              setTimeout(() => {
-                navigate('/select-plan')
-              }, 500)
-            },
-            onError: (error: any) => {
-              setPassword('')
-              setConfirmPassword('')
-              const errorMessage =
-                error?.response?.data?.error?.message ||
-                'Failed to create account. Please try again with a different email.'
-              toast.error(errorMessage)
-            }
+      await register(
+        { email, password, username: email },
+        {
+          onSuccess: () => {
+            toast.success('Account created successfully')
+            setTimeout(() => {
+              navigate('/select-plan')
+            }, 500)
+          },
+          onError: (error: any) => {
+            setPassword('')
+            setConfirmPassword('')
+            const errorMessage =
+              error?.response?.data?.error?.message ||
+              'Failed to create account. Please try again with a different email.'
+            toast.error(errorMessage)
           }
-        )
-      } catch (error: any) {
-        setPassword('')
-        setConfirmPassword('')
-        const errorMessage =
-          error?.response?.data?.error?.message ||
-          'Failed to create account. Please try again with a different email.'
-        toast.error(errorMessage)
-      }
+        }
+      )
     },
     [
       email,
