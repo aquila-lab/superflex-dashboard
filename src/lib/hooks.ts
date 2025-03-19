@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import posthog from 'posthog-js'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { apiClient } from './api-client'
 import { EXTENSION_URIS, TOKEN_KEY, queryKeys } from './constants'
@@ -406,6 +406,16 @@ export const useWithErrorToast = <
 export const useExtensionLauncher = () => {
   const [isAttemptingLaunch, setIsAttemptingLaunch] = useState(false)
   const [currentApp, setCurrentApp] = useState<ExtensionType | ''>('')
+  const timeoutRef = useRef<number | null>(null)
+
+  // Clear timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
 
   const handleExtensionAction = useCallback(
     (action: ExtensionAction, app?: ExtensionType) => {
@@ -419,11 +429,19 @@ export const useExtensionLauncher = () => {
           return
         }
 
+        if (timeoutRef.current) {
+          window.clearTimeout(timeoutRef.current)
+        }
+
         setIsAttemptingLaunch(true)
         setCurrentApp(app)
 
         const uri = EXTENSION_URIS[app][action]
         window.location.href = uri
+
+        timeoutRef.current = window.setTimeout(() => {
+          setIsAttemptingLaunch(false)
+        }, 3000)
       } catch (_error) {
         setIsAttemptingLaunch(false)
       }

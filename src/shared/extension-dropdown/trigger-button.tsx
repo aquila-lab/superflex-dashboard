@@ -1,19 +1,23 @@
 import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
 import { ChevronDown, ExternalLink } from 'lucide-react'
+import { forwardRef } from 'react'
 
-export const TriggerButton = ({
-  isAttemptingLaunch,
-  dropdownLabel
-}: {
-  isAttemptingLaunch: boolean
-  dropdownLabel: string
-}) => {
+export const TriggerButton = forwardRef<
+  HTMLButtonElement,
+  {
+    isAttemptingLaunch: boolean
+    dropdownLabel: string
+  } & React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ isAttemptingLaunch, dropdownLabel, ...props }, ref) => {
   return (
     <Button
+      ref={ref}
+      type='button'
       variant='outline'
       className='flex items-center gap-2'
       disabled={isAttemptingLaunch}
+      {...props}
     >
       {isAttemptingLaunch ? (
         <>
@@ -29,4 +33,4 @@ export const TriggerButton = ({
       )}
     </Button>
   )
-}
+})
