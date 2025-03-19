@@ -1,14 +1,14 @@
 import { Button } from '@/ui/button'
 import { Icons } from '@/ui/icons'
 import { ChevronDown, ExternalLink } from 'lucide-react'
-import { forwardRef } from 'react'
+import { type ButtonHTMLAttributes, forwardRef } from 'react'
 
 export const TriggerButton = forwardRef<
   HTMLButtonElement,
   {
     isAttemptingLaunch: boolean
     dropdownLabel: string
-  } & React.ButtonHTMLAttributes<HTMLButtonElement>
+  } & ButtonHTMLAttributes<HTMLButtonElement>
 >(({ isAttemptingLaunch, dropdownLabel, ...props }, ref) => {
   return (
     <Button

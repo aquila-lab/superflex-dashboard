@@ -1,9 +1,9 @@
 import { Progress } from '@/ui/progress'
 import {
-  TooltipProvider,
   Tooltip,
-  TooltipTrigger,
-  TooltipContent
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
 } from '@/ui/tooltip'
 
 export const RequestProgressBar = ({

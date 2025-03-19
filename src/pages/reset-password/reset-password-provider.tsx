@@ -1,6 +1,8 @@
 import { withErrorHandling } from '@/lib/error-handling'
 import { useRequestPasswordReset } from '@/lib/hooks'
 import {
+  type FormEvent,
+  type ReactNode,
   createContext,
   useCallback,
   useContext,
@@ -15,7 +17,7 @@ const ResetPasswordContext = createContext<
       setEmail: (email: string) => void
       isSubmitting: boolean
       isFormValid: boolean
-      handleSubmit: (e: React.FormEvent) => Promise<void>
+      handleSubmit: (e: FormEvent) => Promise<void>
     }
   | undefined
 >(undefined)
@@ -23,7 +25,7 @@ const ResetPasswordContext = createContext<
 export const ResetPasswordProvider = ({
   children
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) => {
   const [email, setEmail] = useState('')
   const navigate = useNavigate()
@@ -34,7 +36,7 @@ export const ResetPasswordProvider = ({
   }, [email])
 
   const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
+    async (e: FormEvent) => {
       e.preventDefault()
 
       if (!isFormValid || requestPasswordReset.isPending) {

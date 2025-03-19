@@ -1,5 +1,5 @@
 import confetti from 'canvas-confetti'
-import { memo, useRef, useMemo, useCallback, useEffect } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 import { toast } from 'sonner'
 import { useSuccessContext } from './success-provider'
 

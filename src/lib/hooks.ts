@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import posthog from 'posthog-js'
-import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { apiClient } from './api-client'
-import { EXTENSION_URIS, TOKEN_KEY, queryKeys } from './constants'
+import { EXTENSION_URIS, QUERY_KEYS, TOKEN_KEY } from './constants'
 import { useErrorHandler, withErrorHandling } from './error-handling'
 import type {
   AuthTokenResponse,
@@ -52,7 +52,7 @@ export const useUser = () => {
   const { token } = useAuth()
 
   return useQuery({
-    queryKey: queryKeys.user,
+    queryKey: QUERY_KEYS.user,
     queryFn: async () => {
       const { data } = await apiClient.get<User>('/user')
       return data
@@ -65,7 +65,7 @@ export const useSubscription = () => {
   const { token } = useAuth()
 
   return useQuery({
-    queryKey: queryKeys.subscription,
+    queryKey: QUERY_KEYS.subscription,
     queryFn: async () => {
       const { data } = await apiClient.get<UserSubscription>(
         '/billing/subscription'
@@ -93,8 +93,8 @@ export const useLogin = () => {
       throw new Error('Invalid response from server')
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.user })
-      queryClient.invalidateQueries({ queryKey: queryKeys.subscription })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.subscription })
     }
   })
 }
@@ -113,8 +113,8 @@ export const useRegister = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.user })
-      queryClient.invalidateQueries({ queryKey: queryKeys.subscription })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.subscription })
     }
   })
 }
@@ -134,8 +134,8 @@ export const useGoogleAuth = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.user })
-      queryClient.invalidateQueries({ queryKey: queryKeys.subscription })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.subscription })
     }
   })
 }
@@ -196,7 +196,7 @@ export const useUpdateOnboardingStep = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.user })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
     }
   })
 }
@@ -217,7 +217,7 @@ export const useUpdateUser = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.user })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
     }
   })
 }
@@ -296,8 +296,8 @@ export const useResetPassword = () => {
     },
     onSuccess: (data: AuthTokenResponse) => {
       setToken(data.token)
-      queryClient.invalidateQueries({ queryKey: queryKeys.user })
-      queryClient.invalidateQueries({ queryKey: queryKeys.subscription })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.subscription })
     }
   })
 }
@@ -414,7 +414,6 @@ export const useExtensionLauncher = () => {
   const [currentApp, setCurrentApp] = useState<ExtensionType | ''>('')
   const timeoutRef = useRef<number | null>(null)
 
-  // Clear timeout on unmount
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {

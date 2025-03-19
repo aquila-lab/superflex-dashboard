@@ -1,5 +1,23 @@
 import type { ReactNode } from 'react'
 
+// Common UI types
+export type Option = {
+  readonly value: string
+  readonly label: string
+}
+
+export type TabOption = {
+  id: string
+  label: string
+  icon: ReactNode
+}
+
+export type InfoBoxVariant = 'default' | 'success' | 'warning'
+
+export type RouterContainerProps = {
+  children: ReactNode
+}
+
 // User related types
 export type User = {
   id: string
@@ -33,6 +51,20 @@ export type UpdateUserMutation = {
   isPending: boolean
 }
 
+export type TechnicalLevel = 'non-technical' | 'technical' | 'highly-technical'
+
+export type ReferralSource =
+  | 'vscode'
+  | 'google'
+  | 'reddit'
+  | 'tiktok'
+  | 'youtube'
+  | 'twitter'
+  | 'instagram'
+  | 'friend'
+  | 'linkedin'
+  | 'other'
+
 // Authentication types
 export type AuthTokenResponse = {
   token: string
@@ -52,6 +84,19 @@ export type RegisterRequest = {
 export type GoogleAuthRequest = {
   code: string
   redirect_uri?: string
+}
+
+// API types
+export type ApiError = {
+  statusCode: number
+  slug: string
+  message: string
+} | null
+
+// Routing types
+export type RedirectInfo = {
+  path: string
+  shouldRedirect: boolean
 }
 
 // Subscription and plan types
@@ -144,56 +189,10 @@ export type SuccessConfig = {
   cardDescription: string
   toastMessage: string
   ctaText: string
-  icon: React.ReactNode
-}
-
-export type TechnicalLevel = 'non-technical' | 'technical' | 'highly-technical'
-
-export type ReferralSource =
-  | 'vscode'
-  | 'google'
-  | 'reddit'
-  | 'tiktok'
-  | 'youtube'
-  | 'twitter'
-  | 'instagram'
-  | 'friend'
-  | 'linkedin'
-  | 'other'
-
-// Extension types
-export type ExtensionType = 'VS Code' | 'Cursor'
-
-export type ExtensionAction = 'install' | 'open' | 'marketplace'
-
-// Routing types
-export type RedirectInfo = {
-  path: string
-  shouldRedirect: boolean
-}
-
-export type RouterContainerProps = {
-  children: ReactNode
-}
-
-// API types
-export type ApiError = {
-  statusCode: number
-  slug: string
-  message: string
-} | null
-
-export type TabOption = {
-  id: string
-  label: string
   icon: ReactNode
 }
 
+// Extension types
+export type ExtensionType = 'VS Code' | 'Cursor'
+export type ExtensionAction = 'install' | 'open' | 'marketplace'
 export type Editor = 'vscode' | 'cursor'
-
-export type InfoBoxVariant = 'default' | 'success' | 'warning'
-
-export type Option = {
-  readonly value: string
-  readonly label: string
-}

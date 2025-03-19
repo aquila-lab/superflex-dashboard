@@ -1,9 +1,9 @@
 import { memo } from 'react'
-import { useSuccessContext } from './success-provider'
-import { SuccessIcon } from './success-icon'
-import { SuccessDescription } from './success-description'
-import { SuccessTitle } from './success-title'
 import { SuccessButton } from './success-button'
+import { SuccessDescription } from './success-description'
+import { SuccessIcon } from './success-icon'
+import { useSuccessContext } from './success-provider'
+import { SuccessTitle } from './success-title'
 
 export const SuccessContent = memo(() => {
   const { config } = useSuccessContext()

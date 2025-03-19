@@ -1,6 +1,6 @@
+import { trackPageView } from '@/lib/utils'
 import { type ReactNode, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { trackPageView } from '@/lib/utils'
 
 export const TrackingProvider = ({ children }: { children: ReactNode }) => {
   const location = useLocation()
