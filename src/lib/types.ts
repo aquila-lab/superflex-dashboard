@@ -182,3 +182,11 @@ export type ApiError = {
   slug: string
   message: string
 } | null
+
+export type TabOption = {
+  id: string
+  label: string
+  icon: ReactNode
+}
+
+export type Editor = 'vscode' | 'cursor'
