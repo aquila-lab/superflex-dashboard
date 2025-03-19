@@ -7,7 +7,7 @@ import {
 } from '@/lib/hooks'
 import type { SuccessConfig, SuccessType } from '@/lib/types'
 import { FileCode, CreditCard, ExternalLink } from 'lucide-react'
-import { createContext, memo, useEffect, useMemo } from 'react'
+import { createContext, memo, useEffect, useMemo, useRef } from 'react'
 
 import { useContext } from 'react'
 import { useSearchParams } from 'react-router-dom'
@@ -26,6 +26,7 @@ export const SuccessProvider = memo(
     const updateOnboardingStep = useUpdateOnboardingStep()
     const onboardingStep = useOnboardingStep()
     const { openVSCodeSuperflex, openCursorSuperflex } = useExtensionLauncher()
+    const hasUpdatedOnboardingStep = useRef(false)
 
     const successType = searchParams.get('type') as SuccessType | null
 
@@ -88,11 +89,14 @@ export const SuccessProvider = memo(
       if (
         successType === 'payment' &&
         subscription?.plan?.name !== 'Free' &&
-        subscription !== undefined
+        subscription !== undefined &&
+        !hasUpdatedOnboardingStep.current
       ) {
         if (onboardingStep.currentStep === 0) {
+          hasUpdatedOnboardingStep.current = true
           updateOnboardingStep.mutate(1, {
             onError: error => {
+              hasUpdatedOnboardingStep.current = false
               toast.error(
                 error ? error.message : 'An unexpected error occurred'
               )
