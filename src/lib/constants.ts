@@ -210,3 +210,28 @@ export const VARIANT_CLASS_MAP = {
   success: 'rounded-lg bg-green-50 border border-green-200 p-4 space-y-1',
   warning: 'rounded-lg bg-amber-50 border border-amber-200 p-4 space-y-1'
 }
+
+export const USER_INFO_LAYOUT_CLASSES = {
+  container: 'flex flex-col min-h-svh',
+  content: 'flex flex-1 items-center justify-center p-4 lg:p-8',
+  formWrapper: 'w-full max-w-md'
+}
+
+export const REFERAL_SOURCE_OPTIONS = [
+  { value: 'vscode', label: 'VSCode' },
+  { value: 'google', label: 'Google' },
+  { value: 'reddit', label: 'Reddit' },
+  { value: 'tiktok', label: 'TikTok' },
+  { value: 'youtube', label: 'YouTube' },
+  { value: 'twitter', label: 'X/Twitter' },
+  { value: 'instagram', label: 'Instagram' },
+  { value: 'friend', label: 'Friend' },
+  { value: 'linkedin', label: 'LinkedIn' },
+  { value: 'other', label: 'Other' }
+] as const
+
+export const TECHNICAL_LEVEL_OPTIONS = [
+  { value: 'non-technical', label: 'Non Technical' },
+  { value: 'technical', label: 'Technical' },
+  { value: 'highly-technical', label: 'Highly Technical' }
+] as const
