@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
+import { memo, useMemo } from 'react'
 
-export const YouTubeVideo = ({ videoId }: { videoId: string }) => {
+export const YouTubeVideo = memo(({ videoId }: { videoId: string }) => {
   const videoSrc = useMemo(() => {
     return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&disablekb=1&modestbranding=1&loop=1&playsinline=1&iv_load_policy=3&color=white`
   }, [videoId])
@@ -17,4 +17,4 @@ export const YouTubeVideo = ({ videoId }: { videoId: string }) => {
       />
     </div>
   )
-}
+})

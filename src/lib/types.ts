@@ -190,3 +190,5 @@ export type TabOption = {
 }
 
 export type Editor = 'vscode' | 'cursor'
+
+export type InfoBoxVariant = 'default' | 'success' | 'warning'

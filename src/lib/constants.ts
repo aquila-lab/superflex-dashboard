@@ -198,3 +198,15 @@ export const FIGMA_CONNECTION_STEPS = [
     text: "Once connected, you'll be able to copy Figma selections and use the Figma link feature to provide design context directly to Superflex."
   }
 ]
+
+export const TITLE_COLOR_MAP = {
+  default: 'text-foreground',
+  success: 'text-green-800',
+  warning: 'text-amber-800'
+}
+
+export const VARIANT_CLASS_MAP = {
+  default: 'rounded-lg border p-4 space-y-4',
+  success: 'rounded-lg bg-green-50 border border-green-200 p-4 space-y-1',
+  warning: 'rounded-lg bg-amber-50 border border-amber-200 p-4 space-y-1'
+}
