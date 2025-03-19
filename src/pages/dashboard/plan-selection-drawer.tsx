@@ -1,7 +1,8 @@
 import { PLAN_CARD } from '@/lib/constants'
 import { usePlanSelection } from '@/lib/hooks'
 import type { BillingPeriod } from '@/lib/types'
-import { cn, getPlanIdFromTitle, trackConversion } from '@/lib/utils'
+import { getPlanIdFromTitle, trackConversion } from '@/lib/utils'
+import { BillingToggle } from '@/shared/plan-card/billing-toggle'
 import { PlanCard } from '@/shared/plan-card/plan-card'
 import {
   Drawer,
@@ -65,10 +66,12 @@ export const PlanSelectionDrawer = () => {
           </DrawerHeader>
 
           <div className='flex flex-col p-4 gap-6 px-4'>
-            <BillingToggle
-              billingPeriod={billingPeriod}
-              setBillingPeriod={setBillingPeriod}
-            />
+            <div className='mb-6 text-center'>
+              <BillingToggle
+                billingPeriod={billingPeriod}
+                onChangeBillingPeriod={setBillingPeriod}
+              />
+            </div>
 
             <div className='grid gap-8 md:grid-cols-2 items-start'>
               {PLAN_CARD.filter(plan => plan.title !== 'Free Plan').map(
@@ -86,52 +89,5 @@ export const PlanSelectionDrawer = () => {
         </div>
       </DrawerContent>
     </Drawer>
-  )
-}
-
-type BillingToggleProps = {
-  billingPeriod: BillingPeriod
-  setBillingPeriod: (period: BillingPeriod) => void
-}
-
-const BillingToggle = ({
-  billingPeriod,
-  setBillingPeriod
-}: BillingToggleProps) => {
-  return (
-    <div className='mb-6 text-center'>
-      <div className='inline-flex items-center rounded-full border p-1 bg-muted/30'>
-        <div
-          className={cn(
-            'px-4 py-2 rounded-full cursor-pointer text-sm font-medium transition-colors duration-200',
-            billingPeriod === 'monthly'
-              ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground'
-          )}
-          onClick={() => setBillingPeriod('monthly')}
-        >
-          Monthly
-        </div>
-        <div
-          className={cn(
-            'px-4 py-2 rounded-full cursor-pointer text-sm font-medium transition-colors duration-200',
-            billingPeriod === 'annual'
-              ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground'
-          )}
-          onClick={() => setBillingPeriod('annual')}
-        >
-          Annual{' '}
-          <span
-            className={cn(
-              'text-primary font-medium',
-              billingPeriod === 'annual' && 'text-primary-foreground'
-            )}
-          >
-            (Save 33%)
-          </span>
-        </div>
-      </div>
-    </div>
   )
 }

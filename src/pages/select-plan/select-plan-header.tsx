@@ -1,5 +1,5 @@
 import type { BillingPeriod } from '@/lib/types'
-import { BillingToggle } from './billing-toggle'
+import { BillingToggle } from '../../shared/plan-card/billing-toggle'
 
 export const SelectPlanHeader = ({
   billingPeriod,
