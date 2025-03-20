@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { ConnectFigmaSection } from './connect-figma-section'
 import { DownloadVSCodeSection } from './download-vscode-section'
 import { StartUsingSection } from './start-using-section'
@@ -11,6 +12,8 @@ export const OnboardingSectionContent = ({
   completed: boolean
   onComplete: (id: string, completed: boolean) => void
 }) => {
+  const navigate = useNavigate()
+
   if (sectionId === 'download-vscode') {
     return (
       <DownloadVSCodeSection
@@ -33,7 +36,10 @@ export const OnboardingSectionContent = ({
     return (
       <ConnectFigmaSection
         isCompleted={completed}
-        onComplete={onComplete}
+        onComplete={() => {
+          onComplete(sectionId, true)
+          navigate('/dashboard')
+        }}
       />
     )
   }
