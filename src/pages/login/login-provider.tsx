@@ -81,32 +81,24 @@ export const LoginProvider = ({
         return
       }
 
-      try {
-        await login(
-          { username_or_email: email, password },
-          {
-            onSuccess: () => {
-              toast.success('Logged in successfully')
-              setTimeout(() => {
-                navigate('/select-plan')
-              }, 500)
-            },
-            onError: (error: any) => {
-              setPassword('')
-              const errorMessage =
-                error?.response?.data?.error?.message ||
-                'Failed to login. Please check your credentials and try again.'
-              toast.error(errorMessage)
-            }
+      await login(
+        { username_or_email: email, password },
+        {
+          onSuccess: () => {
+            toast.success('Logged in successfully')
+            setTimeout(() => {
+              navigate('/select-plan')
+            }, 500)
+          },
+          onError: (error: any) => {
+            setPassword('')
+            const errorMessage =
+              error?.response?.data?.error?.message ||
+              'Failed to login. Please check your credentials and try again.'
+            toast.error(errorMessage)
           }
-        )
-      } catch (error: any) {
-        setPassword('')
-        const errorMessage =
-          error?.response?.data?.error?.message ||
-          'Failed to login. Please check your credentials and try again.'
-        toast.error(errorMessage)
-      }
+        }
+      )
     },
     [email, password, isFormValid, isLoginPending, login, navigate]
   )

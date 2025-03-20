@@ -1,6 +1,7 @@
 import { useUser } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
+import type { ComponentProps } from 'react'
 import { useMemo } from 'react'
 
 export const UserAvatar = ({
@@ -14,7 +15,7 @@ export const UserAvatar = ({
   imageClassName?: string
   fallbackClassName?: string
   size?: number
-} & Omit<React.ComponentProps<typeof Avatar>, 'children'>) => {
+} & Omit<ComponentProps<typeof Avatar>, 'children'>) => {
   const { data: user } = useUser()
 
   const userInitials = useMemo(() => {

@@ -1,15 +1,17 @@
+import { USER_INFO_LAYOUT_CLASSES } from '@/lib/constants'
 import { OnboardingHeader } from '@/shared/onboarding-header/onboarding-header'
 import { UserInfoForm } from './user-info-form'
+import { UserInfoProvider } from './user-info-provider'
 
-export const UserInfoPage = () => {
-  return (
-    <div className='flex flex-col min-h-svh'>
-      <OnboardingHeader currentStep={2} />
-      <div className='flex flex-1 items-center justify-center p-4 lg:p-8'>
-        <div className='w-full max-w-md'>
+export const UserInfoPage = () => (
+  <div className={USER_INFO_LAYOUT_CLASSES.container}>
+    <OnboardingHeader currentStep={2} />
+    <div className={USER_INFO_LAYOUT_CLASSES.content}>
+      <div className={USER_INFO_LAYOUT_CLASSES.formWrapper}>
+        <UserInfoProvider>
           <UserInfoForm />
-        </div>
+        </UserInfoProvider>
       </div>
     </div>
-  )
-}
+  </div>
+)

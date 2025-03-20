@@ -5,6 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/ui/tooltip'
+import type { ElementType } from 'react'
 
 export const SocialIcon = ({
   href,
@@ -13,7 +14,7 @@ export const SocialIcon = ({
   className
 }: {
   href: string
-  icon: React.ElementType
+  icon: ElementType
   label: string
   className?: string
 }) => {

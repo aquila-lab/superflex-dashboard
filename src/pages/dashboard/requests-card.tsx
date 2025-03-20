@@ -7,14 +7,8 @@ import {
   CardHeader,
   CardTitle
 } from '@/ui/card'
-import { Progress } from '@/ui/progress'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/ui/tooltip'
 import { useMemo } from 'react'
+import { RequestProgressBar } from './request-progress-bar'
 
 export const RequestsCard = () => {
   const { data: subscription } = useSubscription()
@@ -75,48 +69,5 @@ export const RequestsCard = () => {
         </div>
       </CardContent>
     </Card>
-  )
-}
-
-type RequestProgressBarProps = {
-  title: string
-  isUnlimited: boolean
-  usedRequests: number
-  totalRequests: number
-  percentage: number
-}
-
-const RequestProgressBar = ({
-  title,
-  isUnlimited,
-  usedRequests,
-  totalRequests,
-  percentage
-}: RequestProgressBarProps) => {
-  return (
-    <div className='space-y-2'>
-      <div className='flex justify-between items-baseline text-sm'>
-        <span>{title}</span>
-        {isUnlimited ? (
-          <span className='text-muted-foreground text-xs leading-none'>
-            Unlimited requests available
-          </span>
-        ) : (
-          <span>
-            {usedRequests} / {totalRequests}
-          </span>
-        )}
-      </div>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div>
-              <Progress value={percentage} />
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>{usedRequests} requests used</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
   )
 }

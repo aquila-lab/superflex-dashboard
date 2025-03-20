@@ -1,6 +1,7 @@
 import { InfoBox } from '@/shared/onboarding-components/info-box'
 import { Button } from '@/ui/button'
 import { Download } from 'lucide-react'
+import type { ReactNode } from 'react'
 
 export const EditorOption = ({
   icon,
@@ -9,11 +10,11 @@ export const EditorOption = ({
   downloadUrl,
   children
 }: {
-  icon: React.ReactNode
+  icon: ReactNode
   title: string
   description: string
   downloadUrl: string
-  children?: React.ReactNode
+  children?: ReactNode
 }) => {
   return (
     <InfoBox

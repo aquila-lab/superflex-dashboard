@@ -21,7 +21,11 @@ export const ExtensionDropdown = () => {
     openMarketplace
   } = useExtensionLauncher()
 
-  const { isComplete } = useOnboardingStep()
+  const { currentStep } = useOnboardingStep()
+
+  const isComplete = useMemo(() => {
+    return currentStep >= 2
+  }, [currentStep])
 
   const dropdownLabel = useMemo(() => {
     if (isComplete) {

@@ -1,14 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import posthog from 'posthog-js'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { apiClient } from './api-client'
-import { EXTENSION_URIS, TOKEN_KEY, queryKeys } from './constants'
+import { EXTENSION_URIS, QUERY_KEYS, TOKEN_KEY } from './constants'
 import { useErrorHandler, withErrorHandling } from './error-handling'
 import type {
   AuthTokenResponse,
+  Editor,
   ExtensionAction,
-  ExtensionType,
   GoogleAuthRequest,
   LoginRequest,
   PlanId,
@@ -17,7 +17,7 @@ import type {
   UserSubscription,
   UserUpdate
 } from './types'
-import { onboardingStepMapping, parseJwtToken } from './utils'
+import { onboardingStepMapping, parseJwtToken, trackConversion } from './utils'
 
 export const useAuth = () => {
   const getToken = () => localStorage.getItem(TOKEN_KEY)
@@ -52,7 +52,7 @@ export const useUser = () => {
   const { token } = useAuth()
 
   return useQuery({
-    queryKey: queryKeys.user,
+    queryKey: QUERY_KEYS.user,
     queryFn: async () => {
       const { data } = await apiClient.get<User>('/user')
       return data
@@ -65,7 +65,7 @@ export const useSubscription = () => {
   const { token } = useAuth()
 
   return useQuery({
-    queryKey: queryKeys.subscription,
+    queryKey: QUERY_KEYS.subscription,
     queryFn: async () => {
       const { data } = await apiClient.get<UserSubscription>(
         '/billing/subscription'
@@ -93,8 +93,8 @@ export const useLogin = () => {
       throw new Error('Invalid response from server')
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.user })
-      queryClient.invalidateQueries({ queryKey: queryKeys.subscription })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.subscription })
     }
   })
 }
@@ -113,8 +113,8 @@ export const useRegister = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.user })
-      queryClient.invalidateQueries({ queryKey: queryKeys.subscription })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.subscription })
     }
   })
 }
@@ -134,8 +134,8 @@ export const useGoogleAuth = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.user })
-      queryClient.invalidateQueries({ queryKey: queryKeys.subscription })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.subscription })
     }
   })
 }
@@ -196,7 +196,7 @@ export const useUpdateOnboardingStep = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.user })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
     }
   })
 }
@@ -217,7 +217,7 @@ export const useUpdateUser = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.user })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
     }
   })
 }
@@ -296,8 +296,8 @@ export const useResetPassword = () => {
     },
     onSuccess: (data: AuthTokenResponse) => {
       setToken(data.token)
-      queryClient.invalidateQueries({ queryKey: queryKeys.user })
-      queryClient.invalidateQueries({ queryKey: queryKeys.subscription })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.subscription })
     }
   })
 }
@@ -317,6 +317,8 @@ export const usePlanSelection = () => {
   const updateOnboardingStep = useUpdateOnboardingStep()
 
   const handleFreePlanSelection = useCallback(() => {
+    trackConversion.freePlanClick()
+
     const activateFreePlan = withErrorHandling(
       async () => {
         const result = await updateOnboardingStep.mutateAsync(1)
@@ -374,6 +376,10 @@ export const usePlanSelection = () => {
         return
       }
 
+      const planName = planId.includes('individual') ? 'Individual Pro' : 'Team'
+      trackConversion.paidPlanClick(planName)
+      trackConversion.planChangedToPaid(planName)
+
       sessionStorage.setItem('planId', planId)
 
       const stripeUrl = getStripeUrl(planId)
@@ -405,10 +411,19 @@ export const useWithErrorToast = <
 
 export const useExtensionLauncher = () => {
   const [isAttemptingLaunch, setIsAttemptingLaunch] = useState(false)
-  const [currentApp, setCurrentApp] = useState<ExtensionType | ''>('')
+  const [currentApp, setCurrentApp] = useState<Editor | ''>('')
+  const timeoutRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
 
   const handleExtensionAction = useCallback(
-    (action: ExtensionAction, app?: ExtensionType) => {
+    (action: ExtensionAction, app?: Editor) => {
       try {
         if (action === 'marketplace') {
           window.open(EXTENSION_URIS.marketplace, '_blank')
@@ -419,11 +434,27 @@ export const useExtensionLauncher = () => {
           return
         }
 
+        if (timeoutRef.current) {
+          window.clearTimeout(timeoutRef.current)
+        }
+
         setIsAttemptingLaunch(true)
         setCurrentApp(app)
 
+        if (action === 'install') {
+          if (app === 'vscode') {
+            trackConversion.installVSCodeClick()
+          } else if (app === 'cursor') {
+            trackConversion.installCursorClick()
+          }
+        }
+
         const uri = EXTENSION_URIS[app][action]
         window.location.href = uri
+
+        timeoutRef.current = window.setTimeout(() => {
+          setIsAttemptingLaunch(false)
+        }, 3000)
       } catch (_error) {
         setIsAttemptingLaunch(false)
       }
@@ -433,10 +464,10 @@ export const useExtensionLauncher = () => {
 
   const helpers = useMemo(
     () => ({
-      launchVSCodeExtension: () => handleExtensionAction('install', 'VS Code'),
-      launchCursorExtension: () => handleExtensionAction('install', 'Cursor'),
-      openVSCodeSuperflex: () => handleExtensionAction('open', 'VS Code'),
-      openCursorSuperflex: () => handleExtensionAction('open', 'Cursor'),
+      launchVSCodeExtension: () => handleExtensionAction('install', 'vscode'),
+      launchCursorExtension: () => handleExtensionAction('install', 'cursor'),
+      openVSCodeSuperflex: () => handleExtensionAction('open', 'vscode'),
+      openCursorSuperflex: () => handleExtensionAction('open', 'cursor'),
       openMarketplace: () => handleExtensionAction('marketplace')
     }),
     [handleExtensionAction]
