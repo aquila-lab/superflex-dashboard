@@ -193,6 +193,5 @@ export type SuccessConfig = {
 }
 
 // Extension types
-export type ExtensionType = 'VS Code' | 'Cursor'
-export type ExtensionAction = 'install' | 'open' | 'marketplace'
 export type Editor = 'vscode' | 'cursor'
+export type ExtensionAction = 'install' | 'open' | 'marketplace'

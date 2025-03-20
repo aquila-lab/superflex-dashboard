@@ -1,4 +1,4 @@
-import type { ApiError, PlanCard, SuccessType } from './types'
+import type { ApiError, Editor, PlanCard, SuccessType } from './types'
 
 // Environment constants
 export const IS_PROD = import.meta.env.VITE_NODE_ENV === 'production'
@@ -129,18 +129,22 @@ export const SUCCESS_TYPES: SuccessType[] = [
 ]
 
 // Extension related constants
-export const EXTENSION_URIS = {
-  'VS Code': {
+export const EXTENSION_URIS: {
+  [K in Editor]: { install: string; open: string }
+} & {
+  marketplace: string
+} = {
+  vscode: {
     install: 'vscode:extension/aquilalabs.superflex',
     open: 'vscode://aquilalabs.superflex?open=true'
   },
-  Cursor: {
+  cursor: {
     install: 'cursor:extension/aquilalabs.superflex',
     open: 'cursor://aquilalabs.superflex?open=true'
   },
   marketplace:
     'https://marketplace.visualstudio.com/items?itemName=aquilalabs.superflex'
-} as const
+}
 
 export const FIGMA_CONNECTION_STEPS = [
   {

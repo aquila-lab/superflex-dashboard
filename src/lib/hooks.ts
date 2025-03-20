@@ -7,8 +7,8 @@ import { EXTENSION_URIS, QUERY_KEYS, TOKEN_KEY } from './constants'
 import { useErrorHandler, withErrorHandling } from './error-handling'
 import type {
   AuthTokenResponse,
+  Editor,
   ExtensionAction,
-  ExtensionType,
   GoogleAuthRequest,
   LoginRequest,
   PlanId,
@@ -411,7 +411,7 @@ export const useWithErrorToast = <
 
 export const useExtensionLauncher = () => {
   const [isAttemptingLaunch, setIsAttemptingLaunch] = useState(false)
-  const [currentApp, setCurrentApp] = useState<ExtensionType | ''>('')
+  const [currentApp, setCurrentApp] = useState<Editor | ''>('')
   const timeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
@@ -423,7 +423,7 @@ export const useExtensionLauncher = () => {
   }, [])
 
   const handleExtensionAction = useCallback(
-    (action: ExtensionAction, app?: ExtensionType) => {
+    (action: ExtensionAction, app?: Editor) => {
       try {
         if (action === 'marketplace') {
           window.open(EXTENSION_URIS.marketplace, '_blank')
@@ -442,9 +442,9 @@ export const useExtensionLauncher = () => {
         setCurrentApp(app)
 
         if (action === 'install') {
-          if (app === 'VS Code') {
+          if (app === 'vscode') {
             trackConversion.installVSCodeClick()
-          } else if (app === 'Cursor') {
+          } else if (app === 'cursor') {
             trackConversion.installCursorClick()
           }
         }
@@ -464,10 +464,10 @@ export const useExtensionLauncher = () => {
 
   const helpers = useMemo(
     () => ({
-      launchVSCodeExtension: () => handleExtensionAction('install', 'VS Code'),
-      launchCursorExtension: () => handleExtensionAction('install', 'Cursor'),
-      openVSCodeSuperflex: () => handleExtensionAction('open', 'VS Code'),
-      openCursorSuperflex: () => handleExtensionAction('open', 'Cursor'),
+      launchVSCodeExtension: () => handleExtensionAction('install', 'vscode'),
+      launchCursorExtension: () => handleExtensionAction('install', 'cursor'),
+      openVSCodeSuperflex: () => handleExtensionAction('open', 'vscode'),
+      openCursorSuperflex: () => handleExtensionAction('open', 'cursor'),
       openMarketplace: () => handleExtensionAction('marketplace')
     }),
     [handleExtensionAction]

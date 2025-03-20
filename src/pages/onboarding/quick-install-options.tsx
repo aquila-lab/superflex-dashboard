@@ -28,7 +28,7 @@ export const QuickInstallOptions = memo(() => {
           disabled={isAttemptingLaunch}
           className='flex items-center'
         >
-          {isAttemptingLaunch && currentApp === 'VS Code' ? (
+          {isAttemptingLaunch && currentApp === 'vscode' ? (
             <>
               <Icons.Spinner className='size-4 animate-spin' />
               <span>Launching...</span>
@@ -47,7 +47,7 @@ export const QuickInstallOptions = memo(() => {
           disabled={isAttemptingLaunch}
           className='flex items-center'
         >
-          {isAttemptingLaunch && currentApp === 'Cursor' ? (
+          {isAttemptingLaunch && currentApp === 'cursor' ? (
             <>
               <Icons.Spinner className='size-4 animate-spin' />
               <span>Launching...</span>
