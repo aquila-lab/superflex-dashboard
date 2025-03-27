@@ -1,5 +1,6 @@
 import { withErrorHandling } from '@/lib/error-handling'
-import { useGoogleAuth, useLogin } from '@/lib/hooks'
+import { useGoogleAuth, useLogin, useSourceDetection } from '@/lib/hooks'
+import { trackConversion } from '@/lib/utils'
 import { useGoogleLogin } from '@react-oauth/google'
 import {
   type FormEvent,
@@ -37,6 +38,8 @@ export const LoginProvider = ({
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [searchParams] = useSearchParams()
+  const [loginSource, setLoginSource] = useState<string>('')
+  const { detectSource } = useSourceDetection()
 
   const navigate = useNavigate()
   const { mutateAsync: login, isPending: isLoginPending } = useLogin()
@@ -52,6 +55,9 @@ export const LoginProvider = ({
         {
           successMessage: 'Logged in with Google successfully',
           onSuccess: () => {
+            if (loginSource) {
+              trackConversion.userLogin(loginSource)
+            }
             navigate('/select-plan', { replace: true })
           }
         }
@@ -59,15 +65,29 @@ export const LoginProvider = ({
 
       await handleGoogleAuth(code)
     },
-    [googleAuth, navigate]
+    [googleAuth, navigate, loginSource]
   )
 
   useEffect(() => {
+    const detectLoginSource = () => {
+      const detectedSource = detectSource()
+
+      if (detectedSource) {
+        setLoginSource(detectedSource)
+        localStorage.setItem('loginSource', detectedSource)
+        trackConversion.loginPageVisitWithSource(detectedSource)
+      } else {
+        trackConversion.loginPageVisit()
+      }
+    }
+
+    detectLoginSource()
+
     const code = searchParams.get('code')
     if (code) {
       handleGoogleAuthCode(code)
     }
-  }, [searchParams, handleGoogleAuthCode])
+  }, [searchParams, handleGoogleAuthCode, detectSource])
 
   const isFormValid = useMemo(() => {
     return email.trim() !== '' && password.trim() !== ''
@@ -85,6 +105,9 @@ export const LoginProvider = ({
         { username_or_email: email, password },
         {
           onSuccess: () => {
+            if (loginSource) {
+              trackConversion.userLogin(loginSource)
+            }
             toast.success('Logged in successfully')
             setTimeout(() => {
               navigate('/select-plan')
@@ -100,7 +123,7 @@ export const LoginProvider = ({
         }
       )
     },
-    [email, password, isFormValid, isLoginPending, login, navigate]
+    [email, password, isFormValid, isLoginPending, login, navigate, loginSource]
   )
 
   const handleGoogleLogin = useGoogleLogin({
