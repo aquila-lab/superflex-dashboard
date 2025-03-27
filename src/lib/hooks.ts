@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import posthog from 'posthog-js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { apiClient } from './api-client'
 import { EXTENSION_URIS, QUERY_KEYS, TOKEN_KEY } from './constants'
 import { useErrorHandler, withErrorHandling } from './error-handling'
@@ -479,4 +479,34 @@ export const useExtensionLauncher = () => {
     handleExtensionAction,
     ...helpers
   }
+}
+
+export const useSourceDetection = () => {
+  const [searchParams] = useSearchParams()
+
+  const detectSource = useCallback(() => {
+    const source = searchParams.get('source')
+    const state = searchParams.get('state')
+
+    let detectedSource = ''
+
+    if (source === 'website') {
+      detectedSource = 'website'
+    } else if (state) {
+      let decodedState = decodeURIComponent(state)
+      if (decodedState.includes('%')) {
+        decodedState = decodeURIComponent(decodedState)
+      }
+
+      if (decodedState.includes('cursor')) {
+        detectedSource = 'cursor'
+      } else if (decodedState.includes('vscode')) {
+        detectedSource = 'vscode'
+      }
+    }
+
+    return detectedSource
+  }, [searchParams])
+
+  return { detectSource }
 }

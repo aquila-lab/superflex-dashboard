@@ -281,8 +281,17 @@ export const trackUserJourney = (
 export const trackConversion = {
   landingPageVisit: () => trackUserJourney('landing_page_visit'),
   registerPageVisit: () => trackUserJourney('register_page_visit'),
+  registerPageVisitWithSource: (source: string) =>
+    trackUserJourney('register_page_visit', { source }),
   userRegistered: (userId?: string) =>
     trackUserJourney('user_registered', { userId }),
+  userRegisteredWithSource: (userId: string | undefined, source: string) =>
+    trackUserJourney('user_registered', { userId, registrationSource: source }),
+  loginPageVisit: () => trackUserJourney('login_page_visit'),
+  loginPageVisitWithSource: (source: string) =>
+    trackUserJourney('login_page_visit', { source }),
+  userLogin: (source: string) =>
+    trackUserJourney('user_login', { loginSource: source }),
   pricingPageVisit: () => trackUserJourney('pricing_page_visit'),
   paidPlanClick: (planName: string) =>
     trackUserJourney('paid_plan_click', { planName }),

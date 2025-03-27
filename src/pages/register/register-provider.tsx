@@ -1,5 +1,5 @@
 import { withErrorHandling } from '@/lib/error-handling'
-import { useGoogleAuth, useRegister } from '@/lib/hooks'
+import { useGoogleAuth, useRegister, useSourceDetection } from '@/lib/hooks'
 import { trackConversion } from '@/lib/utils'
 import { useGoogleLogin } from '@react-oauth/google'
 import {
@@ -41,6 +41,8 @@ export const RegisterProvider = ({
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [searchParams] = useSearchParams()
+  const [registrationSource, setRegistrationSource] = useState<string>('')
+  const { detectSource } = useSourceDetection()
 
   const navigate = useNavigate()
   const { mutateAsync: register, isPending: isRegisterPending } = useRegister()
@@ -56,7 +58,14 @@ export const RegisterProvider = ({
         {
           successMessage: 'Account created with Google successfully',
           onSuccess: () => {
-            trackConversion.userRegistered()
+            if (registrationSource) {
+              trackConversion.userRegisteredWithSource(
+                undefined,
+                registrationSource
+              )
+            } else {
+              trackConversion.userRegistered()
+            }
             navigate('/select-plan', { replace: true })
           }
         }
@@ -64,17 +73,29 @@ export const RegisterProvider = ({
 
       await handleGoogleAuth(code)
     },
-    [googleAuth, navigate]
+    [googleAuth, navigate, registrationSource]
   )
 
   useEffect(() => {
     trackConversion.registerPageVisit()
 
+    const detectRegistrationSource = () => {
+      const detectedSource = detectSource()
+
+      if (detectedSource) {
+        setRegistrationSource(detectedSource)
+        localStorage.setItem('registrationSource', detectedSource)
+        trackConversion.registerPageVisitWithSource(detectedSource)
+      }
+    }
+
+    detectRegistrationSource()
+
     const code = searchParams.get('code')
     if (code) {
       handleGoogleAuthCode(code)
     }
-  }, [searchParams, handleGoogleAuthCode])
+  }, [searchParams, handleGoogleAuthCode, detectSource])
 
   const isFormValid = useMemo(() => {
     return (
@@ -101,7 +122,14 @@ export const RegisterProvider = ({
         { email, password, username: email },
         {
           onSuccess: () => {
-            trackConversion.userRegistered()
+            if (registrationSource) {
+              trackConversion.userRegisteredWithSource(
+                undefined,
+                registrationSource
+              )
+            } else {
+              trackConversion.userRegistered()
+            }
             toast.success('Account created successfully')
             setTimeout(() => {
               navigate('/select-plan')
@@ -125,7 +153,8 @@ export const RegisterProvider = ({
       isFormValid,
       isRegisterPending,
       register,
-      navigate
+      navigate,
+      registrationSource
     ]
   )
 
