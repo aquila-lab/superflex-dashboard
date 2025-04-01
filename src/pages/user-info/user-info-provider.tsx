@@ -8,6 +8,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState
 } from 'react'
@@ -47,6 +48,17 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
   const [technicalLevel, setTechnicalLevel] = useState<TechnicalLevel | ''>('')
   const [referralSource, setReferralSource] = useState<ReferralSource | ''>('')
 
+  useEffect(() => {
+    if (user) {
+      if (user.first_name) {
+        setFirstName(user.first_name)
+      }
+      if (user.last_name) {
+        setLastName(user.last_name)
+      }
+    }
+  }, [user])
+
   const shouldUpdateNames = useMemo(() => {
     return !user?.first_name || !user?.last_name
   }, [user?.first_name, user?.last_name])
@@ -69,8 +81,8 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
 
       const payload = {
         onboarding_step: 2,
-        ...(shouldUpdateNames && user && user.first_name && user.last_name
-          ? { first_name: user?.first_name, last_name: user?.last_name }
+        ...(shouldUpdateNames
+          ? { first_name: firstName, last_name: lastName }
           : {}),
         ...(title ? { title } : {}),
         ...(company ? { company } : {}),
