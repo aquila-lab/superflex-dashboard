@@ -47,6 +47,10 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
   const [technicalLevel, setTechnicalLevel] = useState<TechnicalLevel | ''>('')
   const [referralSource, setReferralSource] = useState<ReferralSource | ''>('')
 
+  const shouldUpdateNames = useMemo(() => {
+    return !user?.first_name || !user?.last_name
+  }, [user?.first_name, user?.last_name])
+
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault()
@@ -64,9 +68,10 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
       setIsSubmitting(true)
 
       const payload = {
-        first_name: firstName,
-        last_name: lastName,
         onboarding_step: 2,
+        ...(shouldUpdateNames && user && user.first_name && user.last_name
+          ? { first_name: user?.first_name, last_name: user?.last_name }
+          : {}),
         ...(title ? { title } : {}),
         ...(company ? { company } : {}),
         ...(referralSource ? { referral_source: referralSource } : {}),
@@ -87,8 +92,8 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
               posthog.identify(uniqueID, {
                 userID: user.id,
                 email: user.email,
-                firstName,
-                lastName,
+                firstName: user.first_name || firstName,
+                lastName: user.last_name || lastName,
                 technicalLevel,
                 title,
                 company,
@@ -126,7 +131,8 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
       technicalLevel,
       updateUser,
       user,
-      navigate
+      navigate,
+      shouldUpdateNames
     ]
   )
 
