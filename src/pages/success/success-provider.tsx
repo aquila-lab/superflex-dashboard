@@ -6,6 +6,7 @@ import {
   useUpdateOnboardingStep
 } from '@/lib/hooks'
 import type { SuccessConfig, SuccessType } from '@/lib/types'
+import { trackConversion } from '@/lib/utils'
 import { CreditCard, ExternalLink, FileCode } from 'lucide-react'
 import {
   type ReactNode,
@@ -93,10 +94,13 @@ export const SuccessProvider = memo(({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (
       successType === 'payment' &&
-      subscription?.plan?.name !== 'Free' &&
-      subscription !== undefined &&
+      subscription &&
+      subscription.plan &&
+      subscription.plan.name !== 'Free' &&
       !hasUpdatedOnboardingStep.current
     ) {
+      trackConversion.planChangedToPaid(subscription.plan.name)
+
       if (onboardingStep.currentStep === 0) {
         hasUpdatedOnboardingStep.current = true
         updateOnboardingStep.mutate(1, {

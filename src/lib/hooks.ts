@@ -378,7 +378,6 @@ export const usePlanSelection = () => {
 
       const planName = planId.includes('individual') ? 'Individual Pro' : 'Team'
       trackConversion.paidPlanClick(planName)
-      trackConversion.planChangedToPaid(planName)
 
       sessionStorage.setItem('planId', planId)
 
