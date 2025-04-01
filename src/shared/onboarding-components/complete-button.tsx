@@ -23,7 +23,7 @@ export const CompleteButton = ({
 
     return (
       <Button
-        variant='outline'
+        variant='default'
         onClick={() => onComplete(sectionId, true)}
       >
         <CheckCircle className='size-4 mr-2' />

@@ -15,12 +15,12 @@ export const SectionFooter = memo(
   }) => {
     return (
       <div className='pt-2 flex justify-between items-center'>
-        <p className='text-sm text-muted-foreground'>{message}</p>
         <CompleteButton
           sectionId={sectionId}
           onComplete={onComplete}
           isCompleted={isCompleted}
         />
+        <p className='text-sm text-muted-foreground'>{message}</p>
       </div>
     )
   }
