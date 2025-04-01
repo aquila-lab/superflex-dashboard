@@ -3,12 +3,15 @@ import {
   TECHNICAL_LEVEL_OPTIONS
 } from '@/lib/constants'
 import type { ReferralSource, TechnicalLevel } from '@/lib/types'
+import { useUser } from '@/lib/hooks'
 import { SelectField } from '@/shared/form-components/select-field'
 import { SubmitButton } from '@/shared/form-components/submit-button'
 import { TextField } from '@/shared/form-components/text-field'
 import { useUserInfoContext } from './user-info-provider'
+import { useMemo } from 'react'
 
 export const UserInfoFormContent = () => {
+  const { data: user } = useUser()
   const {
     firstName,
     setFirstName,
@@ -25,27 +28,35 @@ export const UserInfoFormContent = () => {
     isSubmitting
   } = useUserInfoContext()
 
+  const shouldShowNameFields = useMemo(() => {
+    return !user?.first_name || !user?.last_name
+  }, [user?.first_name, user?.last_name])
+
   return (
     <div className='grid gap-6'>
-      <TextField
-        id='firstName'
-        label='First name'
-        placeholder='John'
-        value={firstName}
-        setValue={setFirstName}
-        isSubmitting={isSubmitting}
-        required
-      />
+      {shouldShowNameFields && (
+        <>
+          <TextField
+            id='firstName'
+            label='First name'
+            placeholder='John'
+            value={firstName}
+            setValue={setFirstName}
+            isSubmitting={isSubmitting}
+            required
+          />
 
-      <TextField
-        id='lastName'
-        label='Last name'
-        placeholder='Doe'
-        value={lastName}
-        setValue={setLastName}
-        isSubmitting={isSubmitting}
-        required
-      />
+          <TextField
+            id='lastName'
+            label='Last name'
+            placeholder='Doe'
+            value={lastName}
+            setValue={setLastName}
+            isSubmitting={isSubmitting}
+            required
+          />
+        </>
+      )}
 
       <SelectField
         id='technicalLevel'
