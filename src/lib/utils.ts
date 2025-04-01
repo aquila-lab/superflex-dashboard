@@ -301,3 +301,26 @@ export const trackConversion = {
   installVSCodeClick: () => trackUserJourney('install_vscode_click'),
   installCursorClick: () => trackUserJourney('install_cursor_click')
 }
+
+// A/B Testing utilities
+export const shouldShowFreePlan = (userId?: string): boolean => {
+  let shouldShow: boolean
+
+  if (userId) {
+    const hashCode = Array.from(userId).reduce(
+      (hash, char) => (hash << 5) - hash + char.charCodeAt(0),
+      0
+    )
+
+    shouldShow = hashCode % 2 === 0
+  } else {
+    shouldShow = Math.random() >= 0.5
+  }
+
+  trackUserJourney('ab_test_free_plan_visibility', {
+    variant: shouldShow ? 'show' : 'hide',
+    method: userId ? 'deterministic' : 'random'
+  })
+
+  return shouldShow
+}

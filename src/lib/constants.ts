@@ -201,10 +201,10 @@ export const PLAN_CARD = [
     buttonText: 'Subscribe',
     popular: true,
     features: [
-      { text: 'Up to 3 projects', included: true },
+      { text: 'Import from Figma', included: true },
+      { text: 'Unlimited projects', included: true },
       { text: '250 premium requests per month', included: true },
       { text: 'Unlimited basic requests per month', included: true },
-      { text: 'Import from Figma', included: true },
       { text: 'Priority email support', included: true }
     ]
   },
