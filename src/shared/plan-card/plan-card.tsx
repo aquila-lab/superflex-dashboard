@@ -27,12 +27,13 @@ export const PlanCard = ({
   } = plan
 
   const isTeamPlan = useMemo(() => title === 'Team Plan', [title])
+  const isFreePlan = useMemo(() => title === 'Free Plan', [title])
 
   return (
     <Card
       className={cn(
         'flex flex-col shadow-sm hover:shadow transition-shadow duration-200',
-        popular && 'border-primary shadow-md hover:shadow-lg'
+        !isFreePlan && 'border-primary shadow-md hover:shadow-lg'
       )}
     >
       <PlanCardHeader
@@ -54,8 +55,8 @@ export const PlanCard = ({
 
       <PlanCardFooter
         buttonText={buttonText}
-        popular={popular}
         onSelect={onSelect}
+        isFreePlan={isFreePlan}
       />
     </Card>
   )
