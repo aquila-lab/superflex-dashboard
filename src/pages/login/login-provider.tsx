@@ -1,5 +1,10 @@
 import { withErrorHandling } from '@/lib/error-handling'
-import { useGoogleAuth, useLogin, useSourceDetection } from '@/lib/hooks'
+import {
+  useGoogleAuth,
+  useLogin,
+  useSourceDetection,
+  useExtensionOnboardingCompletion
+} from '@/lib/hooks'
 import { trackConversion } from '@/lib/utils'
 import { useGoogleLogin } from '@react-oauth/google'
 import {
@@ -40,6 +45,8 @@ export const LoginProvider = ({
   const [searchParams] = useSearchParams()
   const [loginSource, setLoginSource] = useState<string>('')
   const { detectSource } = useSourceDetection()
+  const { completeOnboardingForExtensionUser } =
+    useExtensionOnboardingCompletion()
 
   const navigate = useNavigate()
   const { mutateAsync: login, isPending: isLoginPending } = useLogin()
@@ -54,10 +61,13 @@ export const LoginProvider = ({
         },
         {
           successMessage: 'Logged in with Google successfully',
-          onSuccess: () => {
+          onSuccess: async () => {
             if (loginSource) {
               trackConversion.userLogin(loginSource)
             }
+
+            await completeOnboardingForExtensionUser()
+
             navigate('/select-plan', { replace: true })
           }
         }
@@ -65,7 +75,7 @@ export const LoginProvider = ({
 
       await handleGoogleAuth(code)
     },
-    [googleAuth, navigate, loginSource]
+    [googleAuth, navigate, loginSource, completeOnboardingForExtensionUser]
   )
 
   useEffect(() => {
@@ -104,10 +114,13 @@ export const LoginProvider = ({
       await login(
         { username_or_email: email, password },
         {
-          onSuccess: () => {
+          onSuccess: async () => {
             if (loginSource) {
               trackConversion.userLogin(loginSource)
             }
+
+            await completeOnboardingForExtensionUser()
+
             toast.success('Logged in successfully')
             setTimeout(() => {
               navigate('/select-plan')
@@ -123,7 +136,16 @@ export const LoginProvider = ({
         }
       )
     },
-    [email, password, isFormValid, isLoginPending, login, navigate, loginSource]
+    [
+      email,
+      password,
+      isFormValid,
+      isLoginPending,
+      login,
+      navigate,
+      loginSource,
+      completeOnboardingForExtensionUser
+    ]
   )
 
   const handleGoogleLogin = useGoogleLogin({

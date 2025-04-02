@@ -6,10 +6,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/ui/dropdown-menu'
+import { COMPLETED_ONBOARDING_STEP } from '@/lib/constants'
 import { useMemo } from 'react'
 import { InstallMenuItems } from './install-menu-items'
 import { OpenMenuItems } from './open-menu-items'
 import { TriggerButton } from './trigger-button'
+import { SkipOnboarding } from '../skip-onboarding/skip-onboarding'
 
 export const ExtensionDropdown = () => {
   const {
@@ -23,18 +25,22 @@ export const ExtensionDropdown = () => {
 
   const { currentStep } = useOnboardingStep()
 
-  const isComplete = useMemo(() => {
+  const isOnboardingComplete = useMemo(() => {
+    return currentStep >= COMPLETED_ONBOARDING_STEP
+  }, [currentStep])
+
+  const isExtensionSetupComplete = useMemo(() => {
     return currentStep >= 2
   }, [currentStep])
 
   const dropdownLabel = useMemo(() => {
-    if (isComplete) {
+    if (isExtensionSetupComplete) {
       return 'Open Superflex'
     }
     return 'Install Superflex'
-  }, [isComplete])
+  }, [isExtensionSetupComplete])
 
-  return (
+  return isOnboardingComplete ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <TriggerButton
@@ -47,10 +53,10 @@ export const ExtensionDropdown = () => {
         className='w-56'
       >
         <DropdownMenuLabel>
-          {isComplete ? 'Extension options' : 'Install options'}
+          {isExtensionSetupComplete ? 'Extension options' : 'Install options'}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {isComplete ? (
+        {isExtensionSetupComplete ? (
           <OpenMenuItems
             openVSCodeSuperflex={openVSCodeSuperflex}
             openCursorSuperflex={openCursorSuperflex}
@@ -66,5 +72,7 @@ export const ExtensionDropdown = () => {
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+  ) : (
+    <SkipOnboarding />
   )
 }

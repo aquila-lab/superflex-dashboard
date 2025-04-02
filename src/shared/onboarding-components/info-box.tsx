@@ -1,5 +1,6 @@
 import { TITLE_COLOR_MAP, VARIANT_CLASS_MAP } from '@/lib/constants'
 import type { InfoBoxVariant } from '@/lib/types'
+import { cn } from '@/lib/utils'
 import { type ReactNode, memo } from 'react'
 
 export const InfoBox = memo(
@@ -7,15 +8,17 @@ export const InfoBox = memo(
     icon,
     title,
     variant = 'default',
-    children
+    children,
+    className
   }: {
     icon: ReactNode
     title: string
     variant?: InfoBoxVariant
     children: ReactNode
+    className?: string
   }) => {
     return (
-      <div className={VARIANT_CLASS_MAP[variant]}>
+      <div className={cn(VARIANT_CLASS_MAP[variant], className)}>
         {variant === 'default' ? (
           <div className='flex items-center gap-2 font-medium'>
             {icon}

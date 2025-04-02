@@ -79,8 +79,12 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
 
       setIsSubmitting(true)
 
+      const decodedState = sessionStorage.getItem('decodedState')
+      const hasExtensionState = !!decodedState
+      const extensionOnboardingStep = hasExtensionState ? 4 : 2
+
       const payload = {
-        onboarding_step: 2,
+        onboarding_step: extensionOnboardingStep,
         ...(shouldUpdateNames
           ? { first_name: firstName, last_name: lastName }
           : {}),
@@ -118,6 +122,10 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
                 referralSource,
                 userID: user.id
               })
+            }
+
+            if (hasExtensionState) {
+              return
             }
 
             navigate('/dashboard/onboarding')
