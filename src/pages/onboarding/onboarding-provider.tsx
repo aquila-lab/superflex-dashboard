@@ -66,7 +66,7 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     }
   ])
 
-  const [openSection, setOpenSection] = useState<string>(() => {
+  const currentStepSlug = useMemo(() => {
     if (user && (user.onboarding_step ?? 0) > 4) {
       return 'connect-figma'
     }
@@ -77,7 +77,13 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
       return 'start-using-superflex'
     }
     return 'download-vscode'
-  })
+  }, [user, currentStep, user?.onboarding_step])
+
+  const [openSection, setOpenSection] = useState<string>(currentStepSlug)
+
+  useEffect(() => {
+    setOpenSection(currentStepSlug)
+  }, [currentStepSlug])
 
   useEffect(() => {
     if (user) {

@@ -1,4 +1,4 @@
-import { usePlanSelection } from '@/lib/hooks'
+import { usePlanSelection, useTrackOnboardingDropoff } from '@/lib/hooks'
 import type { BillingPeriod } from '@/lib/types'
 import { OnboardingHeader } from '@/shared/onboarding-header/onboarding-header'
 import { useMemo, useState } from 'react'
@@ -8,6 +8,8 @@ import { SelectPlanHeader } from './select-plan-header'
 export const SelectPlanPage = () => {
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('annual')
   const { handlePlanSelection } = usePlanSelection()
+
+  useTrackOnboardingDropoff()
 
   const handleBillingPeriodChange = useMemo(() => {
     return (period: BillingPeriod) => {

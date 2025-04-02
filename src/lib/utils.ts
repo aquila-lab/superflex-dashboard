@@ -222,9 +222,12 @@ export const getProtectedRedirectInfo = (
   }
 
   if (user) {
-    const redirected = sessionStorage.getItem('redirected')
+    const redirected = JSON.parse(
+      sessionStorage.getItem('redirected') || 'false'
+    )
+    const loggedIn = JSON.parse(sessionStorage.getItem('loggedIn') || 'false')
 
-    if (!redirected && currentStep >= 2) {
+    if (!loggedIn && !redirected && currentStep >= COMPLETED_ONBOARDING_STEP) {
       const decodedState = sessionStorage.getItem('decodedState')
       sessionStorage.setItem('redirected', 'true')
 
@@ -299,7 +302,25 @@ export const trackConversion = {
     trackUserJourney('plan_changed_to_paid', { planName }),
   freePlanClick: () => trackUserJourney('free_plan_click'),
   installVSCodeClick: () => trackUserJourney('install_vscode_click'),
-  installCursorClick: () => trackUserJourney('install_cursor_click')
+  installCursorClick: () => trackUserJourney('install_cursor_click'),
+  onboardingStepChange: (prevStep: number | null, nextStep: number) =>
+    trackUserJourney('onboarding_step_change', {
+      prevStep: prevStep === null ? 'null' : prevStep,
+      nextStep,
+      stepName: onboardingStepMapping.getStepName(nextStep)
+    }),
+  onboardingDropoff: (step: number | null, location: string) =>
+    trackUserJourney('onboarding_dropoff', {
+      step: step === null ? 'null' : step,
+      stepName: onboardingStepMapping.getStepName(step),
+      location
+    }),
+  onboardingReset: (fromStep: number | null) =>
+    trackUserJourney('onboarding_reset', {
+      fromStep: fromStep === null ? 'null' : fromStep,
+      fromStepName: onboardingStepMapping.getStepName(fromStep)
+    }),
+  onboardingSkipped: () => trackUserJourney('onboarding_skipped')
 }
 
 // A/B Testing utilities

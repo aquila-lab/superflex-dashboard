@@ -5,11 +5,13 @@ import { useMemo } from 'react'
 export const CompleteButton = ({
   sectionId,
   onComplete,
-  isCompleted
+  isCompleted,
+  buttonText = 'Mark as complete'
 }: {
   sectionId: string
   onComplete: (id: string, completed: boolean) => void
   isCompleted: boolean
+  buttonText?: string
 }) => {
   const content = useMemo(() => {
     if (isCompleted) {
@@ -27,10 +29,10 @@ export const CompleteButton = ({
         onClick={() => onComplete(sectionId, true)}
       >
         <CheckCircle className='size-4 mr-2' />
-        Mark as complete
+        {buttonText}
       </Button>
     )
-  }, [isCompleted, onComplete, sectionId])
+  }, [isCompleted, onComplete, sectionId, buttonText])
 
   return content
 }

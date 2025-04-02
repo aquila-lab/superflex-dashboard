@@ -149,14 +149,18 @@ export const EXTENSION_URIS: {
 export const FIGMA_CONNECTION_STEPS = [
   {
     id: 'step-1',
-    text: 'Click "Connect Figma" in the lower panel of Superflex.'
+    text: 'Click "Login to Extension" button to authenticate with your Superflex account.'
   },
   {
     id: 'step-2',
-    text: 'A new tab will open—click Allow to grant Superflex permission to read your Figma projects.'
+    text: 'In the editor, click "Connect Figma" in the lower panel of Superflex.'
   },
   {
     id: 'step-3',
+    text: 'A new tab will open—click Allow to grant Superflex permission to read your Figma projects.'
+  },
+  {
+    id: 'step-4',
     text: "Once connected, you'll be able to copy Figma selections and use the Figma link feature to provide design context directly to Superflex."
   }
 ]

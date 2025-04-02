@@ -69,6 +69,17 @@ export const UserInfoFormContent = () => {
         required
       />
 
+      <SelectField
+        id='referralSource'
+        label='How did you hear about us?'
+        placeholder='Select a source'
+        value={referralSource}
+        setValue={value => setReferralSource(value as ReferralSource | '')}
+        options={REFERAL_SOURCE_OPTIONS}
+        isSubmitting={isSubmitting}
+        required
+      />
+
       <TextField
         id='title'
         label='Title'
@@ -87,17 +98,6 @@ export const UserInfoFormContent = () => {
         setValue={setCompany}
         isSubmitting={isSubmitting}
         optional
-      />
-
-      <SelectField
-        id='referralSource'
-        label='How did you hear about us?'
-        placeholder='Select a source'
-        value={referralSource}
-        setValue={value => setReferralSource(value as ReferralSource | '')}
-        options={REFERAL_SOURCE_OPTIONS}
-        isSubmitting={isSubmitting}
-        required
       />
 
       <SubmitButton

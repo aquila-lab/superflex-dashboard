@@ -3,7 +3,12 @@ import posthog from 'posthog-js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { apiClient } from './api-client'
-import { EXTENSION_URIS, QUERY_KEYS, TOKEN_KEY } from './constants'
+import {
+  EXTENSION_URIS,
+  QUERY_KEYS,
+  TOKEN_KEY,
+  COMPLETED_ONBOARDING_STEP
+} from './constants'
 import { useErrorHandler, withErrorHandling } from './error-handling'
 import type {
   AuthTokenResponse,
@@ -187,6 +192,7 @@ export const useOnboardingStep = () => {
 
 export const useUpdateOnboardingStep = () => {
   const queryClient = useQueryClient()
+  const { data: user } = useUser()
 
   return useMutation({
     mutationFn: async (step: number) => {
@@ -195,7 +201,14 @@ export const useUpdateOnboardingStep = () => {
       })
       return data
     },
-    onSuccess: () => {
+    onSuccess: data => {
+      const prevStep = user?.onboarding_step ?? null
+      const nextStep = data.onboarding_step ?? 0
+
+      if (prevStep !== nextStep) {
+        trackConversion.onboardingStepChange(prevStep, nextStep)
+      }
+
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
     }
   })
@@ -220,6 +233,41 @@ export const useUpdateUser = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user })
     }
   })
+}
+
+export const useExtensionOnboardingCompletion = () => {
+  const { data: user } = useUser()
+  const updateOnboardingStep = useUpdateOnboardingStep()
+
+  const completeOnboardingForExtensionUser = useCallback(async () => {
+    if (!user) {
+      return false
+    }
+
+    if (user.onboarding_step === null || user.onboarding_step < 2) {
+      return false
+    }
+
+    const decodedState = sessionStorage.getItem('decodedState')
+    const hasExtensionState = !!decodedState
+
+    if (hasExtensionState && user.onboarding_step === 2) {
+      try {
+        await updateOnboardingStep.mutateAsync(4)
+        return true
+      } catch (error) {
+        console.error(
+          'Failed to complete onboarding for extension user:',
+          error
+        )
+        return false
+      }
+    }
+
+    return false
+  }, [user, updateOnboardingStep])
+
+  return { completeOnboardingForExtensionUser }
 }
 
 export const useUrlParamsStorage = () => {
@@ -508,4 +556,30 @@ export const useSourceDetection = () => {
   }, [searchParams])
 
   return { detectSource }
+}
+
+export const useTrackOnboardingDropoff = () => {
+  const { data: user } = useUser()
+  const location = useLocation()
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const currentStep = user?.onboarding_step ?? null
+      const isComplete =
+        currentStep === null || currentStep >= COMPLETED_ONBOARDING_STEP
+
+      if (!isComplete && currentStep !== null) {
+        const locationPath = location.pathname
+        trackConversion.onboardingDropoff(currentStep, locationPath)
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [user?.onboarding_step, location.pathname])
+
+  return null
 }

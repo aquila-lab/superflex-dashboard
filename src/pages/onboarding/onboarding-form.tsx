@@ -1,7 +1,8 @@
 import { Accordion } from '@/ui/accordion'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { OnboardingAccordionItem } from './onboarding-accordion-item'
 import { useOnboardingContext } from './onboarding-provider'
+import { useOnboardingStep } from '@/lib/hooks'
 
 export const OnboardingForm = () => {
   const {
@@ -12,9 +13,15 @@ export const OnboardingForm = () => {
     disabledSections
   } = useOnboardingContext()
 
+  const { isComplete } = useOnboardingStep()
+
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const prevOpenSectionRef = useRef<string | null>(null)
+  const isInitialRender = useRef(true)
+
   const handleAccordionValueChange = useCallback(
     (value: string) => {
-      if (value === '') {
+      if (value === '' || isComplete) {
         return
       }
 
@@ -31,7 +38,7 @@ export const OnboardingForm = () => {
 
       setOpenSection(value)
     },
-    [sections, setOpenSection]
+    [sections, setOpenSection, isComplete]
   )
 
   const handleSectionComplete = useCallback(
@@ -41,26 +48,58 @@ export const OnboardingForm = () => {
     [markSectionCompleted]
   )
 
+  useEffect(() => {
+    if (isInitialRender.current) {
+      isInitialRender.current = false
+      prevOpenSectionRef.current = openSection
+      return
+    }
+
+    if (openSection && openSection !== prevOpenSectionRef.current) {
+      setTimeout(() => {
+        if (sectionRefs.current[openSection]) {
+          sectionRefs.current[openSection]?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          })
+        }
+      }, 100)
+
+      prevOpenSectionRef.current = openSection
+    }
+  }, [openSection])
+
+  const getSectionRef = useCallback(
+    (id: string) => (node: HTMLDivElement | null) => {
+      sectionRefs.current[id] = node
+    },
+    []
+  )
+
   return (
     <Accordion
       type='single'
-      value={openSection}
+      value={isComplete ? '' : openSection}
       onValueChange={handleAccordionValueChange}
-      className='w-full space-y-8'
+      className='w-full'
       collapsible
     >
       {sections.map((section, index) => {
-        const isDisabled = disabledSections.includes(section.id)
+        const isDisabled = isComplete || disabledSections.includes(section.id)
 
         return (
-          <OnboardingAccordionItem
+          <div
             key={section.id}
-            section={section}
-            index={index}
-            disabled={isDisabled}
-            isOpen={openSection === section.id}
-            onComplete={handleSectionComplete}
-          />
+            ref={getSectionRef(section.id)}
+          >
+            <OnboardingAccordionItem
+              section={section}
+              index={index}
+              disabled={isDisabled}
+              isOpen={!isComplete && openSection === section.id}
+              onComplete={handleSectionComplete}
+            />
+          </div>
         )
       })}
     </Accordion>
