@@ -104,12 +104,14 @@ export type Plan = {
   name: string
   basic_request_limit: number | null
   premium_request_limit: number | null
+  figma_request_limit: number | null
 }
 
 export type UserSubscription = {
   plan: Plan | null
   basic_requests_used: number
   premium_requests_used: number
+  figma_requests_used: number
   last_reset_date: string
   created_at: string
   end_date: string | null

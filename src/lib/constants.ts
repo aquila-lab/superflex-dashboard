@@ -184,6 +184,7 @@ export const PLAN_CARD = [
     buttonText: 'Get started',
     features: [
       { text: 'One project', included: true },
+      { text: '3 Figma low priority requests per month', included: true },
       { text: '15 premium requests per month', included: true },
       { text: '100 basic requests per month', included: true }
     ]
