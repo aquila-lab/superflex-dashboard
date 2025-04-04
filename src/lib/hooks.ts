@@ -153,7 +153,7 @@ export const useLogout = () => {
     mutationFn: async () => {
       clearToken()
       sessionStorage.clear()
-      localStorage.clear
+      localStorage.clear()
       apiClient.defaults.headers.common.Authorization = undefined
     },
     onSuccess: () => {
