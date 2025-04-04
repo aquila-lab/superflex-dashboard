@@ -9,6 +9,7 @@ import { YouTubeVideo } from '@/shared/youtube-video/youtube-video'
 import { AlertCircle, CheckCircle, ExternalLink, Sparkles } from 'lucide-react'
 import { useMemo } from 'react'
 import { Button } from '@/ui/button'
+import { UsageSteps } from './usage-steps'
 
 export const ConnectFigmaSection = ({
   isCompleted,
@@ -39,6 +40,18 @@ export const ConnectFigmaSection = ({
 
       <YouTubeVideo videoId='9Xn9qisQRgM' />
 
+      <InfoBox
+        icon={<AlertCircle className='size-5 text-amber-600' />}
+        title='Important Note'
+        variant='warning'
+      >
+        <p className='text-sm text-amber-700'>
+          {hasExtensionData
+            ? `You must be logged in to the extension to use Superflex and connect Figma. If you haven\'t already, click the "Login to ${extensionName}" button bellow to authenticate with your Superflex account. If an error occurs, please try initiating the login process from the extension again.`
+            : "You must initiate the login process from your code editor extension first. Once you've done that, return here to continue connecting your Figma account."}
+        </p>
+      </InfoBox>
+
       <div className='flex flex-col items-center space-y-4 my-6'>
         <InfoBox
           icon={<ExternalLink className='size-5 text-blue-600' />}
@@ -46,7 +59,7 @@ export const ConnectFigmaSection = ({
         >
           <p className='text-sm'>
             {hasExtensionData
-              ? `You must be logged in to the extension to connect Figma. If you haven\'t already, click the "Login to ${extensionName}" button above to authenticate with your Superflex account. If an error occurs, please try initiating the login process from the extension again.`
+              ? 'You must be logged in to the extension to connect Figma. If an error occurs, please try initiating the login process from the extension again.'
               : 'To connect your Figma account, you need to first trigger the login from your VSCode or Cursor extension. Please open your extension and use the login option there to continue.'}
           </p>
           <div className='mt-3'>
@@ -68,28 +81,11 @@ export const ConnectFigmaSection = ({
         </InfoBox>
       </div>
 
-      <InfoBox
-        icon={<CheckCircle className='size-5 text-green-600' />}
-        title='How to Connect Figma'
-      >
-        <StepList steps={FIGMA_CONNECTION_STEPS} />
-      </InfoBox>
-
-      <InfoBox
-        icon={<AlertCircle className='size-5 text-amber-600' />}
-        title='Important Note'
-        variant='warning'
-      >
-        <p className='text-sm text-amber-700'>
-          {hasExtensionData
-            ? `You must be logged in to the extension to connect Figma. If you haven\'t already, click the "Login to ${extensionName}" button above to authenticate with your Superflex account. If an error occurs, please try initiating the login process from the extension again.`
-            : "You must initiate the login process from your code editor extension first. Once you've done that, return here to continue connecting your Figma account."}
-        </p>
-      </InfoBox>
+      <UsageSteps />
 
       <InfoBox
         icon={<Sparkles className='size-5 text-green-600' />}
-        title="What you'll unlock"
+        title='Connect Figma to unlock'
         variant='success'
       >
         <p className='text-sm text-green-700'>
@@ -97,6 +93,13 @@ export const ConnectFigmaSection = ({
           layout suggestions, and ensure your implementation matches the design
           perfectly.
         </p>
+      </InfoBox>
+
+      <InfoBox
+        icon={<CheckCircle className='size-5 text-green-600' />}
+        title='How to Connect Figma'
+      >
+        <StepList steps={FIGMA_CONNECTION_STEPS} />
       </InfoBox>
 
       <SectionFooter
