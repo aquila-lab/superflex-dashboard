@@ -87,9 +87,13 @@ export const SuccessProvider = memo(({ children }: { children: ReactNode }) => {
           window.location.href = `${decodedState}&access_token=${token}`
           sessionStorage.clear()
         })
+
+        if (onboardingStep.currentStep < 4) {
+          updateOnboardingStep.mutate(4)
+        }
       }
     }
-  }, [successType, token])
+  }, [successType, token, onboardingStep.currentStep, updateOnboardingStep])
 
   useEffect(() => {
     if (
