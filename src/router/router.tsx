@@ -14,11 +14,13 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthRoute } from './auth-route'
 import { ProtectedRoute } from './protected-route'
 import { RouterContainer } from './router-container'
+import { OnboardingStepHandler } from './onboarding-step-handler'
 
 export const Router = () => {
   return (
     <BrowserRouter>
       <RouterContainer>
+        <OnboardingStepHandler />
         <Routes>
           <Route element={<AuthRoute />}>
             <Route

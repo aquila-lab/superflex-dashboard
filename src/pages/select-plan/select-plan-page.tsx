@@ -6,7 +6,7 @@ import { PlanGrid } from './plan-grid'
 import { SelectPlanHeader } from './select-plan-header'
 
 export const SelectPlanPage = () => {
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('annual')
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly')
   const { handlePlanSelection } = usePlanSelection()
 
   const handleBillingPeriodChange = useMemo(() => {

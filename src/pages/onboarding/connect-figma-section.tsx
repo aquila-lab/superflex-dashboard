@@ -5,7 +5,8 @@ import { SectionFooter } from '@/shared/onboarding-components/section-footer'
 import { SectionIntro } from '@/shared/onboarding-components/section-intro'
 import { StepList } from '@/shared/onboarding-components/step-list'
 import { YouTubeVideo } from '@/shared/youtube-video/youtube-video'
-import { CheckCircle, Sparkles } from 'lucide-react'
+import { AlertCircle, CheckCircle, Sparkles } from 'lucide-react'
+import { UsageSteps } from './usage-steps'
 
 export const ConnectFigmaSection = ({
   isCompleted,
@@ -19,6 +20,20 @@ export const ConnectFigmaSection = ({
       <SectionIntro text='Before diving into Superflex, you need to connect your Figma account. This allows Superflex to access your designs and use them as context for AI-powered assistance.' />
 
       <YouTubeVideo videoId='9Xn9qisQRgM' />
+
+      <InfoBox
+        icon={<AlertCircle className='size-5 text-amber-600' />}
+        title='Important Note'
+        variant='warning'
+      >
+        <p className='text-sm text-amber-700'>
+          You must initiate the login process from your code editor extension
+          first. Once you've done that, return here to continue connecting your
+          Figma account.
+        </p>
+      </InfoBox>
+
+      <UsageSteps />
 
       <InfoBox
         icon={<CheckCircle className='size-5 text-green-600' />}

@@ -52,14 +52,14 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     },
     {
       id: 'start-using-superflex',
-      title: 'Start using Superflex',
+      title: 'Install Superflex',
       defaultOpen: currentStep === 3,
       completed: isStepCompleted(3),
       stepNumber: 3
     },
     {
       id: 'connect-figma',
-      title: 'Connect your Figma account',
+      title: 'Start using Superflex',
       defaultOpen: currentStep === 4,
       completed: isStepCompleted(4),
       stepNumber: 4

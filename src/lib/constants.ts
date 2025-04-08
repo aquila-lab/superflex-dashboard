@@ -166,7 +166,7 @@ export const PLAN_CARD = [
   {
     title: 'Free Plan',
     description:
-      "Explore Superflex with no commitment. Get access to essential features and see if it's the right fit for you.",
+      'Transform images and prompts into beautiful UI. For Figma integration, subscribe to Individual Pro Plan.',
     pricing: {
       monthly: {
         price: 'Free',
@@ -180,6 +180,7 @@ export const PLAN_CARD = [
     buttonText: 'Get started',
     features: [
       { text: 'One project', included: true },
+      { text: '3 Figma requests per month', included: true },
       { text: '15 premium requests per month', included: true },
       { text: '100 basic requests per month', included: true }
     ]
@@ -187,7 +188,7 @@ export const PLAN_CARD = [
   {
     title: 'Individual Pro Plan',
     description:
-      'Perfect for building and scaling projects. Unlock premium tools, gain deeper insights, and maximize efficiency.',
+      'Turn Figma designs to production-ready code that matches your coding style and reuses your UI components.',
     pricing: {
       monthly: {
         price: '$29',
@@ -201,17 +202,18 @@ export const PLAN_CARD = [
     buttonText: 'Subscribe',
     popular: true,
     features: [
-      { text: 'Up to 3 projects', included: true },
+      { text: 'Import from Figma', included: true },
+      { text: 'Unlimited projects', included: true },
       { text: '250 premium requests per month', included: true },
       { text: 'Unlimited basic requests per month', included: true },
-      { text: 'Import from Figma', included: true },
-      { text: 'Priority email support', included: true }
+      { text: 'Priority email support', included: true },
+      { text: '30-day moneyback guarantee', included: true }
     ]
   },
   {
     title: 'Team Plan',
     description:
-      'Empower your team with unlimited requests, centralized billing, and advanced analytics for seamless collaboration.',
+      'Achieve an 80% boost in front-end development velocity with the Superflex team plan.',
     pricing: {
       monthly: {
         price: '$299',
@@ -222,6 +224,7 @@ export const PLAN_CARD = [
         billingLabel: '/mo *billed yearly'
       }
     },
+    popular: true,
     buttonText: 'Subscribe',
     features: [
       { text: 'Centralized team billing', included: true },
@@ -229,16 +232,17 @@ export const PLAN_CARD = [
       { text: 'Unlimited projects', included: true },
       { text: 'Unlimited premium requests per month', included: true },
       { text: 'Zero data retention policy', included: true },
-      { text: 'Priority support via Slack Connect', included: true }
+      { text: 'Priority support via Slack Connect', included: true },
+      { text: '30-day moneyback guarantee', included: true }
     ],
     teamSize: {
       monthly: {
-        users: '5 users ',
-        price: '$69 per new user'
+        users: 'Includes 5 licenses',
+        price: '$69 per additional user'
       },
       annual: {
-        users: '5 users ',
-        price: '$59 per new user'
+        users: 'Includes 5 licenses',
+        price: '$59 per additional user'
       }
     }
   }

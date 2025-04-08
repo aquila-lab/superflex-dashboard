@@ -21,6 +21,10 @@ export const RequestsCard = () => {
     return isUnlimitedPlan(subscription?.plan?.premium_request_limit || null)
   }, [subscription?.plan?.premium_request_limit])
 
+  const isFigmaUnlimited = useMemo(() => {
+    return isUnlimitedPlan(subscription?.plan?.figma_request_limit || null)
+  }, [subscription?.plan?.figma_request_limit])
+
   const basicRequestsUsed = useMemo(() => {
     return subscription?.basic_requests_used || 0
   }, [subscription?.basic_requests_used])
@@ -28,6 +32,10 @@ export const RequestsCard = () => {
   const premiumRequestsUsed = useMemo(() => {
     return subscription?.premium_requests_used || 0
   }, [subscription?.premium_requests_used])
+
+  const figmaRequestsUsed = useMemo(() => {
+    return subscription?.figma_requests_used || 0
+  }, [subscription?.figma_requests_used])
 
   const basicRequestsPercentage = useMemo(() => {
     return getRequestPercentage(
@@ -42,6 +50,13 @@ export const RequestsCard = () => {
       subscription?.plan?.premium_request_limit || null
     )
   }, [premiumRequestsUsed, subscription?.plan?.premium_request_limit])
+
+  const figmaRequestsPercentage = useMemo(() => {
+    return getRequestPercentage(
+      figmaRequestsUsed,
+      subscription?.plan?.figma_request_limit || null
+    )
+  }, [figmaRequestsUsed, subscription?.plan?.figma_request_limit])
 
   return (
     <Card>
@@ -65,6 +80,14 @@ export const RequestsCard = () => {
             usedRequests={premiumRequestsUsed}
             totalRequests={subscription?.plan?.premium_request_limit || 0}
             percentage={premiumRequestsPercentage}
+          />
+
+          <RequestProgressBar
+            title='Figma Requests'
+            isUnlimited={isFigmaUnlimited}
+            usedRequests={figmaRequestsUsed}
+            totalRequests={subscription?.plan?.figma_request_limit || 0}
+            percentage={figmaRequestsPercentage}
           />
         </div>
       </CardContent>

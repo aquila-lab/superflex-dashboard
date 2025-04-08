@@ -40,7 +40,7 @@ export const PlanCard = ({
         description={description}
         pricing={pricing}
         billingPeriod={billingPeriod}
-        popular={popular}
+        popular={popular && !isTeamPlan}
       />
 
       <CardContent>

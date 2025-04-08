@@ -15,7 +15,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 export const PlanSelectionDrawer = () => {
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('annual')
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly')
   const { handlePlanSelection } = usePlanSelection()
   const navigate = useNavigate()
   const location = useLocation()

@@ -166,6 +166,21 @@ export const onboardingStepMapping = {
   }
 }
 
+export const USAGE_STEPS = [
+  {
+    id: 'vscode-usage-1',
+    text: 'Open your project in VS Code'
+  },
+  {
+    id: 'vscode-usage-2',
+    text: 'Access Superflex from the sidebar or press (Ctrl + ; / Cmd + ;) to open Superflex'
+  },
+  {
+    id: 'vscode-usage-4',
+    text: 'Start coding at superhuman speed!'
+  }
+]
+
 export const isOnboardingComplete = (
   onboardingStep: number | null
 ): boolean => {
